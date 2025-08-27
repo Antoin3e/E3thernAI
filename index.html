@@ -1,204 +1,304 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>ethernAI</title>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ethernAI — Demo</title>
   <style>
-    body {
-      font-family: Arial, sans-serif;
-      margin: 0; padding: 0;
-      background: #f4f4f4;
-    }
-    header {
-      background: #222; color: white;
-      padding: 10px; text-align: center;
-    }
-    nav {
-      display: flex;
-      justify-content: space-around;
-      flex-wrap: wrap;
-      background: #333;
-    }
-    nav button {
-      flex: 1;
-      padding: 12px;
-      border: none;
-      background: #333;
-      color: white;
-      font-size: 16px;
-    }
-    nav button:hover { background: #444; }
-    section { display: none; padding: 20px; }
-    canvas {
-      border: 2px solid #333;
-      display: block;
-      margin: 10px auto;
-      background: linear-gradient(#cceeff, #ffffff);
-    }
-    .form-input {
-      margin: 10px 0;
-      display: block;
-    }
-    .card {
-      border: 1px solid #ccc; border-radius: 10px;
-      padding: 15px; margin: 10px;
-      text-align: center;
-      background: white; cursor: pointer;
-      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
-    }
-    #dashboard { max-width: 600px; margin: auto; }
-    canvas.chart { width: 100% !important; height: 300px !important; }
+    :root{--bg:#0b0f17;--panel:#0f1720;--accent:#19c2ff;--accent2:#7c3aed;--text:#e6eef6;--muted:#94a3b8;--radius:14px}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:radial-gradient(circle at 10% 10%,#07101a, #08121a 40%,var(--bg));color:var(--text)}
+    header{position:sticky;top:0;background:rgba(6,8,12,.64);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.03)}
+    .container{max-width:1100px;margin:0 auto;padding:20px}
+    .nav{display:flex;align-items:center;gap:12px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:40px;height:40px;border-radius:10px;background:linear-gradient(135deg,var(--accent),var(--accent2));box-shadow:0 6px 26px rgba(25,194,255,.12)}
+    .tabs{margin-left:auto;display:flex;gap:8px}
+    .tab{background:transparent;border:0;padding:8px 12px;color:var(--muted);cursor:pointer;border-radius:10px;font-weight:700}
+    .tab.active{color:var(--text);background:linear-gradient(180deg,rgba(25,194,255,.06),rgba(25,194,255,.03))}
+    main{padding:20px}
+    .panel{display:none;background:linear-gradient(180deg, rgba(255,255,255,.01), rgba(255,255,255,0));border:1px solid rgba(255,255,255,.03); border-radius:var(--radius); padding:18px; box-shadow:0 10px 30px rgba(0,0,0,.45)}
+    .panel.active{display:block}
+
+    /* Game layout */
+    .game-wrap{display:grid;grid-template-columns:1fr 320px;gap:16px}
+    @media(max-width:980px){.game-wrap{grid-template-columns:1fr} .tabs{display:none}}
+    canvas#game{width:100%;height:480px;border-radius:12px;background:linear-gradient(180deg,#071425,#07101a);display:block}
+    .hud{background:linear-gradient(180deg,rgba(124,58,237,.06),rgba(124,58,237,.02));border-radius:12px;padding:12px}
+    .stat{display:flex;justify-content:space-between;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.02);margin-bottom:8px}
+    .btn{appearance:none;border:0;padding:10px 12px;border-radius:10px;background:linear-gradient(180deg,var(--accent),var(--accent2));color:#041018;font-weight:800;cursor:pointer}
+
+    /* Registration overlay */
+    .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
+    .card{background:var(--panel);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,.04);min-width:320px}
+    .field{display:flex;flex-direction:column;margin-bottom:10px}
+    .field input{padding:10px;border-radius:8px;background:#071018;border:1px solid rgba(255,255,255,.03);color:var(--text)}
+
+    /* Data */
+    .kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:12px}
+    .kpi{background:rgba(255,255,255,.02);padding:10px;border-radius:10px;text-align:center}
+    table{width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden}
+    th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,.03);text-align:left}
+
+    /* Catalog */
+    .catalog{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+    .cat{background:linear-gradient(180deg,rgba(25,194,255,.04),rgba(124,58,237,.03));padding:12px;border-radius:12px;cursor:pointer}
+    .contact{margin-top:10px;padding:8px;background:rgba(0,0,0,.3);border-radius:8px;border:1px solid rgba(255,255,255,.03)}
   </style>
 </head>
 <body>
-  <header><h1>ethernAI</h1></header>
-  <nav>
-    <button onclick="showSection('jugar')">Jugar</button>
-    <button onclick="showSection('datos')">Datos</button>
-    <button onclick="showSection('catalogo')">Catálogo</button>
-  </nav>
-
-  <section id="jugar">
-    <h2>Juego Interactivo</h2>
-    <div id="registro">
-      <label>Nombre:</label><input id="nombre" class="form-input">
-      <label>Teléfono:</label><input id="telefono" class="form-input">
-      <label>Edad:</label><input id="edad" type="number" class="form-input">
-      <button onclick="iniciarJuego()">Iniciar Juego</button>
+  <header>
+    <div class="container nav">
+      <div class="brand"><div class="logo"></div><div>
+        <div style="font-weight:800">ethernAI</div>
+        <div style="font-size:12px;color:var(--muted)">Soluciones Industria 4.0 · IA · Big Data</div>
+      </div></div>
+      <div class="tabs">
+        <button class="tab active" data-tab="jugar">Jugar</button>
+        <button class="tab" data-tab="datos">Datos</button>
+        <button class="tab" data-tab="catalogo">Catálogo</button>
+      </div>
     </div>
-    <canvas id="gameCanvas" width="400" height="400" style="display:none;"></canvas>
-    <p id="score"></p>
-  </section>
+  </header>
 
-  <section id="datos">
-    <h2>Dashboard de Datos</h2>
-    <div id="dashboard">
-      <canvas id="chartTiempo" class="chart"></canvas>
-      <canvas id="chartEdad" class="chart"></canvas>
-      <canvas id="chartDuracion" class="chart"></canvas>
-    </div>
-  </section>
+  <main class="container">
+    <!-- JUGAR -->
+    <section id="panel-jugar" class="panel active">
+      <h1>Juego — El agua huye de la llama</h1>
+      <p style="color:var(--muted)">Controla la gota (WASD / flechas) o inclina tu móvil. Recolecta orbes, evita obstáculos y no dejes que la llama te alcance.</p>
 
-  <section id="catalogo">
-    <h2>Catálogo</h2>
-    <div class="card" onclick="alert('Tel: 8123836266\nEmail: thisis.ethernai@gmail.com')">
-      Producto A
-    </div>
-    <div class="card" onclick="alert('Tel: 8123836266\nEmail: thisis.ethernai@gmail.com')">
-      Producto B
-    </div>
-  </section>
+      <div class="game-wrap">
+        <div style="position:relative">
+          <canvas id="game" width="900" height="480"></canvas>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-<script>
-  function showSection(id){
-    document.querySelectorAll('section').forEach(s=>s.style.display='none');
-    document.getElementById(id).style.display='block';
-  }
-  showSection('jugar');
+          <div id="overlayReg" class="overlay">
+            <div class="card">
+              <h2>Registro obligatorio</h2>
+              <p class="note" style="color:var(--muted);margin:6px 0">Antes de cada partida registra Nombre, Teléfono y Edad.</p>
+              <div class="field"><label>Nombre</label><input id="name" placeholder="Tu nombre" maxlength="40"></div>
+              <div class="field"><label>Teléfono</label><input id="phone" placeholder="8123836266" maxlength="20" inputmode="tel"></div>
+              <div class="field"><label>Edad</label><input id="age" type="number" min="5" max="120"></div>
+              <div style="display:flex;gap:8px;margin-top:6px;align-items:center">
+                <button id="btnStart" class="btn">Comenzar</button>
+                <button id="btnGyro" class="btn" style="background:linear-gradient(180deg,#fff3 10%,rgba(255,255,255,.02));color:var(--text);font-weight:700">Permitir Giroscopio</button>
+              </div>
+              <p style="font-size:12px;color:var(--muted);margin-top:8px">Los datos se guardan localmente en tu navegador.</p>
+            </div>
+          </div>
+        </div>
 
-  // Juego
-  const canvas = document.getElementById("gameCanvas");
-  const ctx = canvas.getContext("2d");
-  let player, objects, score, startTime, jugador;
+        <aside class="hud">
+          <div class="stat"><span>Puntaje</span><strong id="score">0</strong></div>
+          <div class="stat"><span>Mejor personal</span><strong id="best">0</strong></div>
+          <div class="stat"><span>Sesiones</span><strong id="sessions">0</strong></div>
+          <div class="stat"><span>Estado</span><strong id="state">Listo</strong></div>
+          <div style="margin-top:10px;display:flex;gap:8px">
+            <button id="playBtn" class="btn">▶️ Jugar</button>
+            <button id="resetBtn" class="btn">↻ Reiniciar</button>
+          </div>
+          <p class="note" style="color:var(--muted);margin-top:8px">Tip: en móvil, inclina el teléfono cuando hayas permitido el giroscopio.</p>
+        </aside>
+      </div>
+    </section>
 
-  function iniciarJuego(){
-    jugador = {
-      nombre: document.getElementById('nombre').value,
-      telefono: document.getElementById('telefono').value,
-      edad: parseInt(document.getElementById('edad').value)
-    };
-    document.getElementById('registro').style.display = "none";
-    canvas.style.display = "block";
-    resetGame();
-    requestAnimationFrame(update);
-  }
+    <!-- DATOS -->
+    <section id="panel-datos" class="panel">
+      <h1>Dashboard de jugadores</h1>
+      <div class="kpis" id="kpis"></div>
 
-  function resetGame(){
-    player = {x:200, y:200, size:20};
-    objects = [];
-    score = 0;
-    startTime = Date.now();
-  }
+      <div style="display:grid;grid-template-columns:1fr 420px;gap:12px;margin-top:12px">
+        <div>
+          <table>
+            <thead><tr><th>Nombre</th><th>Teléfono</th><th>Edad</th><th>Mejor</th><th>Partidas</th><th>Promedio</th><th>Tiempo(s)</th><th>Última</th></tr></thead>
+            <tbody id="rows"></tbody>
+          </table>
+        </div>
+        <div style="background:rgba(255,255,255,.02);padding:12px;border-radius:10px">
+          <h3 style="margin:0 0 8px">Distribución de edades</h3>
+          <canvas id="ageChart" width="380" height="260"></canvas>
+          <h3 style="margin-top:12px">Top 5 mejores puntajes</h3>
+          <ol id="topList" style="color:var(--muted)"></ol>
+        </div>
+      </div>
+    </section>
 
-  function crearObjeto(){
-    let tipo = Math.random()>0.5 ? 'gota':'llama';
-    objects.push({
-      x: Math.random()*380, y: Math.random()*380,
-      tipo: tipo, size: 15, creado: Date.now()
+    <!-- CATALOGO -->
+    <section id="panel-catalogo" class="panel">
+      <h1>Catálogo de soluciones</h1>
+      <p style="color:var(--muted)">Presiona una tarjeta para ver nuestro contacto.</p>
+      <div class="catalog">
+        <div class="cat" data-title="Optimización de flujos" onclick="showContact(this)">
+          <h3>Optimización de flujos operativos</h3>
+          <p style="color:var(--muted)">Mapeo, automatización y reducción de tiempos ciclo.</p>
+        </div>
+        <div class="cat" data-title="Inventarios" onclick="showContact(this)">
+          <h3>Gestión inteligente de inventarios</h3>
+          <p style="color:var(--muted)">Forecasting con IA para disminuir faltantes y sobrestock.</p>
+        </div>
+        <div class="cat" data-title="Mantenimiento" onclick="showContact(this)">
+          <h3>Mantenimiento predictivo</h3>
+          <p style="color:var(--muted)">Modelos de falla y monitoreo de condición.</p>
+        </div>
+        <div class="cat" data-title="Analitica" onclick="showContact(this)">
+          <h3>Analítica y dashboards</h3>
+          <p style="color:var(--muted)">Dashboards accionables y DataOps.</p>
+        </div>
+        <div class="cat" data-title="Automatizacion" onclick="showContact(this)">
+          <h3>Automatización documental</h3>
+          <p style="color:var(--muted)">OCR y workflows sin papel.</p>
+        </div>
+        <div class="cat" data-title="Integracion" onclick="showContact(this)">
+          <h3>Integración de datos</h3>
+          <p style="color:var(--muted)">Conexión de fuentes y APIs para BI.</p>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    /* ===== Navegación de pestañas ===== */
+    const tabs = document.querySelectorAll('.tab');
+    const panels = {jugar:document.getElementById('panel-jugar'), datos:document.getElementById('panel-datos'), catalogo:document.getElementById('panel-catalogo')};
+    tabs.forEach(t=>t.addEventListener('click',()=>{ tabs.forEach(b=>b.classList.remove('active')); t.classList.add('active'); Object.values(panels).forEach(p=>p.classList.remove('active')); panels[t.dataset.tab].classList.add('active'); if(t.dataset.tab==='datos') renderDashboard(); }));
+
+    /* ===== Persistencia ===== */
+    const LS = 'ethernai_players_v1';
+    function load(){ try{return JSON.parse(localStorage.getItem(LS))||[];}catch{return [];} }
+    function save(data){ localStorage.setItem(LS, JSON.stringify(data)); }
+
+    /* ====== Juego (canvas) ====== */
+    const canvas = document.getElementById('game'); const ctx = canvas.getContext('2d');
+    const overlay = document.getElementById('overlayReg');
+    const nameIn = document.getElementById('name'); const phoneIn = document.getElementById('phone'); const ageIn = document.getElementById('age');
+    const btnStart = document.getElementById('btnStart'); const btnGyro = document.getElementById('btnGyro');
+    const playBtn = document.getElementById('playBtn'); const resetBtn = document.getElementById('resetBtn');
+    const scoreEl = document.getElementById('score'); const bestEl = document.getElementById('best'); const sessionsEl = document.getElementById('sessions'); const stateEl = document.getElementById('state');
+
+    let players = load(); let current=null; let running=false; let raf=null; let world={w:canvas.width,h:canvas.height};
+    let player = {x:120,y:120,r:14,speed:3.2}; let flame = {x:world.w-140,y:world.h-120,r:18,speed:2.6}; let orbs=[]; let obstacles=[];
+    let keys={}; let score=0; let best=0; let startTime=0; let sessionCounted=false;
+
+    // controles teclado
+    window.addEventListener('keydown',e=>{ if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD'].includes(e.code)){ keys[e.code]=true; e.preventDefault(); }});
+    window.addEventListener('keyup',e=>{ if(keys[e.code]!==undefined){ keys[e.code]=false; e.preventDefault(); }});
+
+    // giroscopio (movimiento lateral)
+    let gyroEnabled=false; let tiltX=0;
+    btnGyro.addEventListener('click', async ()=>{
+      if(typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function'){
+        try{ const perm = await DeviceMotionEvent.requestPermission(); if(perm==='granted'){ window.addEventListener('deviceorientation', onTilt); gyroEnabled=true; alert('Giroscopio activado'); }}catch(e){alert('Permiso denegado o no soportado'); }
+      } else { window.addEventListener('deviceorientation', onTilt); gyroEnabled=true; alert('Giroscopio activado'); }
     });
-  }
 
-  setInterval(crearObjeto, 1500);
+    function onTilt(e){ tiltX = e.gamma||0; }
 
-  function update(){
-    ctx.clearRect(0,0,400,400);
-    // dibujar jugador
-    ctx.fillStyle="blue";
-    ctx.beginPath();
-    ctx.arc(player.x, player.y, player.size,0,Math.PI*2);
-    ctx.fill();
+    function spawnOrbs(n=6){ orbs.length=0; for(let i=0;i<n;i++){ orbs.push({x:60+Math.random()*(world.w-120),y:60+Math.random()*(world.h-120),r:8,alive:true}); }}
+    function spawnObstacles(n=4){ obstacles.length=0; for(let i=0;i<n;i++){ obstacles.push({x:40+Math.random()*(world.w-80),y:40+Math.random()*(world.h-80),w:18,h:18}); }}
 
-    // objetos
-    objects = objects.filter(o=>Date.now()-o.creado<4000);
-    for(let o of objects){
-      if(o.tipo==='gota'){
-        ctx.fillStyle="aqua";
-        ctx.beginPath();
-        ctx.moveTo(o.x, o.y);
-        ctx.arc(o.x, o.y, o.size, Math.PI, 0);
-        ctx.lineTo(o.x, o.y-o.size*1.5);
-        ctx.closePath(); ctx.fill();
-      } else {
-        ctx.fillStyle="orange";
-        ctx.beginPath();
-        ctx.moveTo(o.x,o.y);
-        ctx.bezierCurveTo(o.x-10,o.y-20,o.x+10,o.y-20,o.x,o.y);
-        ctx.fill();
+    function resetWorld(){ player.x=120; player.y=120; flame.x=world.w-140; flame.y=world.h-120; score=0; scoreEl.textContent=0; stateEl.textContent='Listo'; spawnOrbs(); spawnObstacles(); best = (current && current.best) ? current.best : 0; bestEl.textContent = best; }
+
+    btnStart.addEventListener('click', ()=>{
+      const name = nameIn.value.trim(); const phone = phoneIn.value.trim(); const age = parseInt(ageIn.value,10);
+      if(!name || !phone || !age || age<5 || age>120){ alert('Ingresa nombre, teléfono y edad válidos.'); return; }
+      current = {name, phone, age, sessions:0, best:0, totalTime:0, last:new Date().toISOString()};
+      overlay.style.display='none'; resetWorld(); startGame();
+    });
+
+    playBtn.addEventListener('click', ()=>{ if(!current){ overlay.style.display='flex'; return; } if(!running) startGame(); });
+    resetBtn.addEventListener('click', ()=>{ endGame(true); overlay.style.display='flex'; current=null; });
+
+    function startGame(){ if(running) return; running=true; stateEl.textContent='Jugando…'; startTime=Date.now(); sessionCounted=true; loop(); }
+
+    function endGame(justReset=false){ running=false; cancelAnimationFrame(raf); raf=null; stateEl.textContent = justReset ? 'Reiniciado' : 'Terminado'; const timeSec = Math.floor((Date.now()-startTime)/1000);
+      // guardar datos
+      if(current){ current.sessions = (current.sessions||0)+1; current.totalTime = (current.totalTime||0)+timeSec; current.last = new Date().toISOString(); if(score> (current.best||0)){ current.best = score; } // merge into players
+        const idx = players.findIndex(p=>p.name.toLowerCase()===current.name.toLowerCase() && p.phone===current.phone);
+        if(idx>=0){ const p = players[idx]; p.sessions = current.sessions; p.totalTime = current.totalTime; p.best = Math.max(p.best||0, current.best); p.scores = p.scores||[]; p.scores.push(score); p.last = current.last; }
+        else { current.scores = [score]; players.push(current); }
+        save(players);
       }
-      // colisión
-      let dx=player.x-o.x, dy=player.y-o.y;
-      if(Math.sqrt(dx*dx+dy*dy)<player.size+o.size){
-        score += o.tipo==='gota'?10:-5;
-        o.creado=0;
-      }
+      // mostrar popup resumen si no es solo reinicio
+      if(!justReset){ alert(`Partida finalizada. Puntaje: ${score} — Tiempo: ${timeSec}s`); }
+      // exigir re-registro para jugar otra vez
+      overlay.style.display='flex'; current=null;
     }
-    document.getElementById('score').innerText = "Puntaje: "+score;
-    requestAnimationFrame(update);
-  }
 
-  // Teclado
-  document.addEventListener("keydown", e=>{
-    if(e.key==="ArrowUp"||e.key==="w") player.y-=10;
-    if(e.key==="ArrowDown"||e.key==="s") player.y+=10;
-    if(e.key==="ArrowLeft"||e.key==="a") player.x-=10;
-    if(e.key==="ArrowRight"||e.key==="d") player.x+=10;
-  });
+    function loop(){ update(); draw(); if(running) raf=requestAnimationFrame(loop); }
 
-  // Giroscopio en móvil
-  window.addEventListener("deviceorientation", e=>{
-    let gamma = e.gamma; // izquierda-derecha
-    let beta = e.beta;   // adelante-atrás
-    if(gamma>5) player.x+=3;
-    if(gamma<-5) player.x-=3;
-    if(beta>5) player.y+=3;
-    if(beta<-5) player.y-=3;
-  });
+    function update(){ // movimiento jugador por teclado o gyro
+      let dx = (keys.KeyD||keys.ArrowRight ? 1:0) - (keys.KeyA||keys.ArrowLeft ? 1:0);
+      let dy = (keys.KeyS||keys.ArrowDown ? 1:0) - (keys.KeyW||keys.ArrowUp ? 1:0);
+      if(gyroEnabled){ dx += (tiltX/15); }
+      const len = Math.hypot(dx,dy)||1; player.x += (dx/len)*player.speed; player.y += (dy/len)*player.speed;
+      player.x = Math.max(player.r, Math.min(world.w-player.r, player.x)); player.y = Math.max(player.r, Math.min(world.h-player.r, player.y));
+      // llama persigue
+      const fx = player.x - flame.x; const fy = player.y - flame.y; const fl = Math.hypot(fx,fy)||1; flame.x += (fx/fl)*flame.speed; flame.y += (fy/fl)*flame.speed;
+      // orbes
+      for(const o of orbs){ if(!o.alive) continue; const d = Math.hypot(player.x-o.x, player.y-o.y); if(d < player.r + o.r){ o.alive=false; score+=10; scoreEl.textContent=score; }}
+      if(orbs.every(o=>!o.alive)) spawnOrbs();
+      // colisiones obstaculos
+      for(const ob of obstacles){ if(Math.abs(player.x-(ob.x+ob.w/2)) < player.r+ob.w/2 && Math.abs(player.y-(ob.y+ob.h/2)) < player.r+ob.h/2){ endGame(false); }}
+      // colision llama
+      if(Math.hypot(player.x-flame.x, player.y-flame.y) < player.r + flame.r){ endGame(false); }
+    }
 
-  // Dashboard con datos ficticios
-  new Chart(document.getElementById("chartTiempo"),{
-    type:'line',
-    data:{labels:["5pts","10pts","15pts"], datasets:[{label:"Tiempo promedio (s)", data:[10,20,35]}]}
-  });
-  new Chart(document.getElementById("chartEdad"),{
-    type:'bar',
-    data:{labels:["10","20","30"], datasets:[{label:"Puntaje Promedio", data:[50,70,40]}]}
-  });
-  new Chart(document.getElementById("chartDuracion"),{
-    type:'pie',
-    data:{labels:["<1min","1-2min",">2min"], datasets:[{data:[5,8,2]}]}
-  });
-</script>
+    function draw(){ ctx.clearRect(0,0,world.w,world.h);
+      // grid
+      ctx.strokeStyle='rgba(25,194,255,0.04)'; ctx.lineWidth=1; for(let x=0;x<world.w;x+=40){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,world.h); ctx.stroke(); }
+      for(let y=0;y<world.h;y+=40){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(world.w,y); ctx.stroke(); }
+      // orbes
+      for(const o of orbs){ if(!o.alive) continue; circle(o.x,o.y,o.r,'rgba(25,194,255,0.95)','rgba(0,200,255,0.35)'); }
+      // obstacles
+      ctx.fillStyle='rgba(180,180,180,0.12)'; for(const ob of obstacles){ ctx.fillRect(ob.x, ob.y, ob.w, ob.h); ctx.strokeStyle='rgba(255,255,255,0.03)'; ctx.strokeRect(ob.x, ob.y, ob.w, ob.h); }
+      // jugador
+      circle(player.x, player.y, player.r, '#8be9ff','rgba(139,233,255,0.35)');
+      // llama
+      circle(flame.x, flame.y, flame.r, '#ff7849','rgba(255,120,73,0.35)');
+      // HUD
+      ctx.fillStyle='rgba(229,231,235,0.9)'; ctx.font='bold 16px system-ui'; ctx.fillText('Puntaje: '+score, 14, 24);
+    }
+
+    function circle(x,y,r,fill,glow){ const g = ctx.createRadialGradient(x,y,r*0.2,x,y,r*1.8); g.addColorStop(0,glow); g.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r*1.8,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.fillStyle=fill; ctx.arc(x,y,r,0,Math.PI*2); ctx.fill(); }
+
+    // catálogo contact
+    window.showContact = function(el){ if(el.querySelector('.contact')) return; const d=document.createElement('div'); d.className='contact'; d.innerHTML='Tel: <strong>8123836266</strong><br>Email: <strong>thisis.ethernai@gmail.com</strong>'; el.appendChild(d); }
+
+    // Dashboard
+    function renderDashboard(){ const list = load(); const kpis = document.getElementById('kpis'); if(!list.length){ kpis.innerHTML='<div style="grid-column:1/-1;color:var(--muted)">No hay registros aún</div>'; document.getElementById('rows').innerHTML=''; document.getElementById('topList').innerHTML=''; return; }
+      const totalPlayers = list.length; const totalSessions = list.reduce((a,p)=>a+(p.sessions||0),0); const bestGlobal = list.reduce((m,p)=>Math.max(m,p.best||0),0); const avgScore = (list.reduce((a,p)=>a+ (p.scores? p.scores.reduce((x,y)=>x+y,0):0),0) / Math.max(1, totalSessions)).toFixed(1);
+      const avgTime = (list.reduce((a,p)=>a+(p.totalTime||0),0)/Math.max(1,totalSessions)).toFixed(1);
+      kpis.innerHTML=`<div class="kpi"><div style="color:var(--muted)">Total jugadores</div><div style="font-weight:800">${totalPlayers}</div></div><div class="kpi"><div style="color:var(--muted)">Partidas totales</div><div style="font-weight:800">${totalSessions}</div></div><div class="kpi"><div style="color:var(--muted)">Mejor global</div><div style="font-weight:800">${bestGlobal}</div></div><div class="kpi"><div style="color:var(--muted)">Puntaje promedio</div><div style="font-weight:800">${avgScore}</div></div>`;
+      // tabla
+      const tbody = document.getElementById('rows'); tbody.innerHTML=''; list.sort((a,b)=> (b.best||0)-(a.best||0)); list.forEach(p=>{ const tr=document.createElement('tr'); const avg = p.scores && p.scores.length? (p.scores.reduce((a,b)=>a+b,0)/p.scores.length).toFixed(1) : '—'; tr.innerHTML=`<td>${escapeHtml(p.name)}</td><td>${escapeHtml(p.phone)}</td><td>${p.age||'—'}</td><td>${p.best||0}</td><td>${(p.scores||[]).length}</td><td>${avg}</td><td>${p.totalTime||0}</td><td>${p.last? new Date(p.last).toLocaleString() : '—'}</td>`; tbody.appendChild(tr); });
+      // edad chart
+      const ageCounts = {}; list.forEach(p=>{ if(p.age) ageCounts[p.age]=(ageCounts[p.age]||0)+1; }); const labels = Object.keys(ageCounts); const values = Object.values(ageCounts);
+      drawBar('ageChart', labels, values);
+      // top list
+      const top = [];
+      list.forEach(p=>{ if(p.scores) p.scores.forEach(s=> top.push({name:p.name,score:s})); }); top.sort((a,b)=>b.score-a.score); const topList = document.getElementById('topList'); topList.innerHTML=''; top.slice(0,5).forEach(t=>{ const li=document.createElement('li'); li.textContent=`${t.name} — ${t.score}`; topList.appendChild(li); });
+    }
+
+    function drawBar(id, labels, values){ const c=document.getElementById(id); const x=c.getContext('2d'); x.clearRect(0,0,c.width,c.height); const pad={l:28,r:12,t:8,b:28}; const W=c.width,H=c.height; const max = Math.max(1,...values); const bw = (W-pad.l-pad.r)/values.length - 8; x.fillStyle='rgba(255,255,255,0.9)'; x.font='12px system-ui'; for(let i=0;i<values.length;i++){ const v=values[i]; const h=(v/max)*(H-pad.t-pad.b); const x0=pad.l + i*(bw+8)+4; const y0=H-pad.b-h; const g = x.createLinearGradient(0,y0,0,H-pad.b); g.addColorStop(0,'rgba(25,194,255,0.95)'); g.addColorStop(1,'rgba(25,194,255,0.35)'); x.fillStyle=g; x.fillRect(x0,y0,bw,h); x.fillStyle='rgba(229,231,235,0.9)'; x.textAlign='center'; x.fillText(labels[i], x0+bw/2, H-8); x.fillText(values[i], x0+bw/2, y0-6); } }
+
+    function escapeHtml(s){ return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[c])); }
+
+    // helper: load and save
+    function load(){ try{ return JSON.parse(localStorage.getItem(LS)) || []; }catch{ return []; } }
+    // reassign players reference
+    players = load();
+
+    // initial
+    spawnOrbs(); spawnObstacles(); renderDashboard();
+
+    // simple collision util (rectangle-circle)
+    function rectCircleIntersect(cx,cy,cr, rx,ry,rw,rh){ const closestX = Math.max(rx, Math.min(cx, rx+rw)); const closestY = Math.max(ry, Math.min(cy, ry+rh)); const dx = cx-closestX; const dy = cy-closestY; return (dx*dx+dy*dy) < cr*cr; }
+
+    // expose renderDashboard to tabs
+    window.renderDashboard = renderDashboard;
+
+    // make canvas responsive
+    window.addEventListener('resize', ()=>{ const r = canvas.getBoundingClientRect(); world.w = canvas.width = r.width; world.h = canvas.height = 480; });
+
+  </script>
 </body>
 </html>
