@@ -1,221 +1,204 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>InfinAI - Juego</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>ethernAI</title>
   <style>
     body {
-      margin: 0;
       font-family: Arial, sans-serif;
-      background: #f5f5f5;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: flex-start;
-      height: 100vh;
+      margin: 0; padding: 0;
+      background: #f4f4f4;
+    }
+    header {
+      background: #222; color: white;
+      padding: 10px; text-align: center;
     }
     nav {
       display: flex;
-      justify-content: center;
-      gap: 1rem;
-      padding: 1rem;
+      justify-content: space-around;
+      flex-wrap: wrap;
       background: #333;
-      color: white;
-      width: 100%;
     }
     nav button {
-      background: #555;
-      color: white;
+      flex: 1;
+      padding: 12px;
       border: none;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      border-radius: 6px;
+      background: #333;
+      color: white;
+      font-size: 16px;
     }
-    nav button:hover {
-      background: #777;
+    nav button:hover { background: #444; }
+    section { display: none; padding: 20px; }
+    canvas {
+      border: 2px solid #333;
+      display: block;
+      margin: 10px auto;
+      background: linear-gradient(#cceeff, #ffffff);
     }
-    .section { display: none; width: 100%; max-width: 800px; padding: 1rem; }
-    #gameSection { display: block; text-align: center; }
-    canvas { background: #d0f0ff; border: 2px solid #333; border-radius: 10px; }
-    .catalogo-item { border: 1px solid #ccc; padding: 1rem; margin: 0.5rem; border-radius: 8px; background: #fff; }
-    .dashboard { display: grid; grid-template-columns: repeat(auto-fit,minmax(200px,1fr)); gap: 1rem; }
-    .card { padding: 1rem; background: white; border-radius: 8px; border: 1px solid #ddd; text-align: center; }
+    .form-input {
+      margin: 10px 0;
+      display: block;
+    }
+    .card {
+      border: 1px solid #ccc; border-radius: 10px;
+      padding: 15px; margin: 10px;
+      text-align: center;
+      background: white; cursor: pointer;
+      box-shadow: 2px 2px 5px rgba(0,0,0,0.2);
+    }
+    #dashboard { max-width: 600px; margin: auto; }
+    canvas.chart { width: 100% !important; height: 300px !important; }
   </style>
 </head>
 <body>
+  <header><h1>ethernAI</h1></header>
   <nav>
-    <button onclick="showSection('gameSection')">Jugar</button>
-    <button onclick="showSection('dataSection')">Datos</button>
-    <button onclick="showSection('catalogSection')">Catálogo</button>
+    <button onclick="showSection('jugar')">Jugar</button>
+    <button onclick="showSection('datos')">Datos</button>
+    <button onclick="showSection('catalogo')">Catálogo</button>
   </nav>
 
-  <!-- Juego -->
-  <div id="gameSection" class="section">
-    <h2>Juego de la Gota</h2>
-    <canvas id="gameCanvas" width="400" height="400"></canvas>
-    <p>Puntaje: <span id="score">0</span></p>
-  </div>
+  <section id="jugar">
+    <h2>Juego Interactivo</h2>
+    <div id="registro">
+      <label>Nombre:</label><input id="nombre" class="form-input">
+      <label>Teléfono:</label><input id="telefono" class="form-input">
+      <label>Edad:</label><input id="edad" type="number" class="form-input">
+      <button onclick="iniciarJuego()">Iniciar Juego</button>
+    </div>
+    <canvas id="gameCanvas" width="400" height="400" style="display:none;"></canvas>
+    <p id="score"></p>
+  </section>
 
-  <!-- Datos -->
-  <div id="dataSection" class="section">
-    <h2>Dashboard</h2>
-    <div class="dashboard" id="dashboard"></div>
-  </div>
+  <section id="datos">
+    <h2>Dashboard de Datos</h2>
+    <div id="dashboard">
+      <canvas id="chartTiempo" class="chart"></canvas>
+      <canvas id="chartEdad" class="chart"></canvas>
+      <canvas id="chartDuracion" class="chart"></canvas>
+    </div>
+  </section>
 
-  <!-- Catálogo -->
-  <div id="catalogSection" class="section">
+  <section id="catalogo">
     <h2>Catálogo</h2>
-    <div class="catalogo-item">💧 Filtro de Agua - $500</div>
-    <div class="catalogo-item">🔥 Calentador Solar - $3,000</div>
-    <div class="catalogo-item">🚿 Regadera Ecológica - $800</div>
-  </div>
+    <div class="card" onclick="alert('Tel: 8123836266\nEmail: thisis.ethernai@gmail.com')">
+      Producto A
+    </div>
+    <div class="card" onclick="alert('Tel: 8123836266\nEmail: thisis.ethernai@gmail.com')">
+      Producto B
+    </div>
+  </section>
 
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script>
-  function showSection(id) {
-    document.querySelectorAll('.section').forEach(s => s.style.display = 'none');
-    document.getElementById(id).style.display = 'block';
+  function showSection(id){
+    document.querySelectorAll('section').forEach(s=>s.style.display='none');
+    document.getElementById(id).style.display='block';
   }
+  showSection('jugar');
 
   // Juego
   const canvas = document.getElementById("gameCanvas");
   const ctx = canvas.getContext("2d");
-  let score = 0;
-  let playing = true;
-  let drop = {x: 200, y: 200, r: 15, dx: 0, dy: 0};
-  let flame = {x: 50, y: 50, r: 20};
-  let objects = [];
-  let startTime = Date.now();
+  let player, objects, score, startTime, jugador;
 
-  function randomObject() {
-    return {x: Math.random()*380, y: Math.random()*380, r:10, visible: true};
-  }
-
-  function drawDrop() {
-    ctx.fillStyle = "#00f";
-    ctx.beginPath();
-    ctx.ellipse(drop.x, drop.y, drop.r, drop.r*1.2, 0, 0, Math.PI*2);
-    ctx.fill();
-  }
-
-  function drawFlame() {
-    ctx.fillStyle = "orange";
-    ctx.beginPath();
-    ctx.moveTo(flame.x, flame.y);
-    ctx.quadraticCurveTo(flame.x+10, flame.y-30, flame.x+20, flame.y);
-    ctx.quadraticCurveTo(flame.x, flame.y+30, flame.x-20, flame.y);
-    ctx.closePath();
-    ctx.fill();
-  }
-
-  function drawObjects() {
-    ctx.fillStyle = "green";
-    objects.forEach(o => {
-      if(o.visible) {
-        ctx.beginPath();
-        ctx.arc(o.x, o.y, o.r, 0, Math.PI*2);
-        ctx.fill();
-      }
-    });
-  }
-
-  function moveFlame() {
-    let dx = drop.x - flame.x;
-    let dy = drop.y - flame.y;
-    let dist = Math.sqrt(dx*dx+dy*dy);
-    if(dist>0){
-      flame.x += dx/dist*1.5;
-      flame.y += dy/dist*1.5;
-    }
-  }
-
-  function update() {
-    if(!playing) return;
-    ctx.clearRect(0,0,400,400);
-    drop.x += drop.dx;
-    drop.y += drop.dy;
-    if(drop.x<drop.r) drop.x=drop.r;
-    if(drop.y<drop.r) drop.y=drop.r;
-    if(drop.x>400-drop.r) drop.x=400-drop.r;
-    if(drop.y>400-drop.r) drop.y=400-drop.r;
-
-    moveFlame();
-    drawDrop();
-    drawFlame();
-    drawObjects();
-
-    // colisiones
-    objects.forEach(o=>{
-      if(o.visible){
-        let dx = drop.x-o.x;
-        let dy = drop.y-o.y;
-        if(Math.sqrt(dx*dx+dy*dy)<drop.r+o.r){
-          o.visible=false;
-          score++;
-          document.getElementById("score").textContent=score;
-        }
-      }
-    });
-
-    // si llama atrapa
-    let dx=drop.x-flame.x, dy=drop.y-flame.y;
-    if(Math.sqrt(dx*dx+dy*dy)<drop.r+flame.r){
-      playing=false;
-      saveGame();
-    }
-
+  function iniciarJuego(){
+    jugador = {
+      nombre: document.getElementById('nombre').value,
+      telefono: document.getElementById('telefono').value,
+      edad: parseInt(document.getElementById('edad').value)
+    };
+    document.getElementById('registro').style.display = "none";
+    canvas.style.display = "block";
+    resetGame();
     requestAnimationFrame(update);
   }
 
-  // Controles teclado
+  function resetGame(){
+    player = {x:200, y:200, size:20};
+    objects = [];
+    score = 0;
+    startTime = Date.now();
+  }
+
+  function crearObjeto(){
+    let tipo = Math.random()>0.5 ? 'gota':'llama';
+    objects.push({
+      x: Math.random()*380, y: Math.random()*380,
+      tipo: tipo, size: 15, creado: Date.now()
+    });
+  }
+
+  setInterval(crearObjeto, 1500);
+
+  function update(){
+    ctx.clearRect(0,0,400,400);
+    // dibujar jugador
+    ctx.fillStyle="blue";
+    ctx.beginPath();
+    ctx.arc(player.x, player.y, player.size,0,Math.PI*2);
+    ctx.fill();
+
+    // objetos
+    objects = objects.filter(o=>Date.now()-o.creado<4000);
+    for(let o of objects){
+      if(o.tipo==='gota'){
+        ctx.fillStyle="aqua";
+        ctx.beginPath();
+        ctx.moveTo(o.x, o.y);
+        ctx.arc(o.x, o.y, o.size, Math.PI, 0);
+        ctx.lineTo(o.x, o.y-o.size*1.5);
+        ctx.closePath(); ctx.fill();
+      } else {
+        ctx.fillStyle="orange";
+        ctx.beginPath();
+        ctx.moveTo(o.x,o.y);
+        ctx.bezierCurveTo(o.x-10,o.y-20,o.x+10,o.y-20,o.x,o.y);
+        ctx.fill();
+      }
+      // colisión
+      let dx=player.x-o.x, dy=player.y-o.y;
+      if(Math.sqrt(dx*dx+dy*dy)<player.size+o.size){
+        score += o.tipo==='gota'?10:-5;
+        o.creado=0;
+      }
+    }
+    document.getElementById('score').innerText = "Puntaje: "+score;
+    requestAnimationFrame(update);
+  }
+
+  // Teclado
   document.addEventListener("keydown", e=>{
-    if(e.key==="ArrowUp") drop.dy=-2;
-    if(e.key==="ArrowDown") drop.dy=2;
-    if(e.key==="ArrowLeft") drop.dx=-2;
-    if(e.key==="ArrowRight") drop.dx=2;
-  });
-  document.addEventListener("keyup", e=>{
-    if(["ArrowUp","ArrowDown"].includes(e.key)) drop.dy=0;
-    if(["ArrowLeft","ArrowRight"].includes(e.key)) drop.dx=0;
+    if(e.key==="ArrowUp"||e.key==="w") player.y-=10;
+    if(e.key==="ArrowDown"||e.key==="s") player.y+=10;
+    if(e.key==="ArrowLeft"||e.key==="a") player.x-=10;
+    if(e.key==="ArrowRight"||e.key==="d") player.x+=10;
   });
 
-  // Giroscopio
+  // Giroscopio en móvil
   window.addEventListener("deviceorientation", e=>{
-    drop.dx = e.gamma/20;
-    drop.dy = e.beta/20;
+    let gamma = e.gamma; // izquierda-derecha
+    let beta = e.beta;   // adelante-atrás
+    if(gamma>5) player.x+=3;
+    if(gamma<-5) player.x-=3;
+    if(beta>5) player.y+=3;
+    if(beta<-5) player.y-=3;
   });
 
-  // Objetos cada cierto tiempo
-  setInterval(()=>{
-    if(playing) objects.push(randomObject());
-    if(objects.length>20) objects.shift();
-  },2000);
-
-  update();
-
-  // Guardar partida
-  function saveGame(){
-    let duration = (Date.now()-startTime)/1000;
-    let data = JSON.parse(localStorage.getItem("games")||"[]");
-    data.unshift({score:score, duration:duration, date:new Date().toLocaleString()});
-    if(data.length>10) data=data.slice(0,10);
-    localStorage.setItem("games",JSON.stringify(data));
-    loadDashboard();
-  }
-
-  function loadDashboard(){
-    let data = JSON.parse(localStorage.getItem("games")||"[]");
-    let container = document.getElementById("dashboard");
-    container.innerHTML="";
-    if(data.length===0){container.innerHTML="<p>No hay datos</p>";return;}
-    let avgScore = data.reduce((a,b)=>a+b.score,0)/data.length;
-    let avgTime = data.reduce((a,b)=>a+b.duration,0)/data.length;
-    container.innerHTML+=`<div class="card">Promedio Puntaje: ${avgScore.toFixed(1)}</div>`;
-    container.innerHTML+=`<div class="card">Promedio Duración: ${avgTime.toFixed(1)}s</div>`;
-    container.innerHTML+=`<div class="card">Última partida: ${data[0].score} puntos en ${data[0].duration.toFixed(1)}s</div>`;
-  }
-
-  loadDashboard();
+  // Dashboard con datos ficticios
+  new Chart(document.getElementById("chartTiempo"),{
+    type:'line',
+    data:{labels:["5pts","10pts","15pts"], datasets:[{label:"Tiempo promedio (s)", data:[10,20,35]}]}
+  });
+  new Chart(document.getElementById("chartEdad"),{
+    type:'bar',
+    data:{labels:["10","20","30"], datasets:[{label:"Puntaje Promedio", data:[50,70,40]}]}
+  });
+  new Chart(document.getElementById("chartDuracion"),{
+    type:'pie',
+    data:{labels:["<1min","1-2min",">2min"], datasets:[{data:[5,8,2]}]}
+  });
 </script>
 </body>
 </html>
