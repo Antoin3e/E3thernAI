@@ -2,12 +2,12 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <meta name="viewport" content="width=device-width,initial-scale=1, maximum-scale=1, user-scalable=no" />
   <title>ethernAI — Demo</title>
   <style>
     :root{--bg:#0b0f17;--panel:#0f1720;--accent:#19c2ff;--accent2:#7c3aed;--text:#e6eef6;--muted:#94a3b8;--radius:14px}
-    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:radial-gradient(circle at 10% 10%,#07101a, #08121a 40%,var(--bg));color:var(--text)}
-    header{position:sticky;top:0;background:rgba(6,8,12,.64);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.03)}
+    *{box-sizing:border-box} body{margin:0;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,"Helvetica Neue",Arial;background:radial-gradient(circle at 10% 10%,#07101a, #08121a 40%,var(--bg));color:var(--text);touch-action:none;overflow-x:hidden}
+    header{position:sticky;top:0;background:rgba(6,8,12,.64);backdrop-filter:blur(6px);border-bottom:1px solid rgba(255,255,255,.03);z-index:10}
     .container{max-width:1100px;margin:0 auto;padding:20px}
     .nav{display:flex;align-items:center;gap:12px}
     .brand{display:flex;gap:12px;align-items:center}
@@ -21,15 +21,31 @@
 
     /* Game layout */
     .game-wrap{display:grid;grid-template-columns:1fr 320px;gap:16px}
-    @media(max-width:980px){.game-wrap{grid-template-columns:1fr} .tabs{display:none}}
+    @media(max-width:980px){
+      .game-wrap{grid-template-columns:1fr}
+      .tabs{display:none}
+      .mobile-tabs{display:flex;justify-content:space-around;margin:20px 0;background:rgba(255,255,255,.02);border-radius:12px;padding:8px}
+      .mobile-tab{color:var(--muted);padding:10px;text-align:center;flex:1;font-weight:700}
+      .mobile-tab.active{color:var(--text);background:linear-gradient(180deg,rgba(25,194,255,.06),rgba(25,194,255,.03));border-radius:8px}
+    }
+    @media(max-width:768px){
+      .container{padding:10px}
+      main{padding:10px}
+      .kpis{grid-template-columns:repeat(2,1fr) !important}
+      .catalog{grid-template-columns:1fr !important}
+      .data-grid{grid-template-columns:1fr !important}
+    }
+    @media(min-width:981px){
+      .mobile-tabs{display:none}
+    }
     canvas#game{width:100%;height:480px;border-radius:12px;background:linear-gradient(180deg,#071425,#07101a);display:block}
     .hud{background:linear-gradient(180deg,rgba(124,58,237,.06),rgba(124,58,237,.02));border-radius:12px;padding:12px}
     .stat{display:flex;justify-content:space-between;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.02);margin-bottom:8px}
     .btn{appearance:none;border:0;padding:10px 12px;border-radius:10px;background:linear-gradient(180deg,var(--accent),var(--accent2));color:#041018;font-weight:800;cursor:pointer}
 
     /* Registration overlay */
-    .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center}
-    .card{background:var(--panel);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,.04);min-width:320px}
+    .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:5;background:rgba(6,8,12,.85)}
+    .card{background:var(--panel);padding:18px;border-radius:12px;border:1px solid rgba(255,255,255,.04);min-width:320px;max-width:90vw}
     .field{display:flex;flex-direction:column;margin-bottom:10px}
     .field input{padding:10px;border-radius:8px;background:#071018;border:1px solid rgba(255,255,255,.03);color:var(--text)}
 
@@ -38,11 +54,17 @@
     .kpi{background:rgba(255,255,255,.02);padding:10px;border-radius:10px;text-align:center}
     table{width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden}
     th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,.03);text-align:left}
+    .data-grid{display:grid;grid-template-columns:1fr 420px;gap:12px;margin-top:12px}
 
     /* Catalog */
     .catalog{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
     .cat{background:linear-gradient(180deg,rgba(25,194,255,.04),rgba(124,58,237,.03));padding:12px;border-radius:12px;cursor:pointer}
     .contact{margin-top:10px;padding:8px;background:rgba(0,0,0,.3);border-radius:8px;border:1px solid rgba(255,255,255,.03)}
+
+    /* Joystick */
+    #joystick-container{position:absolute;bottom:20px;left:20px;width:120px;height:120px;z-index:4;display:none}
+    #joystick{width:100%;height:100%;border-radius:50%;background:rgba(25,194,255,0.1);border:1px solid rgba(255,255,255,0.1);position:relative}
+    #joystick-handle{width:40px;height:40px;border-radius:50%;background:linear-gradient(180deg,var(--accent),var(--accent2));position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);touch-action:none}
   </style>
 </head>
 <body>
@@ -61,6 +83,13 @@
   </header>
 
   <main class="container">
+    <!-- Mobile tabs -->
+    <div class="mobile-tabs">
+      <div class="mobile-tab active" data-tab="jugar">Jugar</div>
+      <div class="mobile-tab" data-tab="datos">Datos</div>
+      <div class="mobile-tab" data-tab="catalogo">Catálogo</div>
+    </div>
+
     <!-- JUGAR -->
     <section id="panel-jugar" class="panel active">
       <h1>Juego — El agua huye de la llama</h1>
@@ -69,6 +98,13 @@
       <div class="game-wrap">
         <div style="position:relative">
           <canvas id="game" width="900" height="480"></canvas>
+          
+          <!-- Joystick para móvil -->
+          <div id="joystick-container">
+            <div id="joystick">
+              <div id="joystick-handle"></div>
+            </div>
+          </div>
 
           <div id="overlayReg" class="overlay">
             <div class="card">
@@ -77,7 +113,7 @@
               <div class="field"><label>Nombre</label><input id="name" placeholder="Tu nombre" maxlength="40"></div>
               <div class="field"><label>Teléfono</label><input id="phone" placeholder="8123836266" maxlength="20" inputmode="tel"></div>
               <div class="field"><label>Edad</label><input id="age" type="number" min="5" max="120"></div>
-              <div style="display:flex;gap:8px;margin-top:6px;align-items:center">
+              <div style="display:flex;gap:8px;margin-top:6px;align-items:center;flex-wrap:wrap">
                 <button id="btnStart" class="btn">Comenzar</button>
                 <button id="btnGyro" class="btn" style="background:linear-gradient(180deg,#fff3 10%,rgba(255,255,255,.02));color:var(--text);font-weight:700">Permitir Giroscopio</button>
               </div>
@@ -91,7 +127,7 @@
           <div class="stat"><span>Mejor personal</span><strong id="best">0</strong></div>
           <div class="stat"><span>Sesiones</span><strong id="sessions">0</strong></div>
           <div class="stat"><span>Estado</span><strong id="state">Listo</strong></div>
-          <div style="margin-top:10px;display:flex;gap:8px">
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
             <button id="playBtn" class="btn">▶️ Jugar</button>
             <button id="resetBtn" class="btn">↻ Reiniciar</button>
           </div>
@@ -105,7 +141,7 @@
       <h1>Dashboard de jugadores</h1>
       <div class="kpis" id="kpis"></div>
 
-      <div style="display:grid;grid-template-columns:1fr 420px;gap:12px;margin-top:12px">
+      <div class="data-grid">
         <div>
           <table>
             <thead><tr><th>Nombre</th><th>Teléfono</th><th>Edad</th><th>Mejor</th><th>Partidas</th><th>Promedio</th><th>Tiempo(s)</th><th>Última</th></tr></thead>
@@ -158,8 +194,23 @@
   <script>
     /* ===== Navegación de pestañas ===== */
     const tabs = document.querySelectorAll('.tab');
+    const mobileTabs = document.querySelectorAll('.mobile-tab');
     const panels = {jugar:document.getElementById('panel-jugar'), datos:document.getElementById('panel-datos'), catalogo:document.getElementById('panel-catalogo')};
-    tabs.forEach(t=>t.addEventListener('click',()=>{ tabs.forEach(b=>b.classList.remove('active')); t.classList.add('active'); Object.values(panels).forEach(p=>p.classList.remove('active')); panels[t.dataset.tab].classList.add('active'); if(t.dataset.tab==='datos') renderDashboard(); }));
+    
+    function activateTab(tabName) {
+      tabs.forEach(b => b.classList.remove('active'));
+      mobileTabs.forEach(b => b.classList.remove('active'));
+      document.querySelector(`.tab[data-tab="${tabName}"]`).classList.add('active');
+      document.querySelector(`.mobile-tab[data-tab="${tabName}"]`).classList.add('active');
+      
+      Object.values(panels).forEach(p => p.classList.remove('active'));
+      panels[tabName].classList.add('active');
+      
+      if(tabName === 'datos') renderDashboard();
+    }
+    
+    tabs.forEach(t => t.addEventListener('click', () => activateTab(t.dataset.tab)));
+    mobileTabs.forEach(t => t.addEventListener('click', () => activateTab(t.dataset.tab)));
 
     /* ===== Persistencia ===== */
     const LS = 'ethernai_players_v1';
@@ -173,24 +224,114 @@
     const btnStart = document.getElementById('btnStart'); const btnGyro = document.getElementById('btnGyro');
     const playBtn = document.getElementById('playBtn'); const resetBtn = document.getElementById('resetBtn');
     const scoreEl = document.getElementById('score'); const bestEl = document.getElementById('best'); const sessionsEl = document.getElementById('sessions'); const stateEl = document.getElementById('state');
+    const joystickContainer = document.getElementById('joystick-container');
+    const joystickHandle = document.getElementById('joystick-handle');
 
     let players = load(); let current=null; let running=false; let raf=null; let world={w:canvas.width,h:canvas.height};
     let player = {x:120,y:120,r:14,speed:3.2}; let flame = {x:world.w-140,y:world.h-120,r:18,speed:2.6}; let orbs=[]; let obstacles=[];
     let keys={}; let score=0; let best=0; let startTime=0; let sessionCounted=false;
+    let gyroEnabled=false; let tiltX=0; let joystickActive = false; let joystickX = 0; let joystickY = 0;
+
+    // Detectar dispositivo móvil
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    if (isMobile) {
+      joystickContainer.style.display = 'block';
+    }
+
+    // Inicializar joystick
+    function initJoystick() {
+      const joystick = document.getElementById('joystick');
+      const handle = document.getElementById('joystick-handle');
+      const joystickSize = joystick.offsetWidth;
+      const handleSize = handle.offsetWidth;
+      const maxDistance = (joystickSize - handleSize) / 2;
+
+      let touchId = null;
+
+      handle.addEventListener('touchstart', (e) => {
+        e.preventDefault();
+        touchId = e.changedTouches[0].identifier;
+        joystickActive = true;
+      });
+
+      document.addEventListener('touchmove', (e) => {
+        if (!joystickActive) return;
+        
+        const touch = Array.from(e.changedTouches).find(t => t.identifier === touchId);
+        if (!touch) return;
+        
+        const rect = joystick.getBoundingClientRect();
+        const centerX = rect.left + joystickSize / 2;
+        const centerY = rect.top + joystickSize / 2;
+        
+        let x = touch.clientX - centerX;
+        let y = touch.clientY - centerY;
+        
+        // Limitar el movimiento al área del joystick
+        const distance = Math.min(maxDistance, Math.sqrt(x * x + y * y));
+        const angle = Math.atan2(y, x);
+        
+        x = Math.cos(angle) * distance;
+        y = Math.sin(angle) * distance;
+        
+        // Actualizar posición del handle
+        handle.style.transform = `translate(${x}px, ${y}px)`;
+        
+        // Calcular valores normalizados para el movimiento
+        joystickX = x / maxDistance;
+        joystickY = y / maxDistance;
+      });
+
+      document.addEventListener('touchend', (e) => {
+        if (!joystickActive) return;
+        
+        const touch = Array.from(e.changedTouches).find(t => t.identifier === touchId);
+        if (!touch) return;
+        
+        // Resetear joystick
+        handle.style.transform = 'translate(-50%, -50%)';
+        joystickX = 0;
+        joystickY = 0;
+        joystickActive = false;
+        touchId = null;
+      });
+    }
 
     // controles teclado
     window.addEventListener('keydown',e=>{ if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD'].includes(e.code)){ keys[e.code]=true; e.preventDefault(); }});
     window.addEventListener('keyup',e=>{ if(keys[e.code]!==undefined){ keys[e.code]=false; e.preventDefault(); }});
 
     // giroscopio (movimiento lateral)
-    let gyroEnabled=false; let tiltX=0;
     btnGyro.addEventListener('click', async ()=>{
-      if(typeof DeviceMotionEvent !== 'undefined' && typeof DeviceMotionEvent.requestPermission === 'function'){
-        try{ const perm = await DeviceMotionEvent.requestPermission(); if(perm==='granted'){ window.addEventListener('deviceorientation', onTilt); gyroEnabled=true; alert('Giroscopio activado'); }}catch(e){alert('Permiso denegado o no soportado'); }
-      } else { window.addEventListener('deviceorientation', onTilt); gyroEnabled=true; alert('Giroscopio activado'); }
+      if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        try {
+          const permission = await DeviceOrientationEvent.requestPermission();
+          if (permission === 'granted') {
+            window.addEventListener('deviceorientation', onDeviceOrientation);
+            gyroEnabled = true;
+            alert('Giroscopio activado. Inclina tu dispositivo para mover la gota.');
+          } else {
+            alert('Permiso para usar el giroscopio denegado.');
+          }
+        } catch (error) {
+          alert('Error al solicitar permiso para el giroscopio: ' + error.message);
+        }
+      } else if (window.DeviceOrientationEvent) {
+        window.addEventListener('deviceorientation', onDeviceOrientation);
+        gyroEnabled = true;
+        alert('Giroscopio activado. Inclina tu dispositivo para mover la gota.');
+      } else {
+        alert('Tu dispositivo no soporta el API de orientación o no está disponible.');
+      }
     });
 
-    function onTilt(e){ tiltX = e.gamma||0; }
+    function onDeviceOrientation(e) {
+      // Gamma es la inclinación izquierda-derecha
+      if (e.gamma !== null) {
+        // Limitar la inclinación a un rango de -45 a 45 grados y normalizar a -1 a 1
+        tiltX = Math.max(-45, Math.min(45, e.gamma)) / 45;
+      }
+    }
 
     function spawnOrbs(n=6){ orbs.length=0; for(let i=0;i<n;i++){ orbs.push({x:60+Math.random()*(world.w-120),y:60+Math.random()*(world.h-120),r:8,alive:true}); }}
     function spawnObstacles(n=4){ obstacles.length=0; for(let i=0;i<n;i++){ obstacles.push({x:40+Math.random()*(world.w-80),y:40+Math.random()*(world.h-80),w:18,h:18}); }}
@@ -225,19 +366,42 @@
 
     function loop(){ update(); draw(); if(running) raf=requestAnimationFrame(loop); }
 
-    function update(){ // movimiento jugador por teclado o gyro
-      let dx = (keys.KeyD||keys.ArrowRight ? 1:0) - (keys.KeyA||keys.ArrowLeft ? 1:0);
-      let dy = (keys.KeyS||keys.ArrowDown ? 1:0) - (keys.KeyW||keys.ArrowUp ? 1:0);
-      if(gyroEnabled){ dx += (tiltX/15); }
-      const len = Math.hypot(dx,dy)||1; player.x += (dx/len)*player.speed; player.y += (dy/len)*player.speed;
-      player.x = Math.max(player.r, Math.min(world.w-player.r, player.x)); player.y = Math.max(player.r, Math.min(world.h-player.r, player.y));
+    function update(){ 
+      // movimiento jugador por teclado, gyro o joystick
+      let dx = 0, dy = 0;
+      
+      // Controles de teclado
+      dx = (keys.KeyD||keys.ArrowRight ? 1:0) - (keys.KeyA||keys.ArrowLeft ? 1:0);
+      dy = (keys.KeyS||keys.ArrowDown ? 1:0) - (keys.KeyW||keys.ArrowUp ? 1:0);
+      
+      // Controles de giroscopio
+      if(gyroEnabled){ 
+        dx += tiltX;
+      }
+      
+      // Controles de joystick (móvil)
+      if (joystickActive) {
+        dx += joystickX;
+        dy += joystickY;
+      }
+      
+      const len = Math.hypot(dx,dy)||1; 
+      player.x += (dx/len)*player.speed; 
+      player.y += (dy/len)*player.speed;
+      
+      player.x = Math.max(player.r, Math.min(world.w-player.r, player.x)); 
+      player.y = Math.max(player.r, Math.min(world.h-player.r, player.y));
+      
       // llama persigue
       const fx = player.x - flame.x; const fy = player.y - flame.y; const fl = Math.hypot(fx,fy)||1; flame.x += (fx/fl)*flame.speed; flame.y += (fy/fl)*flame.speed;
+      
       // orbes
       for(const o of orbs){ if(!o.alive) continue; const d = Math.hypot(player.x-o.x, player.y-o.y); if(d < player.r + o.r){ o.alive=false; score+=10; scoreEl.textContent=score; }}
       if(orbs.every(o=>!o.alive)) spawnOrbs();
+      
       // colisiones obstaculos
       for(const ob of obstacles){ if(Math.abs(player.x-(ob.x+ob.w/2)) < player.r+ob.w/2 && Math.abs(player.y-(ob.y+ob.h/2)) < player.r+ob.h/2){ endGame(false); }}
+      
       // colision llama
       if(Math.hypot(player.x-flame.x, player.y-flame.y) < player.r + flame.r){ endGame(false); }
     }
@@ -289,6 +453,9 @@
 
     // initial
     spawnOrbs(); spawnObstacles(); renderDashboard();
+    if (isMobile) {
+      initJoystick();
+    }
 
     // simple collision util (rectangle-circle)
     function rectCircleIntersect(cx,cy,cr, rx,ry,rw,rh){ const closestX = Math.max(rx, Math.min(cx, rx+rw)); const closestY = Math.max(ry, Math.min(cy, ry+rh)); const dx = cx-closestX; const dy = cy-closestY; return (dx*dx+dy*dy) < cr*cr; }
