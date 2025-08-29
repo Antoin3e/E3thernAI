@@ -28,7 +28,7 @@
     .panel.active{display:block}
 
     /* Game layout */
-    .game-wrap{display:grid;grid-template-columns:1fr 320px;gap:16px}
+    .game-wrap{display:grid;grid-template-columns:1fr;gap:16px}
     @media(max-width:980px){
       .game-wrap{grid-template-columns:1fr}
       .tabs{display:none}
@@ -84,7 +84,7 @@
       .mobile-tabs{display:none}
     }
     canvas#game{width:100%;height:480px;border-radius:12px;background:linear-gradient(180deg,#071425,#07101a);display:block}
-    .hud{background:linear-gradient(180deg,rgba(124,58,237,.06),rgba(124,58,237,.02));border-radius:12px;padding:12px}
+    .hud{display:none} /* Ocultamos el panel lateral */
     .stat{display:flex;justify-content:space-between;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.02);margin-bottom:8px}
     .btn{appearance:none;border:0;padding:10px 12px;border-radius:10px;background:linear-gradient(180deg,var(--accent),var(--accent2));color:#041018;font-weight:800;cursor:pointer}
     .btn-secondary{appearance:none;border:0;padding:10px 12px;border-radius:10px;background:linear-gradient(180deg, #ff6b6b, #ee5a24);color:white;font-weight:800;cursor:pointer;margin-top:10px}
@@ -100,8 +100,9 @@
     .kpi{background:rgba(255,255,255,.02);padding:10px;border-radius:10px;text-align:center}
     table{width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden}
     th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,.03);text-align:left}
-    .data-grid{display:grid;grid-template-columns:1fr 420px;gap:12px;margin-top:12px}
-    .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+    .data-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:12px}
+    .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+    .full-width{grid-column:1/-1}
 
     /* Catalog */
     .catalog{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
@@ -133,6 +134,18 @@
     .zoomable {
       max-width: 100%;
       overflow: auto;
+    }
+    
+    /* Mini HUD dentro del juego */
+    .mini-hud {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: rgba(0, 0, 0, 0.5);
+      padding: 8px 12px;
+      border-radius: 8px;
+      font-weight: bold;
+      z-index: 3;
     }
   </style>
 </head>
@@ -169,6 +182,11 @@
         <div style="position:relative">
           <canvas id="game" width="900" height="480"></canvas>
           
+          <!-- Mini HUD dentro del juego -->
+          <div class="mini-hud">
+            Puntaje: <span id="mini-score">0</span>
+          </div>
+          
           <!-- Joystick para móvil -->
           <div id="joystick-container">
             <div id="joystick">
@@ -191,18 +209,6 @@
             </div>
           </div>
         </div>
-
-        <aside class="hud">
-          <div class="stat"><span>Puntaje</span><strong id="score">0</strong></div>
-          <div class="stat"><span>Mejor personal</span><strong id="best">0</strong></div>
-          <div class="stat"><span>Sesiones</span><strong id="sessions">0</strong></div>
-          <div class="stat"><span>Estado</span><strong id="state">Listo</strong></div>
-          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
-            <button id="playBtn" class="btn">▶️ Jugar</button>
-            <button id="resetBtn" class="btn">↻ Reiniciar</button>
-          </div>
-          <p class="note" style="color:var(--muted);margin-top:8px">Tip: en móvil, inclina el teléfono cuando hayas permitido el giroscopio.</p>
-        </aside>
       </div>
     </section>
 
@@ -214,7 +220,7 @@
       <div class="data-grid">
         <div>
           <table>
-            <thead><tr><th>Nombre</th><th>Teléfono</th><th>Edad</th><th>Mejor</th><th>Partidas</th><th>Promedio</th><th>Tiempo(s)</th><th>Última</th></tr></thead>
+            <thead><tr><th>Nombre</th><th>Teléfono</th><th>Edad</th><th>Mejor</th><th>Partidas</th><th>Promedio</th><th>Tiempo(s)</th><th>Orbes/s</th><th>Última</th></tr></thead>
             <tbody id="rows"></tbody>
           </table>
         </div>
@@ -232,8 +238,19 @@
           <canvas id="scoreChart" width="380" height="260"></canvas>
         </div>
         <div style="background:rgba(255,255,255,.02);padding:12px;border-radius:10px">
-          <h3 style="margin:0 0 8px">Tiempo promedio por edad</h3>
-          <canvas id="timeChart" width="380" height="260"></canvas>
+          <h3 style="margin:0 0 8px">Tiempo promedio por orbe (segundos)</h3>
+          <canvas id="timePerOrbChart" width="380" height="260"></canvas>
+        </div>
+      </div>
+
+      <div class="charts-grid">
+        <div style="background:rgba(255,255,255,.02);padding:12px;border-radius:10px">
+          <h3 style="margin:0 0 8px">Eficiencia por grupo de edad</h3>
+          <canvas id="efficiencyChart" width="380" height="260"></canvas>
+        </div>
+        <div style="background:rgba(255,255,255,.02);padding:12px;border-radius:10px">
+          <h3 style="margin:0 0 8px">Distribución de sesiones por jugador</h3>
+          <canvas id="sessionsChart" width="380" height="260"></canvas>
         </div>
       </div>
 
@@ -284,6 +301,7 @@
     const panels = {jugar:document.getElementById('panel-jugar'), datos:document.getElementById('panel-datos'), catalogo:document.getElementById('panel-catalogo')};
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const clearDataBtn = document.getElementById('clearDataBtn');
+    const miniScoreEl = document.getElementById('mini-score');
     
     function activateTab(tabName) {
       tabs.forEach(b => b.classList.remove('active'));
@@ -339,22 +357,24 @@
     const ageIn = document.getElementById('age');
     const btnStart = document.getElementById('btnStart'); 
     const btnGyro = document.getElementById('btnGyro');
-    const playBtn = document.getElementById('playBtn'); 
-    const resetBtn = document.getElementById('resetBtn');
-    const scoreEl = document.getElementById('score'); 
-    const bestEl = document.getElementById('best'); 
-    const sessionsEl = document.getElementById('sessions'); 
-    const stateEl = document.getElementById('state');
-    const joystickContainer = document.getElementById('joystick-container');
-    const joystickHandle = document.getElementById('joystick-handle');
 
     let players = load(); 
     let current = null; 
     let running = false; 
     let raf = null; 
     let world = {w: canvas.width, h: canvas.height};
-    let player = {x: 120, y: 120, r: 14, speed: 3.2}; 
-    let flame = {x: world.w-140, y: world.h-120, r: 18, speed: 2.6}; 
+    
+    // Mejoras visuales para la gota y llama
+    let player = {
+      x: 120, y: 120, r: 14, speed: 3.2,
+      trail: [] // Para efecto de estela
+    }; 
+    
+    let flame = {
+      x: world.w-140, y: world.h-120, r: 18, speed: 2.6,
+      particles: [] // Para efecto de partículas de fuego
+    }; 
+    
     let orbs = []; 
     let obstacles = [];
     let keys = {}; 
@@ -367,6 +387,10 @@
     let joystickActive = false; 
     let joystickX = 0; 
     let joystickY = 0;
+    
+    // Para estadísticas de tiempo por orbe
+    let orbCollectionTimes = [];
+    let lastOrbCollectionTime = 0;
 
     // Detectar dispositivo móvil
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -491,7 +515,8 @@
           x: 60 + Math.random() * (world.w - 120),
           y: 60 + Math.random() * (world.h - 120),
           r: 8,
-          alive: true
+          alive: true,
+          pulse: 0
         }); 
       }
     }
@@ -501,15 +526,17 @@
     function resetWorld(){ 
       player.x = 120; 
       player.y = 120; 
+      player.trail = [];
       flame.x = world.w - 140; 
       flame.y = world.h - 120; 
+      flame.particles = [];
       score = 0; 
-      scoreEl.textContent = 0; 
-      stateEl.textContent = 'Listo'; 
+      miniScoreEl.textContent = 0; 
       spawnOrbs(); 
       spawnObstacles(); 
       best = (current && current.best) ? current.best : 0; 
-      bestEl.textContent = best; 
+      orbCollectionTimes = [];
+      lastOrbCollectionTime = Date.now();
     }
 
     btnStart.addEventListener('click', ()=>{
@@ -520,31 +547,26 @@
         alert('Ingresa nombre, teléfono y edad válidos.'); 
         return; 
       }
-      current = {name, phone, age, sessions: 0, best: 0, totalTime: 0, last: new Date().toISOString()};
+      current = {
+        name, 
+        phone, 
+        age, 
+        sessions: 0, 
+        best: 0, 
+        totalTime: 0, 
+        orbTimes: [],
+        last: new Date().toISOString()
+      };
       overlay.style.display = 'none'; 
       resetWorld(); 
       startGame();
     });
 
-    playBtn.addEventListener('click', ()=>{ 
-      if(!current){ 
-        overlay.style.display = 'flex'; 
-        return; 
-      } 
-      if(!running) startGame(); 
-    });
-    
-    resetBtn.addEventListener('click', ()=>{ 
-      endGame(true); 
-      overlay.style.display = 'flex'; 
-      current = null; 
-    });
-
     function startGame(){ 
       if(running) return; 
       running = true; 
-      stateEl.textContent = 'Jugando…'; 
       startTime = Date.now(); 
+      lastOrbCollectionTime = Date.now();
       sessionCounted = true; 
       loop(); 
     }
@@ -553,7 +575,6 @@
       running = false; 
       cancelAnimationFrame(raf); 
       raf = null; 
-      stateEl.textContent = justReset ? 'Reiniciado' : 'Terminado'; 
       const timeSec = Math.floor((Date.now() - startTime) / 1000);
       
       // guardar datos
@@ -561,6 +582,17 @@
         current.sessions = (current.sessions || 0) + 1; 
         current.totalTime = (current.totalTime || 0) + timeSec; 
         current.last = new Date().toISOString(); 
+        
+        // Guardar tiempos de orbes si hay datos
+        if (orbCollectionTimes.length > 0) {
+          current.orbTimes = current.orbTimes || [];
+          current.orbTimes.push({
+            session: current.sessions,
+            average: orbCollectionTimes.reduce((a, b) => a + b, 0) / orbCollectionTimes.length,
+            values: [...orbCollectionTimes]
+          });
+        }
+        
         if(score > (current.best || 0)){ 
           current.best = score; 
         }
@@ -577,7 +609,8 @@
           p.best = Math.max(p.best || 0, current.best); 
           p.scores = p.scores || []; 
           p.scores.push(score); 
-          p.last = current.last; 
+          p.last = current.last;
+          p.orbTimes = current.orbTimes;
         } else { 
           current.scores = [score]; 
           players.push(current); 
@@ -588,7 +621,10 @@
       
       // mostrar popup resumen si no es solo reinicio
       if(!justReset){ 
-        alert(`Partida finalizada. Puntaje: ${score} — Tiempo: ${timeSec}s`); 
+        const timePerOrb = orbCollectionTimes.length > 0 
+          ? (orbCollectionTimes.reduce((a, b) => a + b, 0) / orbCollectionTimes.length).toFixed(2) 
+          : "N/A";
+        alert(`Partida finalizada. Puntaje: ${score} — Tiempo: ${timeSec}s\nTiempo promedio por orbe: ${timePerOrb}s`);
       }
       
       // exigir re-registro para jugar otra vez
@@ -625,6 +661,10 @@
       player.x += (dx / len) * player.speed; 
       player.y += (dy / len) * player.speed;
       
+      // Guardar posición para la estela
+      player.trail.push({x: player.x, y: player.y});
+      if (player.trail.length > 10) player.trail.shift();
+      
       player.x = Math.max(player.r, Math.min(world.w - player.r, player.x)); 
       player.y = Math.max(player.r, Math.min(world.h - player.r, player.y));
       
@@ -635,14 +675,38 @@
       flame.x += (fx / fl) * flame.speed; 
       flame.y += (fy / fl) * flame.speed;
       
-      // orbes
+      // Generar partículas de fuego
+      if (Math.random() < 0.3) {
+        flame.particles.push({
+          x: flame.x + (Math.random() - 0.5) * 10,
+          y: flame.y + (Math.random() - 0.5) * 10,
+          size: Math.random() * 3 + 1,
+          life: 20
+        });
+      }
+      
+      // Actualizar partículas
+      flame.particles = flame.particles.map(p => {
+        p.life--;
+        return p;
+      }).filter(p => p.life > 0);
+      
+      // orbes - efecto de pulso
       for(const o of orbs){ 
         if(!o.alive) continue; 
+        o.pulse = (o.pulse + 0.05) % (Math.PI * 2);
+        
         const d = Math.hypot(player.x - o.x, player.y - o.y); 
         if(d < player.r + o.r){ 
           o.alive = false; 
           score += 10; 
-          scoreEl.textContent = score; 
+          miniScoreEl.textContent = score;
+          
+          // Calcular tiempo para agarrar este orbe
+          const now = Date.now();
+          const timeToCollect = (now - lastOrbCollectionTime) / 1000;
+          orbCollectionTimes.push(timeToCollect);
+          lastOrbCollectionTime = now;
         }
       }
       
@@ -674,36 +738,73 @@
         ctx.stroke(); 
       }
       
-      // orbes
-      for(const o of orbs){ 
-        if(!o.alive) continue; 
-        circle(o.x, o.y, o.r, 'rgba(25,194,255,0.95)', 'rgba(0,200,255,0.35)'); 
+      // Estela de la gota
+      for (let i = 0; i < player.trail.length; i++) {
+        const point = player.trail[i];
+        const alpha = i / player.trail.length * 0.5;
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, player.r * (i / player.trail.length), 0, Math.PI * 2);
+        ctx.fillStyle = `rgba(139, 233, 255, ${alpha})`;
+        ctx.fill();
       }
       
-      // jugador
-      circle(player.x, player.y, player.r, '#8be9ff', 'rgba(139,233,255,0.35)');
+      // orbes con efecto de pulso
+      for(const o of orbs){ 
+        if(!o.alive) continue;
+        const pulseSize = o.r + Math.sin(o.pulse) * 2;
+        ctx.beginPath();
+        ctx.arc(o.x, o.y, pulseSize, 0, Math.PI * 2);
+        
+        const gradient = ctx.createRadialGradient(o.x, o.y, 0, o.x, o.y, pulseSize);
+        gradient.addColorStop(0, 'rgba(25,194,255,0.95)');
+        gradient.addColorStop(1, 'rgba(0,200,255,0.35)');
+        
+        ctx.fillStyle = gradient;
+        ctx.fill();
+      }
       
-      // llama
-      circle(flame.x, flame.y, flame.r, '#ff7849', 'rgba(255,120,73,0.35)');
+      // jugador (gota de agua)
+      ctx.beginPath();
+      ctx.arc(player.x, player.y, player.r, 0, Math.PI * 2);
       
-      // HUD
-      ctx.fillStyle = 'rgba(229,231,235,0.9)'; 
-      ctx.font = 'bold 16px system-ui'; 
-      ctx.fillText('Puntaje: ' + score, 14, 24);
-    }
-
-    function circle(x, y, r, fill, glow){ 
-      const g = ctx.createRadialGradient(x, y, r * 0.2, x, y, r * 1.8); 
-      g.addColorStop(0, glow); 
-      g.addColorStop(1, 'rgba(0,0,0,0)'); 
-      ctx.fillStyle = g; 
-      ctx.beginPath(); 
-      ctx.arc(x, y, r * 1.8, 0, Math.PI * 2); 
-      ctx.fill(); 
-      ctx.beginPath(); 
-      ctx.fillStyle = fill; 
-      ctx.arc(x, y, r, 0, Math.PI * 2); 
-      ctx.fill(); 
+      const playerGradient = ctx.createRadialGradient(
+        player.x - 3, player.y - 3, 0,
+        player.x, player.y, player.r
+      );
+      playerGradient.addColorStop(0, '#8be9ff');
+      playerGradient.addColorStop(0.7, '#3498db');
+      playerGradient.addColorStop(1, '#2980b9');
+      
+      ctx.fillStyle = playerGradient;
+      ctx.fill();
+      
+      // Reflejo en la gota
+      ctx.beginPath();
+      ctx.arc(player.x - 3, player.y - 3, player.r / 3, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.7)';
+      ctx.fill();
+      
+      // llama con partículas
+      for (const p of flame.particles) {
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fillStyle = `hsla(${20 + Math.random() * 10}, 100%, 60%, ${p.life / 20})`;
+        ctx.fill();
+      }
+      
+      ctx.beginPath();
+      ctx.arc(flame.x, flame.y, flame.r, 0, Math.PI * 2);
+      
+      const flameGradient = ctx.createRadialGradient(
+        flame.x, flame.y, 0,
+        flame.x, flame.y, flame.r
+      );
+      flameGradient.addColorStop(0, '#ff9d00');
+      flameGradient.addColorStop(0.5, '#ff6600');
+      flameGradient.addColorStop(1, '#ff3000');
+      
+      ctx.fillStyle = flameGradient;
+      ctx.fill();
     }
 
     // catálogo contact
@@ -733,11 +834,24 @@
       const avgScore = (list.reduce((a, p) => a + (p.scores ? p.scores.reduce((x, y) => x + y, 0) : 0), 0) / Math.max(1, totalSessions)).toFixed(1);
       const avgTime = (list.reduce((a, p) => a + (p.totalTime || 0), 0) / Math.max(1, totalSessions)).toFixed(1);
       
+      // Calcular tiempo promedio por orbe
+      let totalOrbTime = 0;
+      let totalOrbCount = 0;
+      list.forEach(p => {
+        if (p.orbTimes) {
+          p.orbTimes.forEach(session => {
+            totalOrbTime += session.average * session.values.length;
+            totalOrbCount += session.values.length;
+          });
+        }
+      });
+      const avgOrbTime = totalOrbCount > 0 ? (totalOrbTime / totalOrbCount).toFixed(2) : 0;
+      
       kpis.innerHTML = `
         <div class="kpi"><div style="color:var(--muted)">Total jugadores</div><div style="font-weight:800">${totalPlayers}</div></div>
         <div class="kpi"><div style="color:var(--muted)">Partidas totales</div><div style="font-weight:800">${totalSessions}</div></div>
         <div class="kpi"><div style="color:var(--muted)">Mejor global</div><div style="font-weight:800">${bestGlobal}</div></div>
-        <div class="kpi"><div style="color:var(--muted)">Puntaje promedio</div><div style="font-weight:800">${avgScore}</div></div>
+        <div class="kpi"><div style="color:var(--muted)">Tiempo/orbe</div><div style="font-weight:800">${avgOrbTime}s</div></div>
       `;
       
       // tabla
@@ -746,7 +860,19 @@
       list.sort((a, b) => (b.best || 0) - (a.best || 0)); 
       
       list.forEach(p => { 
-        const avg = p.scores && p.scores.length ? (p.scores.reduce((a, b) => a + b, 0) / p.scores.length).toFixed(1) : '—'; 
+        const avg = p.scores && p.scores.length ? (p.scores.reduce((a, b) => a + b, 0) / p.scores.length).toFixed(1) : '—';
+        
+        // Calcular tiempo promedio por orbe para este jugador
+        let playerOrbTime = 0;
+        let playerOrbCount = 0;
+        if (p.orbTimes) {
+          p.orbTimes.forEach(session => {
+            playerOrbTime += session.average * session.values.length;
+            playerOrbCount += session.values.length;
+          });
+        }
+        const playerAvgOrbTime = playerOrbCount > 0 ? (playerOrbTime / playerOrbCount).toFixed(2) : '—';
+        
         const tr = document.createElement('tr'); 
         tr.innerHTML = `
           <td>${escapeHtml(p.name)}</td>
@@ -756,6 +882,7 @@
           <td>${(p.scores || []).length}</td>
           <td>${avg}</td>
           <td>${p.totalTime || 0}</td>
+          <td>${playerAvgOrbTime}</td>
           <td>${p.last ? new Date(p.last).toLocaleString() : '—'}</td>
         `; 
         tbody.appendChild(tr); 
@@ -767,9 +894,9 @@
         if(p.age) ageCounts[p.age] = (ageCounts[p.age] || 0) + 1; 
       }); 
       
-      const labels = Object.keys(ageCounts); 
-      const values = Object.values(ageCounts);
-      drawBar('ageChart', labels, values, 'Edades', 'Jugadores');
+      const ageLabels = Object.keys(ageCounts).sort((a, b) => a - b); 
+      const ageValues = ageLabels.map(age => ageCounts[age]);
+      drawBarChart('ageChart', ageLabels, ageValues, 'Edades', 'Jugadores');
       
       // top list
       const top = [];
@@ -801,25 +928,65 @@
         }
       });
       
-      drawBar('scoreChart', Object.keys(scoreRanges), Object.values(scoreRanges), 'Rangos de puntaje', 'Cantidad');
+      drawBarChart('scoreChart', Object.keys(scoreRanges), Object.values(scoreRanges), 'Rangos de puntaje', 'Cantidad');
       
-      // Nueva gráfica de tiempo promedio por edad
-      const ageTime = {};
+      // Gráfica de tiempo promedio por orbe
+      const ageOrbTimes = {};
       list.forEach(p => {
-        if(p.age && p.scores && p.scores.length) {
-          if(!ageTime[p.age]) ageTime[p.age] = {total: 0, count: 0};
-          ageTime[p.age].total += (p.totalTime || 0) / p.scores.length;
-          ageTime[p.age].count++;
+        if(p.age && p.orbTimes && p.orbTimes.length) {
+          let totalTime = 0;
+          let totalOrbs = 0;
+          p.orbTimes.forEach(session => {
+            totalTime += session.average * session.values.length;
+            totalOrbs += session.values.length;
+          });
+          
+          if(!ageOrbTimes[p.age]) ageOrbTimes[p.age] = {total: 0, count: 0};
+          ageOrbTimes[p.age].total += totalTime / totalOrbs;
+          ageOrbTimes[p.age].count++;
         }
       });
       
-      const ageLabels = Object.keys(ageTime).sort((a, b) => a - b);
-      const avgTimes = ageLabels.map(age => (ageTime[age].total / ageTime[age].count).toFixed(1));
+      const ageOrbLabels = Object.keys(ageOrbTimes).sort((a, b) => a - b);
+      const ageOrbValues = ageOrbLabels.map(age => (ageOrbTimes[age].total / ageOrbTimes[age].count).toFixed(2));
       
-      drawBar('timeChart', ageLabels, avgTimes, 'Edad', 'Tiempo promedio (s)');
+      drawBarChart('timePerOrbChart', ageOrbLabels, ageOrbValues, 'Edad', 'Tiempo promedio (s)');
+      
+      // Gráfica de eficiencia (puntaje/tiempo) por grupo de edad
+      const ageEfficiency = {};
+      list.forEach(p => {
+        if(p.age && p.scores && p.scores.length && p.totalTime) {
+          const totalScore = p.scores.reduce((a, b) => a + b, 0);
+          const efficiency = totalScore / p.totalTime;
+          
+          if(!ageEfficiency[p.age]) ageEfficiency[p.age] = {total: 0, count: 0};
+          ageEfficiency[p.age].total += efficiency;
+          ageEfficiency[p.age].count++;
+        }
+      });
+      
+      const efficiencyLabels = Object.keys(ageEfficiency).sort((a, b) => a - b);
+      const efficiencyValues = efficiencyLabels.map(age => (ageEfficiency[age].total / ageEfficiency[age].count).toFixed(2));
+      
+      drawLineChart('efficiencyChart', efficiencyLabels, efficiencyValues, 'Edad', 'Eficiencia (pts/seg)');
+      
+      // Gráfica de dispersión de sesiones por jugador
+      const sessionCounts = list.map(p => p.sessions || 0).filter(s => s > 0);
+      const sessionData = {
+        labels: Array.from({length: Math.max(...sessionCounts)}, (_, i) => i + 1),
+        values: Array(Math.max(...sessionCounts)).fill(0)
+      };
+      
+      sessionCounts.forEach(count => {
+        if (count <= sessionData.values.length) {
+          sessionData.values[count - 1]++;
+        }
+      });
+      
+      drawBarChart('sessionsChart', sessionData.labels, sessionData.values, 'Número de sesiones', 'Jugadores');
     }
 
-    function drawBar(id, labels, values, xLabel = '', yLabel = ''){ 
+    function drawBarChart(id, labels, values, xLabel = '', yLabel = ''){ 
       const c = document.getElementById(id); 
       const ctx = c.getContext('2d'); 
       ctx.clearRect(0, 0, c.width, c.height); 
@@ -853,6 +1020,60 @@
       // Ejes y etiquetas
       ctx.fillStyle = 'rgba(255,255,255,0.7)';
       ctx.textAlign = 'center';
+      ctx.fillText(xLabel, W / 2, H - 5);
+      
+      ctx.save();
+      ctx.translate(10, H / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText(yLabel, 0, 0);
+      ctx.restore();
+    }
+    
+    function drawLineChart(id, labels, values, xLabel = '', yLabel = '') {
+      const c = document.getElementById(id);
+      const ctx = c.getContext('2d');
+      ctx.clearRect(0, 0, c.width, c.height);
+      
+      const pad = {l: 28, r: 12, t: 8, b: 28};
+      const W = c.width, H = c.height;
+      const max = Math.max(1, ...values);
+      
+      // Draw line
+      ctx.beginPath();
+      ctx.strokeStyle = 'rgba(25,194,255,0.8)';
+      ctx.lineWidth = 2;
+      
+      for(let i = 0; i < values.length; i++) {
+        const x = pad.l + i * ((W - pad.l - pad.r) / (values.length - 1));
+        const y = H - pad.b - (values[i] / max) * (H - pad.t - pad.b);
+        
+        if(i === 0) {
+          ctx.moveTo(x, y);
+        } else {
+          ctx.lineTo(x, y);
+        }
+        
+        // Draw points
+        ctx.beginPath();
+        ctx.arc(x, y, 4, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(25,194,255,0.95)';
+        ctx.fill();
+      }
+      
+      ctx.stroke();
+      
+      // Draw labels
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.textAlign = 'center';
+      ctx.font = '12px system-ui';
+      
+      for(let i = 0; i < labels.length; i++) {
+        const x = pad.l + i * ((W - pad.l - pad.r) / (labels.length - 1));
+        ctx.fillText(labels[i], x, H - 8);
+        ctx.fillText(values[i], x, H - pad.b - (values[i] / max) * (H - pad.t - pad.b) - 10);
+      }
+      
+      // Axis labels
       ctx.fillText(xLabel, W / 2, H - 5);
       
       ctx.save();
@@ -900,8 +1121,3 @@
   </script>
 </body>
 </html>
-
-
-
-
-
