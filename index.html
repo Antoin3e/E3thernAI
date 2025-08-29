@@ -15,7 +15,6 @@
         width: 140px;
         height: 60px;
         border-radius: 10px;
-        /* Reemplaza la línea de background con la de abajo */
         background-image: url('https://raw.githubusercontent.com/Antoin3e/E3thernAI/main/ETHERNAILOGO.png');
         background-size: cover;
         background-position: center;
@@ -88,6 +87,7 @@
     .hud{background:linear-gradient(180deg,rgba(124,58,237,.06),rgba(124,58,237,.02));border-radius:12px;padding:12px}
     .stat{display:flex;justify-content:space-between;padding:8px 10px;border-radius:8px;background:rgba(255,255,255,.02);margin-bottom:8px}
     .btn{appearance:none;border:0;padding:10px 12px;border-radius:10px;background:linear-gradient(180deg,var(--accent),var(--accent2));color:#041018;font-weight:800;cursor:pointer}
+    .btn-secondary{appearance:none;border:0;padding:10px 12px;border-radius:10px;background:linear-gradient(180deg, #ff6b6b, #ee5a24);color:white;font-weight:800;cursor:pointer;margin-top:10px}
 
     /* Registration overlay */
     .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;z-index:5;background:rgba(6,8,12,.85)}
@@ -101,6 +101,7 @@
     table{width:100%;border-collapse:collapse;border-radius:10px;overflow:hidden}
     th,td{padding:8px;border-bottom:1px solid rgba(255,255,255,.03);text-align:left}
     .data-grid{display:grid;grid-template-columns:1fr 420px;gap:12px;margin-top:12px}
+    .charts-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
 
     /* Catalog */
     .catalog{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
@@ -161,8 +162,8 @@
 
     <!-- JUGAR -->
     <section id="panel-jugar" class="panel active">
-      <h1>JUEGA:¡ QUE N0 TE ALCANCE !</h1>
-      <p style="color:var(--muted)">Controla la gota (WASD / flechas) o inclina tu móvil. Recolecta orbes, evita obstáculos y no dejes que la llama te alcance.</p>
+      <h1>JUEGA: ¡QUE NO TE ALCANCE!</h1>
+      <p style="color:var(--muted)">Controla la gota (WASD / flechas) o inclina tu móvil. Recolecta orbes y no dejes que la llama te alcance.</p>
 
       <div class="game-wrap">
         <div style="position:relative">
@@ -191,7 +192,19 @@
           </div>
         </div>
 
-        
+        <aside class="hud">
+          <div class="stat"><span>Puntaje</span><strong id="score">0</strong></div>
+          <div class="stat"><span>Mejor personal</span><strong id="best">0</strong></div>
+          <div class="stat"><span>Sesiones</span><strong id="sessions">0</strong></div>
+          <div class="stat"><span>Estado</span><strong id="state">Listo</strong></div>
+          <div style="margin-top:10px;display:flex;gap:8px;flex-wrap:wrap">
+            <button id="playBtn" class="btn">▶️ Jugar</button>
+            <button id="resetBtn" class="btn">↻ Reiniciar</button>
+          </div>
+          <p class="note" style="color:var(--muted);margin-top:8px">Tip: en móvil, inclina el teléfono cuando hayas permitido el giroscopio.</p>
+        </aside>
+      </div>
+    </section>
 
     <!-- DATOS -->
     <section id="panel-datos" class="panel">
@@ -211,6 +224,22 @@
           <h3 style="margin-top:12px">Top 5 mejores puntajes</h3>
           <ol id="topList" style="color:var(--muted)"></ol>
         </div>
+      </div>
+
+      <div class="charts-grid">
+        <div style="background:rgba(255,255,255,.02);padding:12px;border-radius:10px">
+          <h3 style="margin:0 0 8px">Distribución de puntajes</h3>
+          <canvas id="scoreChart" width="380" height="260"></canvas>
+        </div>
+        <div style="background:rgba(255,255,255,.02);padding:12px;border-radius:10px">
+          <h3 style="margin:0 0 8px">Tiempo promedio por edad</h3>
+          <canvas id="timeChart" width="380" height="260"></canvas>
+        </div>
+      </div>
+
+      <div style="margin-top:20px;text-align:center">
+        <button id="clearDataBtn" class="btn-secondary">🗑️ Limpiar todos los datos</button>
+        <p style="color:var(--muted);font-size:12px;margin-top:8px">Esta acción eliminará todos los registros de jugadores y no se puede deshacer.</p>
       </div>
     </section>
 
@@ -254,6 +283,7 @@
     const mobileTabs = document.querySelectorAll('.mobile-tab');
     const panels = {jugar:document.getElementById('panel-jugar'), datos:document.getElementById('panel-datos'), catalogo:document.getElementById('panel-catalogo')};
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
+    const clearDataBtn = document.getElementById('clearDataBtn');
     
     function activateTab(tabName) {
       tabs.forEach(b => b.classList.remove('active'));
@@ -290,22 +320,53 @@
     function load(){ try{return JSON.parse(localStorage.getItem(LS))||[];}catch{return [];} }
     function save(data){ localStorage.setItem(LS, JSON.stringify(data)); }
 
+    // Limpiar datos
+    clearDataBtn.addEventListener('click', () => {
+      if(confirm('¿Estás seguro de que quieres eliminar todos los datos? Esta acción no se puede deshacer.')) {
+        localStorage.removeItem(LS);
+        players = [];
+        renderDashboard();
+        alert('Todos los datos han sido eliminados.');
+      }
+    });
+
     /* ====== Juego (canvas) ====== */
-    const canvas = document.getElementById('game'); const ctx = canvas.getContext('2d');
+    const canvas = document.getElementById('game'); 
+    const ctx = canvas.getContext('2d');
     const overlay = document.getElementById('overlayReg');
-    const nameIn = document.getElementById('name'); const phoneIn = document.getElementById('phone'); const ageIn = document.getElementById('age');
-    const btnStart = document.getElementById('btnStart'); const btnGyro = document.getElementById('btnGyro');
-    const playBtn = document.getElementById('playBtn'); const resetBtn = document.getElementById('resetBtn');
-    const scoreEl = document.getElementById('score'); const bestEl = document.getElementById('best'); const sessionsEl = document.getElementById('sessions'); const stateEl = document.getElementById('state');
+    const nameIn = document.getElementById('name'); 
+    const phoneIn = document.getElementById('phone'); 
+    const ageIn = document.getElementById('age');
+    const btnStart = document.getElementById('btnStart'); 
+    const btnGyro = document.getElementById('btnGyro');
+    const playBtn = document.getElementById('playBtn'); 
+    const resetBtn = document.getElementById('resetBtn');
+    const scoreEl = document.getElementById('score'); 
+    const bestEl = document.getElementById('best'); 
+    const sessionsEl = document.getElementById('sessions'); 
+    const stateEl = document.getElementById('state');
     const joystickContainer = document.getElementById('joystick-container');
     const joystickHandle = document.getElementById('joystick-handle');
 
-    let players = load(); let current=null; let running=false; let raf=null; let world={w:canvas.width,h:canvas.height};
-    let player = {x:120,y:120,r:14,speed:3.2}; let flame = {x:world.w-140,y:world.h-120,r:18,speed:2.6}; let orbs=[]; 
-    // Eliminamos los obstáculos completamente
+    let players = load(); 
+    let current = null; 
+    let running = false; 
+    let raf = null; 
+    let world = {w: canvas.width, h: canvas.height};
+    let player = {x: 120, y: 120, r: 14, speed: 3.2}; 
+    let flame = {x: world.w-140, y: world.h-120, r: 18, speed: 2.6}; 
+    let orbs = []; 
     let obstacles = [];
-    let keys={}; let score=0; let best=0; let startTime=0; let sessionCounted=false;
-    let gyroEnabled=false; let tiltX=0; let joystickActive = false; let joystickX = 0; let joystickY = 0;
+    let keys = {}; 
+    let score = 0; 
+    let best = 0; 
+    let startTime = 0; 
+    let sessionCounted = false;
+    let gyroEnabled = false; 
+    let tiltX = 0; 
+    let joystickActive = false; 
+    let joystickX = 0; 
+    let joystickY = 0;
 
     // Detectar dispositivo móvil
     const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
@@ -372,9 +433,24 @@
       });
     }
 
-    // controles teclado
-    window.addEventListener('keydown',e=>{ if(['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD'].includes(e.code)){ keys[e.code]=true; e.preventDefault(); }});
-    window.addEventListener('keyup',e=>{ if(keys[e.code]!==undefined){ keys[e.code]=false; e.preventDefault(); }});
+    // controles teclado - FIXED: Ahora permite escribir WASD en los campos de texto
+    window.addEventListener('keydown', e => { 
+      // Solo capturar teclas de movimiento si no estamos en un campo de texto
+      if (!['INPUT', 'TEXTAREA'].includes(e.target.tagName) && 
+          ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight','KeyW','KeyA','KeyS','KeyD'].includes(e.code)) { 
+        keys[e.code] = true; 
+        e.preventDefault(); 
+      }
+    });
+    
+    window.addEventListener('keyup', e => { 
+      if (keys[e.code] !== undefined) { 
+        keys[e.code] = false; 
+        if (!['INPUT', 'TEXTAREA'].includes(e.target.tagName)) {
+          e.preventDefault(); 
+        }
+      }
+    });
 
     // giroscopio (movimiento lateral)
     btnGyro.addEventListener('click', async ()=>{
@@ -408,47 +484,131 @@
       }
     }
 
-    function spawnOrbs(n=6){ orbs.length=0; for(let i=0;i<n;i++){ orbs.push({x:60+Math.random()*(world.w-120),y:60+Math.random()*(world.h-120),r:8,alive:true}); }}
-    // Eliminamos la función de generación de obstáculos
-    function spawnObstacles(){ obstacles = []; } // No hay obstáculos
-
-    function resetWorld(){ player.x=120; player.y=120; flame.x=world.w-140; flame.y=world.h-120; score=0; scoreEl.textContent=0; stateEl.textContent='Listo'; spawnOrbs(); spawnObstacles(); best = (current && current.best) ? current.best : 0; bestEl.textContent = best; }
-
-    btnStart.addEventListener('click', ()=>{
-      const name = nameIn.value.trim(); const phone = phoneIn.value.trim(); const age = parseInt(ageIn.value,10);
-      if(!name || !phone || !age || age<5 || age>120){ alert('Ingresa nombre, teléfono y edad válidos.'); return; }
-      current = {name, phone, age, sessions:0, best:0, totalTime:0, last:new Date().toISOString()};
-      overlay.style.display='none'; resetWorld(); startGame();
-    });
-
-    playBtn.addEventListener('click', ()=>{ if(!current){ overlay.style.display='flex'; return; } if(!running) startGame(); });
-    resetBtn.addEventListener('click', ()=>{ endGame(true); overlay.style.display='flex'; current=null; });
-
-    function startGame(){ if(running) return; running=true; stateEl.textContent='Jugando…'; startTime=Date.now(); sessionCounted=true; loop(); }
-
-    function endGame(justReset=false){ running=false; cancelAnimationFrame(raf); raf=null; stateEl.textContent = justReset ? 'Reiniciado' : 'Terminado'; const timeSec = Math.floor((Date.now()-startTime)/1000);
-      // guardar datos
-      if(current){ current.sessions = (current.sessions||0)+1; current.totalTime = (current.totalTime||0)+timeSec; current.last = new Date().toISOString(); if(score> (current.best||0)){ current.best = score; } // merge into players
-        const idx = players.findIndex(p=>p.name.toLowerCase()===current.name.toLowerCase() && p.phone===current.phone);
-        if(idx>=0){ const p = players[idx]; p.sessions = current.sessions; p.totalTime = current.totalTime; p.best = Math.max(p.best||0, current.best); p.scores = p.scores||[]; p.scores.push(score); p.last = current.last; }
-        else { current.scores = [score]; players.push(current); }
-        save(players);
+    function spawnOrbs(n=6){ 
+      orbs.length = 0; 
+      for(let i = 0; i < n; i++) { 
+        orbs.push({
+          x: 60 + Math.random() * (world.w - 120),
+          y: 60 + Math.random() * (world.h - 120),
+          r: 8,
+          alive: true
+        }); 
       }
-      // mostrar popup resumen si no es solo reinicio
-      if(!justReset){ alert(`Partida finalizada. Puntaje: ${score} — Tiempo: ${timeSec}s`); }
-      // exigir re-registro para jugar otra vez
-      overlay.style.display='flex'; current=null;
     }
 
-    function loop(){ update(); draw(); if(running) raf=requestAnimationFrame(loop); }
+    function spawnObstacles(){ obstacles = []; }
+
+    function resetWorld(){ 
+      player.x = 120; 
+      player.y = 120; 
+      flame.x = world.w - 140; 
+      flame.y = world.h - 120; 
+      score = 0; 
+      scoreEl.textContent = 0; 
+      stateEl.textContent = 'Listo'; 
+      spawnOrbs(); 
+      spawnObstacles(); 
+      best = (current && current.best) ? current.best : 0; 
+      bestEl.textContent = best; 
+    }
+
+    btnStart.addEventListener('click', ()=>{
+      const name = nameIn.value.trim(); 
+      const phone = phoneIn.value.trim(); 
+      const age = parseInt(ageIn.value,10);
+      if(!name || !phone || !age || age < 5 || age > 120){ 
+        alert('Ingresa nombre, teléfono y edad válidos.'); 
+        return; 
+      }
+      current = {name, phone, age, sessions: 0, best: 0, totalTime: 0, last: new Date().toISOString()};
+      overlay.style.display = 'none'; 
+      resetWorld(); 
+      startGame();
+    });
+
+    playBtn.addEventListener('click', ()=>{ 
+      if(!current){ 
+        overlay.style.display = 'flex'; 
+        return; 
+      } 
+      if(!running) startGame(); 
+    });
+    
+    resetBtn.addEventListener('click', ()=>{ 
+      endGame(true); 
+      overlay.style.display = 'flex'; 
+      current = null; 
+    });
+
+    function startGame(){ 
+      if(running) return; 
+      running = true; 
+      stateEl.textContent = 'Jugando…'; 
+      startTime = Date.now(); 
+      sessionCounted = true; 
+      loop(); 
+    }
+
+    function endGame(justReset = false){ 
+      running = false; 
+      cancelAnimationFrame(raf); 
+      raf = null; 
+      stateEl.textContent = justReset ? 'Reiniciado' : 'Terminado'; 
+      const timeSec = Math.floor((Date.now() - startTime) / 1000);
+      
+      // guardar datos
+      if(current){ 
+        current.sessions = (current.sessions || 0) + 1; 
+        current.totalTime = (current.totalTime || 0) + timeSec; 
+        current.last = new Date().toISOString(); 
+        if(score > (current.best || 0)){ 
+          current.best = score; 
+        }
+        
+        // merge into players
+        const idx = players.findIndex(p => 
+          p.name.toLowerCase() === current.name.toLowerCase() && p.phone === current.phone
+        );
+        
+        if(idx >= 0){ 
+          const p = players[idx]; 
+          p.sessions = current.sessions; 
+          p.totalTime = current.totalTime; 
+          p.best = Math.max(p.best || 0, current.best); 
+          p.scores = p.scores || []; 
+          p.scores.push(score); 
+          p.last = current.last; 
+        } else { 
+          current.scores = [score]; 
+          players.push(current); 
+        }
+        
+        save(players);
+      }
+      
+      // mostrar popup resumen si no es solo reinicio
+      if(!justReset){ 
+        alert(`Partida finalizada. Puntaje: ${score} — Tiempo: ${timeSec}s`); 
+      }
+      
+      // exigir re-registro para jugar otra vez
+      overlay.style.display = 'flex'; 
+      current = null;
+    }
+
+    function loop(){ 
+      update(); 
+      draw(); 
+      if(running) raf = requestAnimationFrame(loop); 
+    }
 
     function update(){ 
       // movimiento jugador por teclado, gyro o joystick
       let dx = 0, dy = 0;
       
       // Controles de teclado
-      dx = (keys.KeyD||keys.ArrowRight ? 1:0) - (keys.KeyA||keys.ArrowLeft ? 1:0);
-      dy = (keys.KeyS||keys.ArrowDown ? 1:0) - (keys.KeyW||keys.ArrowUp ? 1:0);
+      dx = (keys.KeyD || keys.ArrowRight ? 1 : 0) - (keys.KeyA || keys.ArrowLeft ? 1 : 0);
+      dy = (keys.KeyS || keys.ArrowDown ? 1 : 0) - (keys.KeyW || keys.ArrowUp ? 1 : 0);
       
       // Controles de giroscopio
       if(gyroEnabled){ 
@@ -461,87 +621,281 @@
         dy += joystickY;
       }
       
-      const len = Math.hypot(dx,dy)||1; 
-      player.x += (dx/len)*player.speed; 
-      player.y += (dy/len)*player.speed;
+      const len = Math.hypot(dx, dy) || 1; 
+      player.x += (dx / len) * player.speed; 
+      player.y += (dy / len) * player.speed;
       
-      player.x = Math.max(player.r, Math.min(world.w-player.r, player.x)); 
-      player.y = Math.max(player.r, Math.min(world.h-player.r, player.y));
+      player.x = Math.max(player.r, Math.min(world.w - player.r, player.x)); 
+      player.y = Math.max(player.r, Math.min(world.h - player.r, player.y));
       
       // llama persigue
-      const fx = player.x - flame.x; const fy = player.y - flame.y; const fl = Math.hypot(fx,fy)||1; flame.x += (fx/fl)*flame.speed; flame.y += (fy/fl)*flame.speed;
+      const fx = player.x - flame.x; 
+      const fy = player.y - flame.y; 
+      const fl = Math.hypot(fx, fy) || 1; 
+      flame.x += (fx / fl) * flame.speed; 
+      flame.y += (fy / fl) * flame.speed;
       
       // orbes
-      for(const o of orbs){ if(!o.alive) continue; const d = Math.hypot(player.x-o.x, player.y-o.y); if(d < player.r + o.r){ o.alive=false; score+=10; scoreEl.textContent=score; }}
-      if(orbs.every(o=>!o.alive)) spawnOrbs();
+      for(const o of orbs){ 
+        if(!o.alive) continue; 
+        const d = Math.hypot(player.x - o.x, player.y - o.y); 
+        if(d < player.r + o.r){ 
+          o.alive = false; 
+          score += 10; 
+          scoreEl.textContent = score; 
+        }
+      }
       
-      // NOTA: Se eliminó la colisión con obstáculos ya que no hay obstáculos
+      if(orbs.every(o => !o.alive)) spawnOrbs();
       
       // colision llama (solo esta colisión hace perder)
-      if(Math.hypot(player.x-flame.x, player.y-flame.y) < player.r + flame.r){ endGame(false); }
+      if(Math.hypot(player.x - flame.x, player.y - flame.y) < player.r + flame.r){ 
+        endGame(false); 
+      }
     }
 
-    function draw(){ ctx.clearRect(0,0,world.w,world.h);
+    function draw(){ 
+      ctx.clearRect(0, 0, world.w, world.h);
+      
       // grid
-      ctx.strokeStyle='rgba(25,194,255,0.04)'; ctx.lineWidth=1; for(let x=0;x<world.w;x+=40){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,world.h); ctx.stroke(); }
-      for(let y=0;y<world.h;y+=40){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(world.w,y); ctx.stroke(); }
+      ctx.strokeStyle = 'rgba(25,194,255,0.04)'; 
+      ctx.lineWidth = 1; 
+      for(let x = 0; x < world.w; x += 40){ 
+        ctx.beginPath(); 
+        ctx.moveTo(x, 0); 
+        ctx.lineTo(x, world.h); 
+        ctx.stroke(); 
+      }
+      
+      for(let y = 0; y < world.h; y += 40){ 
+        ctx.beginPath(); 
+        ctx.moveTo(0, y); 
+        ctx.lineTo(world.w, y); 
+        ctx.stroke(); 
+      }
+      
       // orbes
-      for(const o of orbs){ if(!o.alive) continue; circle(o.x,o.y,o.r,'rgba(25,194,255,0.95)','rgba(0,200,255,0.35)'); }
-      // NOTA: No se dibujan obstáculos ya que no hay
+      for(const o of orbs){ 
+        if(!o.alive) continue; 
+        circle(o.x, o.y, o.r, 'rgba(25,194,255,0.95)', 'rgba(0,200,255,0.35)'); 
+      }
+      
       // jugador
-      circle(player.x, player.y, player.r, '#8be9ff','rgba(139,233,255,0.35)');
+      circle(player.x, player.y, player.r, '#8be9ff', 'rgba(139,233,255,0.35)');
+      
       // llama
-      circle(flame.x, flame.y, flame.r, '#ff7849','rgba(255,120,73,0.35)');
+      circle(flame.x, flame.y, flame.r, '#ff7849', 'rgba(255,120,73,0.35)');
+      
       // HUD
-      ctx.fillStyle='rgba(229,231,235,0.9)'; ctx.font='bold 16px system-ui'; ctx.fillText('Puntaje: '+score, 14, 24);
+      ctx.fillStyle = 'rgba(229,231,235,0.9)'; 
+      ctx.font = 'bold 16px system-ui'; 
+      ctx.fillText('Puntaje: ' + score, 14, 24);
     }
 
-    function circle(x,y,r,fill,glow){ const g = ctx.createRadialGradient(x,y,r*0.2,x,y,r*1.8); g.addColorStop(0,glow); g.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r*1.8,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.fillStyle=fill; ctx.arc(x,y,r,0,Math.PI*2); ctx.fill(); }
+    function circle(x, y, r, fill, glow){ 
+      const g = ctx.createRadialGradient(x, y, r * 0.2, x, y, r * 1.8); 
+      g.addColorStop(0, glow); 
+      g.addColorStop(1, 'rgba(0,0,0,0)'); 
+      ctx.fillStyle = g; 
+      ctx.beginPath(); 
+      ctx.arc(x, y, r * 1.8, 0, Math.PI * 2); 
+      ctx.fill(); 
+      ctx.beginPath(); 
+      ctx.fillStyle = fill; 
+      ctx.arc(x, y, r, 0, Math.PI * 2); 
+      ctx.fill(); 
+    }
 
     // catálogo contact
     window.showContact = function(el){ 
-    if(el.querySelector('.contact')) return; 
-    const d=document.createElement('div'); 
-    d.className='contact'; 
-    d.innerHTML='Tel: <strong>8123836266</strong><br>Email: <strong>thisis.ethernai@gmail.com</strong><br>Instagram: <a href="https://www.instagram.com/ethern_ai?igsh=MTNjc3B1b2RqZGpwNg==" target="_blank">Ethern-ai</a><br>YouTube: <a href="https://www.youtube.com/@Ethern-ai" target="_blank">Ethern-ai</a>'; 
-    el.appendChild(d); 
-}
-
-    // Dashboard
-    function renderDashboard(){ const list = load(); const kpis = document.getElementById('kpis'); if(!list.length){ kpis.innerHTML='<div style="grid-column:1/-1;color:var(--muted)">No hay registros aún</div>'; document.getElementById('rows').innerHTML=''; document.getElementById('topList').innerHTML=''; return; }
-      const totalPlayers = list.length; const totalSessions = list.reduce((a,p)=>a+(p.sessions||0),0); const bestGlobal = list.reduce((m,p)=>Math.max(m,p.best||0),0); const avgScore = (list.reduce((a,p)=>a+ (p.scores? p.scores.reduce((x,y)=>x+y,0):0),0) / Math.max(1, totalSessions)).toFixed(1);
-      const avgTime = (list.reduce((a,p)=>a+(p.totalTime||0),0)/Math.max(1,totalSessions)).toFixed(1);
-      kpis.innerHTML=`<div class="kpi"><div style="color:var(--muted)">Total jugadores</div><div style="font-weight:800">${totalPlayers}</div></div><div class="kpi"><div style="color:var(--muted)">Partidas totales</div><div style="font-weight:800">${totalSessions}</div></div><div class="kpi"><div style="color:var(--muted)">Mejor global</div><div style="font-weight:800">${bestGlobal}</div></div><div class="kpi"><div style="color:var(--muted)">Puntaje promedio</div><div style="font-weight:800">${avgScore}</div></div>`;
-      // tabla
-      const tbody = document.getElementById('rows'); tbody.innerHTML=''; list.sort((a,b)=> (b.best||0)-(a.best||0)); list.forEach(p=>{ const tr=document.createElement('tr'); const avg = p.scores && p.scores.length? (p.scores.reduce((a,b)=>a+b,0)/p.scores.length).toFixed(1) : '—'; tr.innerHTML=`<td>${escapeHtml(p.name)}</td><td>${escapeHtml(p.phone)}</td><td>${p.age||'—'}</td><td>${p.best||0}</td><td>${(p.scores||[]).length}</td><td>${avg}</td><td>${p.totalTime||0}</td><td>${p.last? new Date(p.last).toLocaleString() : '—'}</td>`; tbody.appendChild(tr); });
-      // edad chart
-      const ageCounts = {}; list.forEach(p=>{ if(p.age) ageCounts[p.age]=(ageCounts[p.age]||0)+1; }); const labels = Object.keys(ageCounts); const values = Object.values(ageCounts);
-      drawBar('ageChart', labels, values);
-      // top list
-      const top = [];
-      list.forEach(p=>{ if(p.scores) p.scores.forEach(s=> top.push({name:p.name,score:s})); }); top.sort((a,b)=>b.score-a.score); const topList = document.getElementById('topList'); topList.innerHTML=''; top.slice(0,5).forEach(t=>{ const li=document.createElement('li'); li.textContent=`${t.name} — ${t.score}`; topList.appendChild(li); });
+      if(el.querySelector('.contact')) return; 
+      const d = document.createElement('div'); 
+      d.className = 'contact'; 
+      d.innerHTML = 'Tel: <strong>8123836266</strong><br>Email: <strong>thisis.ethernai@gmail.com</strong><br>Instagram: <a href="https://www.instagram.com/ethern_ai?igsh=MTNjc3B1b2RqZGpwNg==" target="_blank">Ethern-ai</a><br>YouTube: <a href="https://www.youtube.com/@Ethern-ai" target="_blank">Ethern-ai</a>'; 
+      el.appendChild(d); 
     }
 
-    function drawBar(id, labels, values){ const c=document.getElementById(id); const x=c.getContext('2d'); x.clearRect(0,0,c.width,c.height); const pad={l:28,r:12,t:8,b:28}; const W=c.width,H=c.height; const max = Math.max(1,...values); const bw = (W-pad.l-pad.r)/values.length - 8; x.fillStyle='rgba(255,255,255,0.9)'; x.font='12px system-ui'; for(let i=0;i<values.length;i++){ const v=values[i]; const h=(v/max)*(H-pad.t-pad.b); const x0=pad.l + i*(bw+8)+4; const y0=H-pad.b-h; const g = x.createLinearGradient(0,y0,0,H-pad.b); g.addColorStop(0,'rgba(25,194,255,0.95)'); g.addColorStop(1,'rgba(25,194,255,0.35)'); x.fillStyle=g; x.fillRect(x0,y0,bw,h); x.fillStyle='rgba(229,231,235,0.9)'; x.textAlign='center'; x.fillText(labels[i], x0+bw/2, H-8); x.fillText(values[i], x0+bw/2, y0-6); } }
+    // Dashboard
+    function renderDashboard(){ 
+      const list = load(); 
+      const kpis = document.getElementById('kpis'); 
+      
+      if(!list.length){ 
+        kpis.innerHTML = '<div style="grid-column:1/-1;color:var(--muted)">No hay registros aún</div>'; 
+        document.getElementById('rows').innerHTML = ''; 
+        document.getElementById('topList').innerHTML = ''; 
+        return; 
+      }
+      
+      const totalPlayers = list.length; 
+      const totalSessions = list.reduce((a, p) => a + (p.sessions || 0), 0); 
+      const bestGlobal = list.reduce((m, p) => Math.max(m, p.best || 0), 0); 
+      const avgScore = (list.reduce((a, p) => a + (p.scores ? p.scores.reduce((x, y) => x + y, 0) : 0), 0) / Math.max(1, totalSessions)).toFixed(1);
+      const avgTime = (list.reduce((a, p) => a + (p.totalTime || 0), 0) / Math.max(1, totalSessions)).toFixed(1);
+      
+      kpis.innerHTML = `
+        <div class="kpi"><div style="color:var(--muted)">Total jugadores</div><div style="font-weight:800">${totalPlayers}</div></div>
+        <div class="kpi"><div style="color:var(--muted)">Partidas totales</div><div style="font-weight:800">${totalSessions}</div></div>
+        <div class="kpi"><div style="color:var(--muted)">Mejor global</div><div style="font-weight:800">${bestGlobal}</div></div>
+        <div class="kpi"><div style="color:var(--muted)">Puntaje promedio</div><div style="font-weight:800">${avgScore}</div></div>
+      `;
+      
+      // tabla
+      const tbody = document.getElementById('rows'); 
+      tbody.innerHTML = ''; 
+      list.sort((a, b) => (b.best || 0) - (a.best || 0)); 
+      
+      list.forEach(p => { 
+        const avg = p.scores && p.scores.length ? (p.scores.reduce((a, b) => a + b, 0) / p.scores.length).toFixed(1) : '—'; 
+        const tr = document.createElement('tr'); 
+        tr.innerHTML = `
+          <td>${escapeHtml(p.name)}</td>
+          <td>${escapeHtml(p.phone)}</td>
+          <td>${p.age || '—'}</td>
+          <td>${p.best || 0}</td>
+          <td>${(p.scores || []).length}</td>
+          <td>${avg}</td>
+          <td>${p.totalTime || 0}</td>
+          <td>${p.last ? new Date(p.last).toLocaleString() : '—'}</td>
+        `; 
+        tbody.appendChild(tr); 
+      });
+      
+      // edad chart
+      const ageCounts = {}; 
+      list.forEach(p => { 
+        if(p.age) ageCounts[p.age] = (ageCounts[p.age] || 0) + 1; 
+      }); 
+      
+      const labels = Object.keys(ageCounts); 
+      const values = Object.values(ageCounts);
+      drawBar('ageChart', labels, values, 'Edades', 'Jugadores');
+      
+      // top list
+      const top = [];
+      list.forEach(p => { 
+        if(p.scores) p.scores.forEach(s => top.push({name: p.name, score: s})); 
+      }); 
+      
+      top.sort((a, b) => b.score - a.score); 
+      const topList = document.getElementById('topList'); 
+      topList.innerHTML = ''; 
+      
+      top.slice(0, 5).forEach(t => { 
+        const li = document.createElement('li'); 
+        li.textContent = `${t.name} — ${t.score}`; 
+        topList.appendChild(li); 
+      });
+      
+      // Nueva gráfica de distribución de puntajes
+      const scoreRanges = {'0-100': 0, '101-200': 0, '201-300': 0, '301-400': 0, '401+': 0};
+      list.forEach(p => {
+        if(p.scores) {
+          p.scores.forEach(score => {
+            if(score <= 100) scoreRanges['0-100']++;
+            else if(score <= 200) scoreRanges['101-200']++;
+            else if(score <= 300) scoreRanges['201-300']++;
+            else if(score <= 400) scoreRanges['301-400']++;
+            else scoreRanges['401+']++;
+          });
+        }
+      });
+      
+      drawBar('scoreChart', Object.keys(scoreRanges), Object.values(scoreRanges), 'Rangos de puntaje', 'Cantidad');
+      
+      // Nueva gráfica de tiempo promedio por edad
+      const ageTime = {};
+      list.forEach(p => {
+        if(p.age && p.scores && p.scores.length) {
+          if(!ageTime[p.age]) ageTime[p.age] = {total: 0, count: 0};
+          ageTime[p.age].total += (p.totalTime || 0) / p.scores.length;
+          ageTime[p.age].count++;
+        }
+      });
+      
+      const ageLabels = Object.keys(ageTime).sort((a, b) => a - b);
+      const avgTimes = ageLabels.map(age => (ageTime[age].total / ageTime[age].count).toFixed(1));
+      
+      drawBar('timeChart', ageLabels, avgTimes, 'Edad', 'Tiempo promedio (s)');
+    }
 
-    function escapeHtml(s){ return (s||'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[c])); }
+    function drawBar(id, labels, values, xLabel = '', yLabel = ''){ 
+      const c = document.getElementById(id); 
+      const ctx = c.getContext('2d'); 
+      ctx.clearRect(0, 0, c.width, c.height); 
+      
+      const pad = {l: 28, r: 12, t: 8, b: 28}; 
+      const W = c.width, H = c.height;
+      const max = Math.max(1, ...values); 
+      const bw = (W - pad.l - pad.r) / values.length - 8; 
+      
+      ctx.fillStyle = 'rgba(255,255,255,0.9)'; 
+      ctx.font = '12px system-ui'; 
+      
+      for(let i = 0; i < values.length; i++){ 
+        const v = values[i]; 
+        const h = (v / max) * (H - pad.t - pad.b); 
+        const x0 = pad.l + i * (bw + 8) + 4; 
+        const y0 = H - pad.b - h; 
+        
+        const g = ctx.createLinearGradient(0, y0, 0, H - pad.b); 
+        g.addColorStop(0, 'rgba(25,194,255,0.95)'); 
+        g.addColorStop(1, 'rgba(25,194,255,0.35)'); 
+        
+        ctx.fillStyle = g; 
+        ctx.fillRect(x0, y0, bw, h); 
+        ctx.fillStyle = 'rgba(229,231,235,0.9)'; 
+        ctx.textAlign = 'center'; 
+        ctx.fillText(labels[i], x0 + bw / 2, H - 8); 
+        ctx.fillText(values[i], x0 + bw / 2, y0 - 6); 
+      }
+      
+      // Ejes y etiquetas
+      ctx.fillStyle = 'rgba(255,255,255,0.7)';
+      ctx.textAlign = 'center';
+      ctx.fillText(xLabel, W / 2, H - 5);
+      
+      ctx.save();
+      ctx.translate(10, H / 2);
+      ctx.rotate(-Math.PI / 2);
+      ctx.fillText(yLabel, 0, 0);
+      ctx.restore();
+    }
+
+    function escapeHtml(s){ 
+      return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;','\'':'&#039;'}[c])); 
+    }
 
     // helper: load and save
-    function load(){ try{ return JSON.parse(localStorage.getItem(LS)) || []; }catch{ return []; } }
+    function load(){ try{ return JSON.parse(localStorage.getItem(LS)) || []; } catch{ return []; } }
+
     // reassign players reference
     players = load();
 
     // initial
-    spawnOrbs(); spawnObstacles(); renderDashboard();
+    spawnOrbs(); 
+    spawnObstacles(); 
+    renderDashboard();
+    
     if (isMobile) {
       initJoystick();
     }
 
     // make canvas responsive
-    window.addEventListener('resize', ()=>{ const r = canvas.getBoundingClientRect(); world.w = canvas.width = r.width; world.h = canvas.height = 480; });
+    window.addEventListener('resize', () => { 
+      const r = canvas.getBoundingClientRect(); 
+      world.w = canvas.width = r.width; 
+      world.h = canvas.height = 480; 
+      
+      // Redibujar cuando cambia el tamaño
+      draw();
+    });
 
     // expose renderDashboard to tabs
     window.renderDashboard = renderDashboard;
+
+    // Dibujar el juego inicialmente
+    draw();
 
   </script>
 </body>
