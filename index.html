@@ -502,7 +502,13 @@
     function circle(x,y,r,fill,glow){ const g = ctx.createRadialGradient(x,y,r*0.2,x,y,r*1.8); g.addColorStop(0,glow); g.addColorStop(1,'rgba(0,0,0,0)'); ctx.fillStyle=g; ctx.beginPath(); ctx.arc(x,y,r*1.8,0,Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.fillStyle=fill; ctx.arc(x,y,r,0,Math.PI*2); ctx.fill(); }
 
     // catálogo contact
-    window.showContact = function(el){ if(el.querySelector('.contact')) return; const d=document.createElement('div'); d.className='contact'; d.innerHTML='Tel: <strong>8123836266</strong><br>Email: <strong>thisis.ethernai@gmail.com</strong>'; el.appendChild(d); }
+    window.showContact = function(el){ 
+    if(el.querySelector('.contact')) return; 
+    const d=document.createElement('div'); 
+    d.className='contact'; 
+    d.innerHTML='Tel: <strong>8123836266</strong><br>Email: <strong>thisis.ethernai@gmail.com</strong><br>Instagram: <a href="https://www.instagram.com/ethern_ai?igsh=MTNjc3B1b2RqZGpwNg==" target="_blank">Ethern-ai</a><br>YouTube: <a href="https://www.youtube.com/@Ethern-ai" target="_blank">Ethern-ai</a>'; 
+    el.appendChild(d); 
+}
 
     // Dashboard
     function renderDashboard(){ const list = load(); const kpis = document.getElementById('kpis'); if(!list.length){ kpis.innerHTML='<div style="grid-column:1/-1;color:var(--muted)">No hay registros aún</div>'; document.getElementById('rows').innerHTML=''; document.getElementById('topList').innerHTML=''; return; }
@@ -543,3 +549,4 @@
   </script>
 </body>
 </html>
+
