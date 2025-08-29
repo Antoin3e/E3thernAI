@@ -283,7 +283,7 @@
         </div>
         <div class="cat" data-title="Automatizacion" onclick="showContact(this)">
           <h3>Automatización documental</h3>
-          <p style="color:var(--muted)">OCR y workflows sin papel.</p>
+          <p style="color:var(--muted)">OCR и workflows sin papel.</p>
         </div>
         <div class="cat" data-title="Integracion" onclick="showContact(this)">
           <h3>Integración de datos</h3>
@@ -539,6 +539,7 @@
       lastOrbCollectionTime = Date.now();
     }
 
+    // CORRECCIÓN: Añadir event listener al botón de comenzar
     btnStart.addEventListener('click', ()=>{
       const name = nameIn.value.trim(); 
       const phone = phoneIn.value.trim(); 
