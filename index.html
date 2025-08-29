@@ -393,10 +393,47 @@
     let lastOrbCollectionTime = 0;
 
     // Detectar dispositivo móvil
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
-    if (isMobile) {
-      joystickContainer.style.display = 'block';
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+if (isMobile) {
+  document.getElementById('joystick-container').style.display = 'block'; // Corregido
+}
+
+// ... resto del código ...
+
+// Inicializar joystick si es móvil
+if (isMobile) {
+  initJoystick();
+}
+
+// make canvas responsive - Versión mejorada
+window.addEventListener('resize', () => {
+  const r = canvas.getBoundingClientRect();
+  
+  if (Math.abs(r.width - world.w) > 10) {
+    world.w = canvas.width = r.width;
+    world.h = canvas.height = 480;
+    
+    if (running) {
+      const scaleX = world.w / canvas.width;
+      const scaleY = world.h / canvas.height;
+      
+      player.x *= scaleX;
+      player.y *= scaleY;
+      flame.x *= scaleX;
+      flame.y *= scaleY;
+      
+      orbs.forEach(orb => {
+        orb.x *= scaleX;
+        orb.y *= scaleY;
+      });
     }
+    
+    draw();
+  }
+});
+
+// Dibujar estado inicial del juego
+draw();
 
     // Inicializar joystick
     function initJoystick() {
@@ -1122,3 +1159,4 @@
   </script>
 </body>
 </html>
+
