@@ -2,664 +2,722 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Daniel Segovia - Proyectos de Tecnología</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Exo+2:wght@300;400;500;600;700&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Menú Gourmet | Restaurante Exquisito</title>
     <style>
+        /* Variables y reset */
         :root {
-            --primary-dark: #0d1b2a;
-            --primary: #1b263b;
-            --secondary: #415a77;
-            --accent: #778da9;
-            --accent-alt: #e0e1dd;
-            --text: #e0e1dd;
-            --text-secondary: #c5c6c7;
-            --card-bg: rgba(27, 38, 59, 0.8);
-            --glow: 0 0 10px rgba(119, 141, 169, 0.5), 0 0 20px rgba(119, 141, 169, 0.3);
-            --white: #ffffff;
+            --primary-color: #2c3e50;
+            --accent-color: #c44d34;
+            --light-color: #ecf0f1;
+            --dark-color: #2c3e50;
+            --text-color: #333;
+            --background-color: #f9f9f9;
+            --card-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Exo 2', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
-        
+
         body {
-            background: linear-gradient(135deg, var(--primary-dark), var(--primary));
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-            color: var(--text);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
             overflow-x: hidden;
+            height: 100vh;
             position: relative;
         }
-        
-        /* Partículas de fondo */
-        #particles-js {
+
+        /* Contenedor principal */
+        .app-container {
+            position: relative;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        /* Vista de categorías (pantalla principal) */
+        .categories-view {
             position: absolute;
             width: 100%;
             height: 100%;
-            top: 0;
-            left: 0;
-            z-index: 0;
-        }
-        
-        .business-card {
-            width: 100%;
-            max-width: 1100px;
-            background: rgba(13, 27, 42, 0.9);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: var(--glow);
             display: flex;
             flex-direction: column;
-            position: relative;
-            z-index: 1;
-            backdrop-filter: blur(10px);
-            border: 1px solid var(--accent);
-            transform-style: preserve-3d;
-            perspective: 1000px;
-            transition: transform 0.5s ease;
-        }
-        
-        .card-header {
-            background: linear-gradient(to right, #0d1b2a, #1b263b, #415a77);
-            color: var(--white);
-            padding: 40px 30px;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            border-bottom: 1px solid var(--accent);
-        }
-        
-        .card-header::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, rgba(119, 141, 169, 0.2) 0%, transparent 70%);
-            z-index: 0;
-        }
-        
-        .logo {
-            font-size: 3rem;
-            font-weight: bold;
-            margin-bottom: 15px;
-            letter-spacing: 3px;
-            text-transform: uppercase;
-            font-family: 'Share Tech Mono', monospace;
-            color: var(--accent-alt);
-            text-shadow: 0 0 10px rgba(224, 225, 221, 0.7);
-            position: relative;
-            z-index: 1;
-        }
-        
-        .name {
-            font-size: 2.2rem;
-            margin-bottom: 10px;
-            position: relative;
-            z-index: 1;
-            color: var(--white);
-        }
-        
-        .title {
-            font-size: 1.3rem;
-            opacity: 0.9;
-            position: relative;
-            z-index: 1;
-            color: var(--accent);
-        }
-        
-        .card-body {
-            display: flex;
-            flex-wrap: wrap;
-            padding: 0;
-        }
-        
-        .contact-info {
-            flex: 1;
-            min-width: 300px;
-            padding: 30px;
-            background: var(--card-bg);
-            position: relative;
-            border-right: 1px solid var(--accent);
-        }
-        
-        .services {
-            flex: 2;
-            min-width: 400px;
-            padding: 30px;
-            background: rgba(27, 38, 59, 0.6);
-            position: relative;
-        }
-        
-        .info-item {
-            margin-bottom: 25px;
-            display: flex;
-            align-items: flex-start;
-            transition: transform 0.3s ease;
-        }
-        
-        .info-item:hover {
-            transform: translateX(5px);
-        }
-        
-        .info-item i {
-            font-size: 1.3rem;
-            margin-right: 15px;
-            color: var(--accent);
-            min-width: 25px;
-            padding-top: 3px;
-        }
-        
-        .social-links {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-top: 25px;
-        }
-        
-        .social-links a {
-            display: inline-flex;
             justify-content: center;
             align-items: center;
-            width: 45px;
-            height: 45px;
-            background: rgba(65, 90, 119, 0.2);
-            color: var(--accent);
-            border-radius: 50%;
-            text-decoration: none;
-            transition: all 0.3s ease;
-            border: 1px solid var(--accent);
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .social-links a::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(45deg, var(--accent), transparent);
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .social-links a:hover {
-            transform: translateY(-5px) scale(1.1);
-            box-shadow: var(--glow);
-            background: rgba(119, 141, 169, 0.3);
-            color: var(--white);
-        }
-        
-        .social-links a:hover::before {
-            opacity: 0.3;
-        }
-        
-        .section-title {
-            color: var(--accent-alt);
-            margin-bottom: 25px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--accent);
-            font-size: 1.5rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-        }
-        
-        .section-title::after {
-            content: '';
-            position: absolute;
-            bottom: -2px;
-            left: 0;
-            width: 50px;
-            height: 2px;
-            background: var(--white);
-        }
-        
-        .services-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
-            max-height: 400px;
-            overflow-y: auto;
-            padding: 10px;
-            padding-right: 5px;
-        }
-        
-        /* Scrollbar personalizado */
-        .services-grid::-webkit-scrollbar {
-            width: 6px;
-        }
-        
-        .services-grid::-webkit-scrollbar-track {
-            background: rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-        }
-        
-        .services-grid::-webkit-scrollbar-thumb {
-            background: var(--accent);
-            border-radius: 10px;
-        }
-        
-        .service-item {
-            background: var(--card-bg);
             padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--accent);
-            transform-style: preserve-3d;
+            transition: var(--transition);
+            z-index: 10;
         }
-        
-        .service-item::before {
+
+        .categories-title {
+            font-size: 2rem;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            text-align: center;
+        }
+
+        .categories-carousel {
+            position: relative;
+            width: 100%;
+            height: 70%;
+            perspective: 1000px;
+        }
+
+        .category-card {
+            position: absolute;
+            width: 80%;
+            height: 100%;
+            left: 10%;
+            background-size: cover;
+            background-position: center;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: var(--transition);
+            transform-style: preserve-3d;
+            cursor: pointer;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .category-card::before {
             content: '';
             position: absolute;
             top: 0;
             left: 0;
-            width: 5px;
-            height: 100%;
-            background: linear-gradient(to bottom, var(--accent), var(--accent-alt));
-            transition: width 0.3s ease;
-        }
-        
-        .service-item:hover {
-            transform: translateY(-5px) translateZ(10px);
-            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3), var(--glow);
-        }
-        
-        .service-item:hover::before {
             width: 100%;
-            opacity: 0.1;
-        }
-        
-        .service-title {
-            font-weight: bold;
-            color: var(--accent-alt);
-            margin-bottom: 12px;
-            font-size: 1.1rem;
-            position: relative;
+            height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 60%);
             z-index: 1;
         }
-        
-        .service-item p {
-            color: var(--text-secondary);
+
+        .category-content {
             position: relative;
-            z-index: 1;
+            z-index: 2;
+            padding: 20px;
+            color: white;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
-        
-        .website-link {
-            display: block;
-            text-align: center;
-            margin-top: 25px;
-            padding: 15px;
-            background: linear-gradient(45deg, var(--primary-dark), var(--secondary));
-            color: var(--white);
-            text-decoration: none;
-            border-radius: 8px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            position: relative;
-            overflow: hidden;
-            border: 1px solid var(--accent);
+
+        .category-name {
+            font-size: 1.8rem;
+            margin-bottom: 0.5rem;
         }
-        
-        .website-link::before {
-            content: '';
+
+        .category-desc {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .category-card.active {
+            transform: translateZ(0) scale(1);
+            opacity: 1;
+            z-index: 3;
+        }
+
+        .category-card.inactive {
+            transform: translateZ(-200px) scale(0.8);
+            opacity: 0.5;
+            filter: blur(2px);
+            z-index: 2;
+        }
+
+        .category-card.hidden {
+            opacity: 0;
+            pointer-events: none;
+        }
+
+        /* Vista de lista de platos */
+        .dishes-view {
             position: absolute;
-            top: 0;
-            left: -100%;
             width: 100%;
             height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
+            background: white;
+            padding: 20px;
+            overflow-y: auto;
+            transition: var(--transition);
+            transform: translateY(100%);
+            opacity: 0;
+            z-index: 20;
         }
-        
-        .website-link:hover {
-            background: linear-gradient(45deg, var(--secondary), var(--primary-dark));
-            box-shadow: var(--glow);
-            transform: translateY(-3px);
+
+        .dishes-view.active {
+            transform: translateY(0);
+            opacity: 1;
         }
-        
-        .website-link:hover::before {
-            left: 100%;
-        }
-        
-        /* Botón destacado para ethernai.com */
-        .ether-button {
+
+        .dishes-header {
             display: flex;
-            justify-content: center;
             align-items: center;
-            margin-top: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
         }
-        
-        .ether-button a {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            padding: 15px 30px;
-            background: linear-gradient(45deg, var(--primary), var(--accent));
-            color: var(--white);
-            text-decoration: none;
+
+        .back-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            margin-right: 15px;
+            color: var(--primary-color);
+            cursor: pointer;
+        }
+
+        .dishes-title {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .dishes-list {
+            list-style: none;
+        }
+
+        .dish-item {
+            padding: 15px;
+            margin-bottom: 15px;
+            background: white;
             border-radius: 8px;
-            font-weight: bold;
-            transition: all 0.3s ease;
-            border: 1px solid var(--accent-alt);
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 0 15px rgba(119, 141, 169, 0.4);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        
-        .ether-button a::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.7s ease;
-        }
-        
-        .ether-button a:hover {
-            background: linear-gradient(45deg, var(--accent), var(--primary));
-            box-shadow: 0 0 25px rgba(119, 141, 169, 0.7);
-            transform: translateY(-3px) scale(1.05);
-        }
-        
-        .ether-button a:hover::before {
-            left: 100%;
-        }
-        
-        .ether-button i {
-            margin-right: 10px;
-            font-size: 1.2rem;
-        }
-        
-        /* Animación de pulsación para el logo */
-        @keyframes pulse {
-            0% { text-shadow: 0 0 10px rgba(224, 225, 221, 0.7); }
-            50% { text-shadow: 0 0 20px rgba(224, 225, 221, 0.9), 0 0 30px rgba(224, 225, 221, 0.5); }
-            100% { text-shadow: 0 0 10px rgba(224, 225, 221, 0.7); }
-        }
-        
-        .logo {
-            animation: pulse 3s infinite ease-in-out;
-        }
-        
-        /* Efecto de aparición para elementos */
-        .service-item, .info-item {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            transition: var(--transition);
             opacity: 0;
             transform: translateY(20px);
-            transition: opacity 0.5s ease, transform 0.5s ease;
+            animation: fadeInUp 0.5s forwards;
         }
-        
-        .visible {
+
+        .dish-item:nth-child(1) { animation-delay: 0.1s; }
+        .dish-item:nth-child(2) { animation-delay: 0.2s; }
+        .dish-item:nth-child(3) { animation-delay: 0.3s; }
+        .dish-item:nth-child(4) { animation-delay: 0.4s; }
+        .dish-item:nth-child(5) { animation-delay: 0.5s; }
+
+        @keyframes fadeInUp {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .dish-item:hover, .dish-item:active {
+            transform: translateY(-5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .dish-name {
+            font-size: 1.2rem;
+            margin-bottom: 5px;
+            color: var(--primary-color);
+        }
+
+        .dish-desc {
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .dish-price {
+            font-weight: bold;
+            color: var(--accent-color);
+        }
+
+        /* Vista de detalle del plato */
+        .detail-view {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: white;
+            overflow-y: auto;
+            transition: var(--transition);
+            transform: scale(0.8);
+            opacity: 0;
+            z-index: 30;
+        }
+
+        .detail-view.active {
+            transform: scale(1);
             opacity: 1;
-            transform: translateY(0);
         }
-        
-        @media (max-width: 768px) {
-            .card-body {
-                flex-direction: column;
-            }
-            
-            .contact-info, .services {
-                min-width: 100%;
-            }
-            
-            .contact-info {
-                border-right: none;
-                border-bottom: 1px solid var(--accent);
-            }
-            
-            .services-grid {
-                grid-template-columns: 1fr;
-            }
+
+        .detail-image {
+            width: 100%;
+            height: 40vh;
+            object-fit: cover;
         }
-        
-        /* Efecto de cursor con partículas */
-        .cursor-effect {
-            position: fixed;
-            width: 20px;
-            height: 20px;
-            border-radius: 50%;
-            background: rgba(119, 141, 169, 0.5);
-            box-shadow: 0 0 10px var(--accent), 0 0 20px var(--accent);
-            transform: translate(-50%, -50%);
-            pointer-events: none;
-            z-index: 9999;
-            transition: width 0.3s, height 0.3s;
-            mix-blend-mode: screen;
+
+        .detail-content {
+            padding: 20px;
         }
-        
-        .cursor-effect.follower {
+
+        .detail-header {
+            margin-bottom: 20px;
+        }
+
+        .detail-name {
+            font-size: 1.8rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .detail-price {
+            font-size: 1.2rem;
+            color: var(--accent-color);
+            margin-bottom: 15px;
+        }
+
+        .detail-section {
+            margin-bottom: 20px;
+        }
+
+        .detail-section h3 {
+            font-size: 1.2rem;
+            color: var(--primary-color);
+            margin-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            padding-bottom: 5px;
+        }
+
+        .detail-ingredients {
+            list-style: none;
+        }
+
+        .detail-ingredients li {
+            padding: 5px 0;
+            border-bottom: 1px dotted #eee;
+        }
+
+        .detail-nutrition {
+            display: flex;
+            justify-content: space-between;
+            background: #f9f9f9;
+            padding: 10px 15px;
+            border-radius: 8px;
+        }
+
+        /* Indicadores de navegación */
+        .carousel-indicators {
+            position: absolute;
+            bottom: 20px;
+            left: 0;
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 5;
+        }
+
+        .indicator {
             width: 10px;
             height: 10px;
-            transition: transform 0.3s;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            margin: 0 5px;
+            transition: var(--transition);
         }
-        
-        .cursor-effect.active {
-            width: 30px;
-            height: 30px;
+
+        .indicator.active {
+            background: white;
+            transform: scale(1.2);
+        }
+
+        /* Estados de visibilidad */
+        .hidden {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div id="particles-js"></div>
-    
-    <div class="cursor-effect"></div>
-    <div class="cursor-effect follower"></div>
-    
-    <div class="business-card">
-        <div class="card-header">
-            <div class="logo">ETHERNAI</div>
-            <h1 class="name">Antoine R.</h1>
-            <p class="title">Business Intelligence and Strategy Partner</p>
-        </div>
-        
-        <div class="card-body">
-            <div class="contact-info">
-                <h2 class="section-title">Información de Contacto</h2>
-                
-                <div class="info-item">
-                    <i class="fas fa-phone"></i>
-                    <span>8123836266</span>
-                </div>
-                
-                <div class="info-item">
-                    <i class="fas fa-envelope"></i>
-                    <span>antoine100120@gmail.com</span>
-                </div>
-                
-                <div class="info-item">
-                    <i class="fas fa-briefcase"></i>
-                    <span>Proyectos de Tecnología que Generan valor</span>
-                </div>
-                
-                <div class="social-links">
-                    <a href="https://www.instagram.com/ethern_ai/" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.facebook.com/ethern.ai.official" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.linkedin.com/company/ethern-ai/" title="LinkedIn"><i class="fab fa-linkedin-in"></i></a>
-                    <a href="https://www.youtube.com/@ethern_ai" title="YouTube"><i class="fab fa-youtube"></i></a>
-                </div>
-                
-                <a href="mailto:antoine100120@gmail.com" class="website-link">Contactar por email</a>
-                
-                <!-- Botón destacado para ethernai.com -->
-                <div class="ether-button">
-                    <a href="https://ethernai.com" target="_blank">
-                        <i class="fas fa-globe"></i> Visitar ethernai.com
-                    </a>
-                </div>
+    <div class="app-container">
+        <!-- Vista de categorías (pantalla principal) -->
+        <div class="categories-view" id="categoriesView">
+            <h1 class="categories-title">Nuestro Menú</h1>
+            <div class="categories-carousel" id="categoriesCarousel">
+                <!-- Las categorías se insertarán dinámicamente con JavaScript -->
             </div>
-            
-            <div class="services">
-                <h2 class="section-title">Proyectos de Tecnología</h2>
-                
-                <div class="services-grid">
-                    <div class="service-item">
-                        <div class="service-title">1. Optimización de Logística con IA</div>
-                        <p>Implementación de un sistema que utiliza inteligencia artificial para analizar los datos de entregas, calcular las rutas más eficientes y optimizar la capacidad de carga.</p>
-                    </div>
-                    
-                    <div class="service-item">
-                        <div class="service-title">2. Chatbot de Atención al Cliente con IA Generativa</div>
-                        <p>Desarrollo de un chatbot avanzado que no solo responde preguntas frecuentes, sino que puede interpretar consultas complejas y asistir en el proceso de compra.</p>
-                    </div>
-                    
-                    <div class="service-item">
-                        <div class="service-title">3. Automatización de Procesos Administrativos (RPA)</div>
-                        <p>Automatización de tareas administrativas repetitivas como la entrada de datos en facturas, la conciliación bancaria o la generación de reportes financieros.</p>
-                    </div>
-                    
-                    <div class="service-item">
-                        <div class="service-title">4. Plataforma de Análisis Predictivo para Ventas</div>
-                        <p>Herramienta de IA que analiza los datos históricos de ventas y clientes para predecir tendencias e identificar a los clientes con mayor probabilidad de comprar.</p>
-                    </div>
-                    
-                    <div class="service-item">
-                        <div class="service-title">5. Sistema de Gestión de Inventario con IA</div>
-                        <p>Solución que utiliza IA para pronosticar la demanda de productos, optimizar los niveles de inventario y generar pedidos automáticos.</p>
-                    </div>
-                    
-                    <div class="service-item">
-                        <div class="service-title">6. Automatización de Campañas de Marketing con IA</div>
-                        <p>Sistema que utiliza IA para segmentar audiencias de manera automática, crear contenido publicitario dinámico y optimizar el presupuesto en tiempo real.</p>
-                    </div>
-                    
-                    <div class="service-item">
-                        <div class="service-title">7. Asistente Virtual con IA para RRHH</div>
-                        <p>Asistente que automatiza la incorporación de nuevos empleados, gestiona las solicitudes de vacaciones y responde a preguntas comunes sobre políticas internas.</p>
-                    </div>
-                    
-                    <div class="service-item">
-                        <div class="service-title">8. Plataforma de Gestión de Documentos con IA</div>
-                        <p>Solución que escanea, clasifica y archiva documentos de manera inteligente, haciéndolos completamente buscables y accesibles desde cualquier lugar.</p>
-                    </div>
-                    
-                    <div class="service-item">
-                        <div class="service-title">9. Solución de Ciberseguridad Proactiva con IA</div>
-                        <p>Sistema de seguridad que utiliza IA para detectar comportamientos inusuales en la red y predecir posibles ataques antes de que ocurran.</p>
-                    </div>
-                    
-                    <div class="service-item">
-                        <div class="service-title">10. Desarrollo de una Aplicación Interna de Logística</div>
-                        <p>Creación de una app móvil a la medida para conductores o repartidores, que les permita escanear paquetes y actualizar el estado de las entregas.</p>
+            <div class="carousel-indicators" id="carouselIndicators">
+                <!-- Los indicadores se insertarán dinámicamente -->
+            </div>
+        </div>
+
+        <!-- Vista de lista de platos -->
+        <div class="dishes-view" id="dishesView">
+            <div class="dishes-header">
+                <button class="back-button" id="backFromDishes">←</button>
+                <h2 class="dishes-title" id="dishesCategoryTitle">Platos</h2>
+            </div>
+            <ul class="dishes-list" id="dishesList">
+                <!-- Los platos se insertarán dinámicamente -->
+            </ul>
+        </div>
+
+        <!-- Vista de detalle del plato -->
+        <div class="detail-view" id="detailView">
+            <img src="" alt="Plato" class="detail-image" id="detailImage">
+            <div class="detail-content">
+                <div class="detail-header">
+                    <h2 class="detail-name" id="detailName">Nombre del plato</h2>
+                    <div class="detail-price" id="detailPrice">$0.00</div>
+                    <button class="back-button" id="backFromDetail">← Volver</button>
+                </div>
+                <div class="detail-section">
+                    <h3>Descripción</h3>
+                    <p id="detailDescription">Descripción del plato.</p>
+                </div>
+                <div class="detail-section">
+                    <h3>Ingredientes</h3>
+                    <ul class="detail-ingredients" id="detailIngredients">
+                        <!-- Ingredientes se insertarán dinámicamente -->
+                    </ul>
+                </div>
+                <div class="detail-section">
+                    <h3>Información Nutricional</h3>
+                    <div class="detail-nutrition" id="detailNutrition">
+                        <!-- Información nutricional se insertará dinámicamente -->
                     </div>
                 </div>
             </div>
         </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
     <script>
-        // Inicialización de partículas.js
-        document.addEventListener('DOMContentLoaded', function() {
-            particlesJS('particles-js', {
-                particles: {
-                    number: { value: 80, density: { enable: true, value_area: 800 } },
-                    color: { value: "#778da9" },
-                    shape: { type: "circle" },
-                    opacity: { value: 0.5, random: true },
-                    size: { value: 3, random: true },
-                    line_linked: {
-                        enable: true,
-                        distance: 150,
-                        color: "#778da9",
-                        opacity: 0.4,
-                        width: 1
-                    },
-                    move: {
-                        enable: true,
-                        speed: 2,
-                        direction: "none",
-                        random: true,
-                        out_mode: "out"
-                    }
+        // Datos del menú (simulando una base de datos)
+        const menuData = {
+            categories: [
+                {
+                    id: 'starters',
+                    name: 'Entradas',
+                    description: 'Aperitivos para comenzar la experiencia',
+                    image: 'https://images.unsplash.com/photo-1605522867157-380f6e1eeda8?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                    dishes: [
+                        {
+                            id: 'bruschetta',
+                            name: 'Bruschetta Italiana',
+                            description: 'Pan tostado con tomate fresco, albahaca y aceite de oliva virgen extra',
+                            price: '$8.99',
+                            image: 'https://images.unsplash.com/photo-1572695157363-776a8028ce4b?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                            ingredients: ['Pan rústico', 'Tomate cherry', 'Albahaca fresca', 'Ajo', 'Aceite de oliva virgen extra', 'Sal marina'],
+                            nutrition: '250 calorías'
+                        },
+                        {
+                            id: 'ceviche',
+                            name: 'Ceviche de Pescado',
+                            description: 'Pescado blanco marinado en limón con cebolla morada, cilantro y ají limo',
+                            price: '$12.99',
+                            image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                            ingredients: ['Pescado blanco fresco', 'Limón verde', 'Cebolla morada', 'Cilantro', 'Ají limo', 'Camote', 'Maíz tostado'],
+                            nutrition: '320 calorías'
+                        },
+                        {
+                            id: 'tartar',
+                            name: 'Tartar de Atún',
+                            description: 'Atún de aleta amarilla finamente picado con aguacate y salsa de soja',
+                            price: '$14.99',
+                            image: 'https://images.unsplash.com/photo-1553621042-f6e147245754?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                            ingredients: ['Atún de aleta amarilla', 'Aguacate Hass', 'Chalotas', 'Alcaparras', 'Salsa de soja', 'Sésamo', 'Aceite de sésamo'],
+                            nutrition: '290 calorías'
+                        }
+                    ]
                 },
-                interactivity: {
-                    detect_on: "canvas",
-                    events: {
-                        onhover: { enable: true, mode: "repulse" },
-                        onclick: { enable: true, mode: "push" }
-                    }
+                {
+                    id: 'mains',
+                    name: 'Platos Principales',
+                    description: 'Nuestras especialidades culinarias',
+                    image: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                    dishes: [
+                        {
+                            id: 'risotto',
+                            name: 'Risotto de Hongos',
+                            description: 'Arroz arbóreo cremoso con hongos porcini y parmesano reggiano',
+                            price: '$18.99',
+                            image: 'https://images.unsplash.com/photo-1476124369491-e7addf5db371?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                            ingredients: ['Arroz arbóreo', 'Hongos porcini', 'Caldo de vegetales', 'Vino blanco', 'Cebolla', 'Queso parmesano', 'Mantequilla'],
+                            nutrition: '480 calorías'
+                        },
+                        {
+                            id: 'salmon',
+                            name: 'Salmón a la Parrilla',
+                            description: 'Salmón salvaje con costra de hierbas, puré de batata y espárragos',
+                            price: '$22.99',
+                            image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                            ingredients: ['Salmón salvaje', 'Eneldo', 'Perejil', 'Ajo', 'Batata', 'Espárragos trigueros', 'Aceite de oliva'],
+                            nutrition: '520 calorías'
+                        },
+                        {
+                            id: 'pasta',
+                            name: 'Pasta Casera Trufada',
+                            description: 'Tagliatelle fresco con salsa de trufa negra y champiñones silvestres',
+                            price: '$19.99',
+                            image: 'https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                            ingredients: ['Harina de trigo', 'Huevos', 'Trufa negra', 'Champiñones silvestres', 'Crema de leche', 'Mantequilla', 'Queso parmesano'],
+                            nutrition: '560 calorías'
+                        }
+                    ]
+                },
+                {
+                    id: 'desserts',
+                    name: 'Postres',
+                    description: 'Dulces finales para terminar con broche de oro',
+                    image: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                    dishes: [
+                        {
+                            id: 'souffle',
+                            name: 'Soufflé de Chocolate',
+                            description: 'Soufflé aireado de chocolate amargo con centro fundido y helado de vainilla',
+                            price: '$9.99',
+                            image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                            ingredients: ['Chocolate amargo 70%', 'Huevos', 'Azúcar', 'Mantequilla', 'Harina', 'Helado de vainilla'],
+                            nutrition: '380 calorías'
+                        },
+                        {
+                            id: 'creme',
+                            name: 'Crème Brûlée',
+                            description: 'Clásica crema catalana con crujiente capa de caramelo y frutos rojos',
+                            price: '$8.99',
+                            image: 'https://images.unsplash.com/photo-1535254979300-9736941845ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                            ingredients: ['Yemas de huevo', 'Crema de leche', 'Vaina de vainilla', 'Azúcar', 'Frutos rojos', 'Azúcar mascabo'],
+                            nutrition: '320 calorías'
+                        },
+                        {
+                            id: 'tiramisu',
+                            name: 'Tiramisú Clásico',
+                            description: 'Capas de bizcocho de soletilla empapado en café y crema de mascarpone',
+                            price: '$10.99',
+                            image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                            ingredients: ['Queso mascarpone', 'Huevos', 'Bizcochos de soletilla', 'Café espresso', 'Cacao en polvo', 'Vino Marsala'],
+                            nutrition: '420 calorías'
+                        }
+                    ]
+                },
+                {
+                    id: 'drinks',
+                    name: 'Bebidas',
+                    description: 'Refrescantes acompañamientos para su comida',
+                    image: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                    dishes: [
+                        {
+                            id: 'mojito',
+                            name: 'Mojito Clásico',
+                            description: 'Ron blanco, hierbabuena, lima, azúcar y soda',
+                            price: '$8.99',
+                            image: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                            ingredients: ['Ron blanco', 'Hierbabuena fresca', 'Lima', 'Azúcar moreno', 'Soda', 'Hielo'],
+                            nutrition: '180 calorías'
+                        },
+                        {
+                            id: 'sangria',
+                            name: 'Sangría Española',
+                            description: 'Vino tinto macerado con frutas de temporada y un toque de brandy',
+                            price: '$12.99',
+                            image: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                            ingredients: ['Vino tinto', 'Naranja', 'Limón', 'Manzana', 'Melocotón', 'Brandy', 'Canela'],
+                            nutrition: '200 calorías'
+                        },
+                        {
+                            id: 'limonada',
+                            name: 'Limonada de Lavanda',
+                            description: 'Limonada casera con infusión de lavanda y miel de flores',
+                            price: '$6.99',
+                            image: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
+                            ingredients: ['Limones frescos', 'Lavanda', 'Miel', 'Agua con gas', 'Hielo'],
+                            nutrition: '120 calorías'
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Variables globales
+        let currentCategoryIndex = 0;
+        let currentDishes = [];
+        let startX = 0;
+        let endX = 0;
+
+        // Elementos del DOM
+        const categoriesView = document.getElementById('categoriesView');
+        const categoriesCarousel = document.getElementById('categoriesCarousel');
+        const carouselIndicators = document.getElementById('carouselIndicators');
+        const dishesView = document.getElementById('dishesView');
+        const dishesCategoryTitle = document.getElementById('dishesCategoryTitle');
+        const dishesList = document.getElementById('dishesList');
+        const detailView = document.getElementById('detailView');
+        const detailImage = document.getElementById('detailImage');
+        const detailName = document.getElementById('detailName');
+        const detailPrice = document.getElementById('detailPrice');
+        const detailDescription = document.getElementById('detailDescription');
+        const detailIngredients = document.getElementById('detailIngredients');
+        const detailNutrition = document.getElementById('detailNutrition');
+        const backFromDishes = document.getElementById('backFromDishes');
+        const backFromDetail = document.getElementById('backFromDetail');
+
+        // Inicializar la aplicación
+        function initApp() {
+            renderCategories();
+            setupEventListeners();
+        }
+
+        // Renderizar las categorías en el carrusel
+        function renderCategories() {
+            categoriesCarousel.innerHTML = '';
+            carouselIndicators.innerHTML = '';
+            
+            menuData.categories.forEach((category, index) => {
+                // Crear tarjeta de categoría
+                const categoryCard = document.createElement('div');
+                categoryCard.className = `category-card ${index === currentCategoryIndex ? 'active' : index === currentCategoryIndex - 1 || index === currentCategoryIndex + 1 ? 'inactive' : 'hidden'}`;
+                categoryCard.style.backgroundImage = `url(${category.image})`;
+                categoryCard.dataset.index = index;
+                
+                const categoryContent = document.createElement('div');
+                categoryContent.className = 'category-content';
+                categoryContent.innerHTML = `
+                    <h3 class="category-name">${category.name}</h3>
+                    <p class="category-desc">${category.description}</p>
+                `;
+                
+                categoryCard.appendChild(categoryContent);
+                categoriesCarousel.appendChild(categoryCard);
+                
+                // Crear indicador
+                const indicator = document.createElement('div');
+                indicator.className = `indicator ${index === currentCategoryIndex ? 'active' : ''}`;
+                indicator.dataset.index = index;
+                carouselIndicators.appendChild(indicator);
+            });
+        }
+
+        // Configurar event listeners
+        function setupEventListeners() {
+            // Navegación por categorías (tap)
+            categoriesCarousel.addEventListener('click', (e) => {
+                const categoryCard = e.target.closest('.category-card');
+                if (categoryCard) {
+                    const index = parseInt(categoryCard.dataset.index);
+                    showDishesView(index);
                 }
             });
+
+            // Navegación por swipe
+            categoriesCarousel.addEventListener('touchstart', (e) => {
+                startX = e.touches[0].clientX;
+            });
+
+            categoriesCarousel.addEventListener('touchend', (e) => {
+                endX = e.changedTouches[0].clientX;
+                handleSwipe();
+            });
+
+            // Botones de retroceso
+            backFromDishes.addEventListener('click', () => {
+                hideDishesView();
+            });
+
+            backFromDetail.addEventListener('click', () => {
+                hideDetailView();
+            });
+        }
+
+        // Manejar gesto de swipe
+        function handleSwipe() {
+            const swipeThreshold = 50;
+            const diffX = startX - endX;
             
-            // Efecto de cursor personalizado
-            const cursor = document.querySelector('.cursor-effect');
-            const cursorFollower = document.querySelector('.cursor-effect.follower');
-            
-            document.addEventListener('mousemove', (e) => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
+            if (Math.abs(diffX) > swipeThreshold) {
+                if (diffX > 0 && currentCategoryIndex < menuData.categories.length - 1) {
+                    // Swipe izquierda
+                    currentCategoryIndex++;
+                } else if (diffX < 0 && currentCategoryIndex > 0) {
+                    // Swipe derecha
+                    currentCategoryIndex--;
+                }
                 
-                setTimeout(() => {
-                    cursorFollower.style.left = e.clientX + 'px';
-                    cursorFollower.style.top = e.clientY + 'px';
-                }, 100);
+                renderCategories();
+            }
+        }
+
+        // Mostrar vista de platos
+        function showDishesView(categoryIndex) {
+            currentDishes = menuData.categories[categoryIndex].dishes;
+            dishesCategoryTitle.textContent = menuData.categories[categoryIndex].name;
+            
+            // Renderizar lista de platos
+            dishesList.innerHTML = '';
+            currentDishes.forEach((dish, index) => {
+                const dishItem = document.createElement('li');
+                dishItem.className = 'dish-item';
+                dishItem.innerHTML = `
+                    <h3 class="dish-name">${dish.name}</h3>
+                    <p class="dish-desc">${dish.description}</p>
+                    <div class="dish-price">${dish.price}</div>
+                `;
+                dishItem.dataset.index = index;
+                dishesList.appendChild(dishItem);
             });
             
-            document.addEventListener('mousedown', () => {
-                cursor.classList.add('active');
-            });
-            
-            document.addEventListener('mouseup', () => {
-                cursor.classList.remove('active');
-            });
-            
-            // Animación de aparición de elementos al hacer scroll
-            const observerOptions = {
-                root: null,
-                rootMargin: '0px',
-                threshold: 0.1
-            };
-            
-            const observer = new IntersectionObserver((entries) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('visible');
-                    }
+            // Añadir event listeners a los elementos de la lista
+            const dishItems = dishesList.querySelectorAll('.dish-item');
+            dishItems.forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const index = parseInt(item.dataset.index);
+                    showDetailView(index);
                 });
-            }, observerOptions);
-            
-            document.querySelectorAll('.service-item, .info-item').forEach(item => {
-                observer.observe(item);
             });
             
-            // Efecto de parallax en la tarjeta
-            const card = document.querySelector('.business-card');
+            // Mostrar vista con animación
+            categoriesView.classList.add('hidden');
+            dishesView.classList.add('active');
+        }
+
+        // Ocultar vista de platos
+        function hideDishesView() {
+            dishesView.classList.remove('active');
+            setTimeout(() => {
+                categoriesView.classList.remove('hidden');
+            }, 300);
+        }
+
+        // Mostrar vista de detalle
+        function showDetailView(dishIndex) {
+            const dish = currentDishes[dishIndex];
             
-            document.addEventListener('mousemove', (e) => {
-                const xAxis = (window.innerWidth / 2 - e.pageX) / 25;
-                const yAxis = (window.innerHeight / 2 - e.pageY) / 25;
-                card.style.transform = `rotateY(${xAxis}deg) rotateX(${yAxis}deg)`;
+            // Llenar datos del plato
+            detailImage.src = dish.image;
+            detailName.textContent = dish.name;
+            detailPrice.textContent = dish.price;
+            detailDescription.textContent = dish.description;
+            
+            // Llenar ingredientes
+            detailIngredients.innerHTML = '';
+            dish.ingredients.forEach(ingredient => {
+                const li = document.createElement('li');
+                li.textContent = ingredient;
+                detailIngredients.appendChild(li);
             });
             
-            // Resetear la transformación cuando el ratón sale de la tarjeta
-            card.addEventListener('mouseleave', () => {
-                card.style.transform = 'rotateY(0deg) rotateX(0deg)';
-                card.style.transition = 'transform 0.5s ease';
-            });
+            // Llenar información nutricional
+            detailNutrition.textContent = dish.nutrition;
             
-            card.addEventListener('mouseenter', () => {
-                card.style.transition = 'none';
-            });
-        });
+            // Mostrar vista con animación
+            dishesView.classList.remove('active');
+            setTimeout(() => {
+                detailView.classList.add('active');
+            }, 300);
+        }
+
+        // Ocultar vista de detalle
+        function hideDetailView() {
+            detailView.classList.remove('active');
+            setTimeout(() => {
+                dishesView.classList.add('active');
+            }, 300);
+        }
+
+        // Inicializar la aplicación cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', initApp);
     </script>
 </body>
 </html>
