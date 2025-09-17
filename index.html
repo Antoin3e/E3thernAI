@@ -2,620 +2,601 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Menú Gourmet | Restaurante Exquisito</title>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* Variables y reset */
+        /* Variables de colores y estilos */
         :root {
-            --primary-color: #2c3e50;
-            --accent-color: #c44d34;
-            --light-color: #ecf0f1;
-            --dark-color: #2c3e50;
-            --text-color: #333;
-            --background-color: #f9f9f9;
-            --card-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --color-primary: #2c3e50;
+            --color-secondary: #c19a6b;
+            --color-accent: #e74c3c;
+            --color-light: #ecf0f1;
+            --color-dark: #2c3e50;
+            --color-background: #f9f9f9;
+            --color-text: #333333;
+            --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.1);
+            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.15);
+            --transition: all 0.3s ease;
+            --border-radius: 8px;
         }
 
+        /* Reset y estilos base */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--background-color);
-            color: var(--text-color);
+            font-family: 'Playfair Display', serif;
+            background-color: var(--color-background);
+            color: var(--color-text);
             line-height: 1.6;
             overflow-x: hidden;
-            height: 100vh;
-            position: relative;
         }
 
         /* Contenedor principal */
-        .app-container {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            overflow: hidden;
-        }
-
-        /* Vista de categorías (pantalla principal) */
-        .categories-view {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
             padding: 20px;
-            transition: var(--transition);
-            z-index: 10;
         }
 
-        .categories-title {
-            font-size: 2rem;
-            margin-bottom: 2rem;
-            color: var(--primary-color);
+        /* Encabezado */
+        header {
             text-align: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--color-primary);
+            margin-bottom: 10px;
+            letter-spacing: 2px;
+        }
+
+        .tagline {
+            font-style: italic;
+            color: var(--color-secondary);
+            font-size: 1.2rem;
+        }
+
+        /* Vista de categorías (carrusel) */
+        .categories-container {
+            position: relative;
+            height: 500px;
+            perspective: 1000px;
+            margin-bottom: 50px;
         }
 
         .categories-carousel {
             position: relative;
             width: 100%;
-            height: 70%;
-            perspective: 1000px;
-        }
-
-        .category-card {
-            position: absolute;
-            width: 80%;
             height: 100%;
-            left: 10%;
-            background-size: cover;
-            background-position: center;
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: var(--card-shadow);
-            transition: var(--transition);
             transform-style: preserve-3d;
-            cursor: pointer;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-end;
+            transition: transform 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67);
         }
 
-        .category-card::before {
-            content: '';
+        .category {
             position: absolute;
-            top: 0;
-            left: 0;
+            width: 300px;
+            height: 400px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: var(--shadow-soft);
+            left: 50%;
+            top: 50%;
+            transform: translate(-50%, -50%) rotateY(0deg) scale(0.8);
+            opacity: 0.6;
+        }
+
+        .category.active {
+            transform: translate(-50%, -50%) rotateY(0deg) scale(1);
+            opacity: 1;
+            z-index: 10;
+            box-shadow: var(--shadow-medium);
+        }
+
+        .category-left {
+            transform: translate(-150%, -50%) rotateY(30deg) scale(0.8);
+        }
+
+        .category-right {
+            transform: translate(50%, -50%) rotateY(-30deg) scale(0.8);
+        }
+
+        .category-bg {
+            position: absolute;
             width: 100%;
             height: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 60%);
-            z-index: 1;
+            background-size: cover;
+            background-position: center;
+            transition: var(--transition);
         }
 
         .category-content {
-            position: relative;
-            z-index: 2;
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
             padding: 20px;
+            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
             color: white;
-            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            text-align: center;
         }
 
-        .category-name {
+        .category-title {
             font-size: 1.8rem;
-            margin-bottom: 0.5rem;
+            margin-bottom: 10px;
         }
 
         .category-desc {
             font-size: 0.9rem;
-            opacity: 0.9;
-        }
-
-        .category-card.active {
-            transform: translateZ(0) scale(1);
-            opacity: 1;
-            z-index: 3;
-        }
-
-        .category-card.inactive {
-            transform: translateZ(-200px) scale(0.8);
-            opacity: 0.5;
-            filter: blur(2px);
-            z-index: 2;
-        }
-
-        .category-card.hidden {
             opacity: 0;
-            pointer-events: none;
-        }
-
-        /* Vista de lista de platos */
-        .dishes-view {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: white;
-            padding: 20px;
-            overflow-y: auto;
+            max-height: 0;
             transition: var(--transition);
-            transform: translateY(100%);
-            opacity: 0;
-            z-index: 20;
         }
 
-        .dishes-view.active {
-            transform: translateY(0);
+        .category.active .category-desc {
             opacity: 1;
+            max-height: 100px;
         }
 
-        .dishes-header {
+        /* Navegación de categorías */
+        .category-nav {
             display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-bottom: 40px;
+        }
+
+        .nav-dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background-color: var(--color-secondary);
+            opacity: 0.5;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .nav-dot.active {
+            opacity: 1;
+            transform: scale(1.2);
+        }
+
+        /* Vista de menú detallado */
+        .menu-detail {
+            display: none;
+            padding: 20px;
+        }
+
+        .menu-header {
+            display: flex;
+            justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #eee;
+            margin-bottom: 30px;
         }
 
         .back-button {
-            background: none;
+            background: var(--color-primary);
+            color: white;
             border: none;
-            font-size: 1.5rem;
-            margin-right: 15px;
-            color: var(--primary-color);
+            padding: 10px 20px;
+            border-radius: var(--border-radius);
             cursor: pointer;
+            font-family: inherit;
+            transition: var(--transition);
         }
 
-        .dishes-title {
-            font-size: 1.5rem;
-            color: var(--primary-color);
+        .back-button:hover {
+            background: var(--color-secondary);
         }
 
-        .dishes-list {
-            list-style: none;
+        .menu-title {
+            font-size: 2.5rem;
+            color: var(--color-primary);
         }
 
-        .dish-item {
-            padding: 15px;
-            margin-bottom: 15px;
+        .dishes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .dish-card {
             background: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
             transition: var(--transition);
             opacity: 0;
             transform: translateY(20px);
-            animation: fadeInUp 0.5s forwards;
         }
 
-        .dish-item:nth-child(1) { animation-delay: 0.1s; }
-        .dish-item:nth-child(2) { animation-delay: 0.2s; }
-        .dish-item:nth-child(3) { animation-delay: 0.3s; }
-        .dish-item:nth-child(4) { animation-delay: 0.4s; }
-        .dish-item:nth-child(5) { animation-delay: 0.5s; }
+        .dish-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
+        .dish-card:hover {
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-medium);
+        }
+
+        .dish-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .dish-content {
+            padding: 20px;
+        }
+
+        .dish-title {
+            font-size: 1.4rem;
+            margin-bottom: 10px;
+            color: var(--color-primary);
+        }
+
+        .dish-desc {
+            font-size: 0.9rem;
+            margin-bottom: 15px;
+            color: #666;
+        }
+
+        .dish-info {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            color: var(--color-secondary);
+        }
+
+        /* Modal de detalle del plato */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal-content {
+            background: white;
+            width: 90%;
+            max-width: 800px;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            transform: scale(0.9);
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active .modal-content {
+            transform: scale(1);
+        }
+
+        .modal-header {
+            position: relative;
+        }
+
+        .modal-image {
+            width: 100%;
+            height: 300px;
+            object-fit: cover;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.8);
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            font-size: 1.2rem;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            background: white;
+        }
+
+        .modal-body {
+            padding: 30px;
+        }
+
+        .modal-title {
+            font-size: 2rem;
+            margin-bottom: 15px;
+            color: var(--color-primary);
+        }
+
+        .modal-desc {
+            margin-bottom: 20px;
+            font-size: 1.1rem;
+            line-height: 1.6;
+        }
+
+        .modal-ingredients {
+            margin-bottom: 20px;
+        }
+
+        .modal-ingredients h4, .modal-nutrition h4 {
+            font-size: 1.2rem;
+            margin-bottom: 10px;
+            color: var(--color-primary);
+        }
+
+        .ingredients-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .ingredient-tag {
+            background: var(--color-light);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+        }
+
+        .modal-nutrition {
+            background: var(--color-light);
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+
+        /* Animaciones */
         @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
             to {
                 opacity: 1;
                 transform: translateY(0);
             }
         }
 
-        .dish-item:hover, .dish-item:active {
-            transform: translateY(-5px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        .fade-in-up {
+            animation: fadeInUp 0.6s ease forwards;
         }
 
-        .dish-name {
-            font-size: 1.2rem;
-            margin-bottom: 5px;
-            color: var(--primary-color);
-        }
-
-        .dish-desc {
-            font-size: 0.9rem;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .dish-price {
-            font-weight: bold;
-            color: var(--accent-color);
-        }
-
-        /* Vista de detalle del plato */
-        .detail-view {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: white;
-            overflow-y: auto;
-            transition: var(--transition);
-            transform: scale(0.8);
-            opacity: 0;
-            z-index: 30;
-        }
-
-        .detail-view.active {
-            transform: scale(1);
-            opacity: 1;
-        }
-
-        .detail-image {
-            width: 100%;
-            height: 40vh;
-            object-fit: cover;
-        }
-
-        .detail-content {
-            padding: 20px;
-        }
-
-        .detail-header {
-            margin-bottom: 20px;
-        }
-
-        .detail-name {
-            font-size: 1.8rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-        }
-
-        .detail-price {
-            font-size: 1.2rem;
-            color: var(--accent-color);
-            margin-bottom: 15px;
-        }
-
-        .detail-section {
-            margin-bottom: 20px;
-        }
-
-        .detail-section h3 {
-            font-size: 1.2rem;
-            color: var(--primary-color);
-            margin-bottom: 10px;
-            border-bottom: 1px solid #eee;
-            padding-bottom: 5px;
-        }
-
-        .detail-ingredients {
-            list-style: none;
-        }
-
-        .detail-ingredients li {
-            padding: 5px 0;
-            border-bottom: 1px dotted #eee;
-        }
-
-        .detail-nutrition {
-            display: flex;
-            justify-content: space-between;
-            background: #f9f9f9;
-            padding: 10px 15px;
-            border-radius: 8px;
-        }
-
-        /* Indicadores de navegación */
-        .carousel-indicators {
-            position: absolute;
-            bottom: 20px;
-            left: 0;
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            z-index: 5;
-        }
-
-        .indicator {
-            width: 10px;
-            height: 10px;
-            border-radius: 50%;
-            background: rgba(255,255,255,0.5);
-            margin: 0 5px;
-            transition: var(--transition);
-        }
-
-        .indicator.active {
-            background: white;
-            transform: scale(1.2);
-        }
-
-        /* Botones de navegación */
-        .nav-button {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-            background: rgba(255, 255, 255, 0.7);
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 1.2rem;
-            color: var(--primary-color);
-            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-            z-index: 5;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .nav-button:hover {
-            background: white;
-            transform: translateY(-50%) scale(1.1);
-        }
-
-        .nav-button.prev {
-            left: 5px;
-        }
-
-        .nav-button.next {
-            right: 5px;
-        }
-
-        /* Estados de visibilidad */
-        .hidden {
-            display: none;
-        }
-
-        /* Mejoras para móviles */
+        /* Responsive */
         @media (max-width: 768px) {
-            .categories-title {
-                font-size: 1.8rem;
-                margin-bottom: 1.5rem;
+            .categories-container {
+                height: 400px;
             }
             
-            .category-name {
-                font-size: 1.5rem;
+            .category {
+                width: 250px;
+                height: 350px;
             }
             
-            .nav-button {
-                width: 35px;
-                height: 35px;
-                font-size: 1rem;
+            .dishes-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .modal-content {
+                width: 95%;
             }
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Vista de categorías (pantalla principal) -->
-        <div class="categories-view" id="categoriesView">
-            <h1 class="categories-title">Nuestro Menú</h1>
-            <div class="categories-carousel" id="categoriesCarousel">
-                <!-- Las categorías se insertarán dinámicamente con JavaScript -->
+    <div class="container">
+        <!-- Encabezado -->
+        <header>
+            <div class="logo">RESTAURANTE EXQUISITO</div>
+            <div class="tagline">Experiencia culinaria de alta gama</div>
+        </header>
+
+        <!-- Vista de categorías -->
+        <div id="categories-view">
+            <div class="categories-container">
+                <div class="categories-carousel">
+                    <!-- Las categorías se generarán dinámicamente con JavaScript -->
+                </div>
             </div>
-            <div class="carousel-indicators" id="carouselIndicators">
-                <!-- Los indicadores se insertarán dinámicamente -->
+            <div class="category-nav">
+                <!-- Los puntos de navegación se generarán dinámicamente con JavaScript -->
             </div>
-            <button class="nav-button prev" id="prevButton">
-                <i class="fas fa-chevron-left"></i>
-            </button>
-            <button class="nav-button next" id="nextButton">
-                <i class="fas fa-chevron-right"></i>
-            </button>
         </div>
 
-        <!-- Vista de lista de platos -->
-        <div class="dishes-view" id="dishesView">
-            <div class="dishes-header">
-                <button class="back-button" id="backFromDishes">←</button>
-                <h2 class="dishes-title" id="dishesCategoryTitle">Platos</h2>
+        <!-- Vista de menú detallado -->
+        <div id="menu-detail" class="menu-detail">
+            <div class="menu-header">
+                <button class="back-button">← Volver</button>
+                <h2 class="menu-title"></h2>
             </div>
-            <ul class="dishes-list" id="dishesList">
-                <!-- Los platos se insertarán dinámicamente -->
-            </ul>
+            <div class="dishes-grid">
+                <!-- Los platos se generarán dinámicamente con JavaScript -->
+            </div>
         </div>
+    </div>
 
-        <!-- Vista de detalle del plato -->
-        <div class="detail-view" id="detailView">
-            <img src="" alt="Plato" class="detail-image" id="detailImage">
-            <div class="detail-content">
-                <div class="detail-header">
-                    <h2 class="detail-name" id="detailName">Nombre del plato</h2>
-                    <div class="detail-price" id="detailPrice">$0.00</div>
-                    <button class="back-button" id="backFromDetail">← Volver</button>
+    <!-- Modal de detalle del plato -->
+    <div class="modal-overlay" id="dish-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <img class="modal-image" src="" alt="">
+                <div class="modal-close">×</div>
+            </div>
+            <div class="modal-body">
+                <h3 class="modal-title"></h3>
+                <p class="modal-desc"></p>
+                <div class="modal-ingredients">
+                    <h4>Ingredientes</h4>
+                    <div class="ingredients-list"></div>
                 </div>
-                <div class="detail-section">
-                    <h3>Descripción</h3>
-                    <p id="detailDescription">Descripción del plato.</p>
-                </div>
-                <div class="detail-section">
-                    <h3>Ingredientes</h3>
-                    <ul class="detail-ingredients" id="detailIngredients">
-                        <!-- Ingredientes se insertarán dinámicamente -->
-                    </ul>
-                </div>
-                <div class="detail-section">
-                    <h3>Información Nutricional</h3>
-                    <div class="detail-nutrition" id="detailNutrition">
-                        <!-- Información nutricional se insertará dinámicamente -->
-                    </div>
+                <div class="modal-nutrition">
+                    <h4>Información Nutricional</h4>
+                    <p class="calories"></p>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Datos del menú (simulando una base de datos)
+        // Datos del menú (normalmente vendrían de una base de datos)
         const menuData = {
-            categories: [
-                {
-                    id: 'starters',
-                    name: 'Entradas',
-                    description: 'Aperitivos para comenzar la experiencia',
-                    image: 'https://images.unsplash.com/photo-1605522867157-380f6e1eeda8?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                    dishes: [
-                        {
-                            id: 'bruschetta',
-                            name: 'Bruschetta Italiana',
-                            description: 'Pan tostado con tomate fresco, albahaca y aceite de oliva virgen extra',
-                            price: '$8.99',
-                            image: 'https://images.unsplash.com/photo-1572695157363-776a8028ce4b?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                            ingredients: ['Pan rústico', 'Tomate cherry', 'Albahaca fresca', 'Ajo', 'Aceite de oliva virgen extra', 'Sal marina'],
-                            nutrition: '250 calorías'
-                        },
-                        {
-                            id: 'ceviche',
-                            name: 'Ceviche de Pescado',
-                            description: 'Pescado blanco marinado en limón con cebolla morada, cilantro y ají limo',
-                            price: '$12.99',
-                            image: 'https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                            ingredients: ['Pescado blanco fresco', 'Limón verde', 'Cebolla morada', 'Cilantro', 'Ají limo', 'Camote', 'Maíz tostado'],
-                            nutrition: '320 calorías'
-                        },
-                        {
-                            id: 'tartar',
-                            name: 'Tartar de Atún',
-                            description: 'Atún de aleta amarilla finamente picado con aguacate y salsa de soja',
-                            price: '$14.99',
-                            image: 'https://images.unsplash.com/photo-1553621042-f6e147245754?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                            ingredients: ['Atún de aleta amarilla', 'Aguacate Hass', 'Chalotas', 'Alcaparras', 'Salsa de soja', 'Sésamo', 'Aceite de sésamo'],
-                            nutrition: '290 calorías'
-                        }
-                    ]
-                },
-                {
-                    id: 'mains',
-                    name: 'Platos Principales',
-                    description: 'Nuestras especialidades culinarias',
-                    image: 'https://images.unsplash.com/photo-1600891964092-4316c288032e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                    dishes: [
-                        {
-                            id: 'risotto',
-                            name: 'Risotto de Hongos',
-                            description: 'Arroz arbóreo cremoso con hongos porcini y parmesano reggiano',
-                            price: '$18.99',
-                            image: 'https://images.unsplash.com/photo-1476124369491-e7addf5db371?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                            ingredients: ['Arroz arbóreo', 'Hongos porcini', 'Caldo de vegetales', 'Vino blanco', 'Cebolla', 'Queso parmesano', 'Mantequilla'],
-                            nutrition: '480 calorías'
-                        },
-                        {
-                            id: 'salmon',
-                            name: 'Salmón a la Parrilla',
-                            description: 'Salmón salvaje con costra de hierbas, puré de batata y espárragos',
-                            price: '$22.99',
-                            image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                            ingredients: ['Salmón salvaje', 'Eneldo', 'Perejil', 'Ajo', 'Batata', 'Espárragos trigueros', 'Aceite de oliva'],
-                            nutrition: '520 calorías'
-                        },
-                        {
-                            id: 'pasta',
-                            name: 'Pasta Casera Trufada',
-                            description: 'Tagliatelle fresco con salsa de trufa negra y champiñones silvestres',
-                            price: '$19.99',
-                            image: 'https://images.unsplash.com/photo-1621996346565-e3dbc353d2e5?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                            ingredients: ['Harina de trigo', 'Huevos', 'Trufa negra', 'Champiñones silvestres', 'Crema de leche', 'Mantequilla', 'Queso parmesano'],
-                            nutrition: '560 calorías'
-                        }
-                    ]
-                },
-                {
-                    id: 'desserts',
-                    name: 'Postres',
-                    description: 'Dulces finales para terminar con broche de oro',
-                    image: 'https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                    dishes: [
-                        {
-                            id: 'souffle',
-                            name: 'Soufflé de Chocolate',
-                            description: 'Soufflé aireado de chocolate amargo con centro fundido y helado de vainilla',
-                            price: '$9.99',
-                            image: 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                            ingredients: ['Chocolate amargo 70%', 'Huevos', 'Azúcar', 'Mantequilla', 'Harina', 'Helado de vainilla'],
-                            nutrition: '380 calorías'
-                        },
-                        {
-                            id: 'creme',
-                            name: 'Crème Brûlée',
-                            description: 'Clásica crema catalana con crujiente capa de caramelo y frutos rojos',
-                            price: '$8.99',
-                            image: 'https://images.unsplash.com/photo-1535254979300-9736941845ef?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                            ingredients: ['Yemas de huevo', 'Crema de leche', 'Vaina de vainilla', 'Azúcar', 'Frutos rojos', 'Azúcar mascabo'],
-                            nutrition: '320 calorías'
-                        },
-                        {
-                            id: 'tiramisu',
-                            name: 'Tiramisú Clásico',
-                            description: 'Capas de bizcocho de soletilla empapado en café y crema de mascarpone',
-                            price: '$10.99',
-                            image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                            ingredients: ['Queso mascarpone', 'Huevos', 'Bizcochos de soletilla', 'Café espresso', 'Cacao en polvo', 'Vino Marsala'],
-                            nutrition: '420 calorías'
-                        }
-                    ]
-                },
-                {
-                    id: 'drinks',
-                    name: 'Bebidas',
-                    description: 'Refrescantes acompañamientos para su comida',
-                    image: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                    dishes: [
-                        {
-                            id: 'mojito',
-                            name: 'Mojito Clásico',
-                            description: 'Ron blanco, hierbabuena, lima, azúcar y soda',
-                            price: '$8.99',
-                            image: 'https://images.unsplash.com/photo-1551538827-9c037cb4f32a?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                            ingredients: ['Ron blanco', 'Hierbabuena fresca', 'Lima', 'Azúcar moreno', 'Soda', 'Hielo'],
-                            nutrition: '180 calorías'
-                        },
-                        {
-                            id: 'sangria',
-                            name: 'Sangría Española',
-                            description: 'Vino tinto macerado con frutas de temporada y un toque de brandy',
-                            price: '$12.99',
-                            image: 'https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                            ingredients: ['Vino tinto', 'Naranja', 'Limón', 'Manzana', 'Melocotón', 'Brandy', 'Canela'],
-                            nutrition: '200 calorías'
-                        },
-                        {
-                            id: 'limonada',
-                            name: 'Limonada de Lavanda',
-                            description: 'Limonada casera con infusión de lavanda y miel de flores',
-                            price: '$6.99',
-                            image: 'https://images.unsplash.com/photo-1536935338788-846bb9981813?ixlib=rb-1.2.1&auto=format&fit=crop&w=600&q=80',
-                            ingredients: ['Limones frescos', 'Lavanda', 'Miel', 'Agua con gas', 'Hielo'],
-                            nutrition: '120 calorías'
-                        }
-                    ]
-                }
-            ]
+            entradas: {
+                title: "Entradas",
+                description: "Aperitivos exquisitos para comenzar su experiencia culinaria",
+                image: "https://images.unsplash.com/photo-1605522867157-380f6e1eeda8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                dishes: [
+                    {
+                        id: 1,
+                        name: "Tartar de Atún con Aguacate",
+                        description: "Atún rojo de almadraba marinado con salsa ponzu, aguacate y chips de wonton.",
+                        image: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?ixlib=rb-1.2.1&auto=format&fit=crop&w=675&q=80",
+                        ingredients: ["Atún rojo", "Aguacate", "Salsa ponzu", "Cebollino", "Sésamo", "Wonton"],
+                        calories: "320 kcal"
+                    },
+                    {
+                        id: 2,
+                        name: "Foie Gras con Compota de Manzana",
+                        description: "Foie gras de pato con compota de manzana caramelizada y pan brioche tostado.",
+                        image: "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                        ingredients: ["Foie gras", "Manzana", "Azúcar moreno", "Brioche", "Sal Maldon"],
+                        calories: "450 kcal"
+                    },
+                    {
+                        id: 3,
+                        name: "Carpaccio de Res con Rúcula",
+                        description: "Finas láminas de res madurada con rúcula, parmesano y alcaparras.",
+                        image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                        ingredients: ["Res Angus", "Rúcula", "Queso parmesano", "Alcaparras", "Aceite de oliva", "Limón"],
+                        calories: "280 kcal"
+                    }
+                ]
+            },
+            principales: {
+                title: "Platos Principales",
+                description: "Nuestras especialidades culinarias preparadas con ingredientes premium",
+                image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80",
+                dishes: [
+                    {
+                        id: 4,
+                        name: "Solomillo Wellington",
+                        description: "Solomillo de ternera envuelto en hojaldre con duxelles de champiñones y foie gras.",
+                        image: "https://images.unsplash.com/photo-1588127333419-501a5c542a2c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                        ingredients: ["Solomillo de ternera", "Hojaldre", "Champiñones", "Foie gras", "Jerez", "Hierbas provenzales"],
+                        calories: "720 kcal"
+                    },
+                    {
+                        id: 5,
+                        name: "Risotto de Bogavante",
+                        description: "Arroz arbóreo cremoso con bogavante, azafrán y queso parmesano.",
+                        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
+                        ingredients: ["Bogavante", "Arroz arbóreo", "Azafrán", "Parmesano", "Vino blanco", "Caldo de mariscos"],
+                        calories: "580 kcal"
+                    },
+                    {
+                        id: 6,
+                        name: "Pato Confitado con Salsa de Frutos Rojos",
+                        description: "Pato confitado lentamente con salsa agridulce de frutos rojos y puré de patata trufado.",
+                        image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1349&q=80",
+                        ingredients: ["Pato", "Frutos rojos", "Patata", "Trufa", "Miel", "Romero"],
+                        calories: "650 kcal"
+                    }
+                ]
+            },
+            postres: {
+                title: "Postres",
+                description: "Delicias dulces para culminar su experiencia gastronómica",
+                image: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1348&q=80",
+                dishes: [
+                    {
+                        id: 7,
+                        name: "Soufflé de Chocolate con Helado de Vainilla",
+                        description: "Soufflé de chocolate negro belga con corazón fundente y helado de vainilla de Madagascar.",
+                        image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                        ingredients: ["Chocolate negro 70%", "Huevos", "Azúcar", "Vainilla", "Nata", "Mantequilla"],
+                        calories: "480 kcal"
+                    },
+                    {
+                        id: 8,
+                        name: "Tarta de Queso con Coulis de Frutos Rojos",
+                        description: "Tarta de queso cremosa al horno con base de galleta y coulis de frutos rojos.",
+                        image: "https://images.unsplash.com/photo-1524351199678-941a58a3df50?ixlib=rb-1.2.1&auto=format&fit=crop&w=1351&q=80",
+                        ingredients: ["Queso crema", "Huevos", "Galleta", "Frutos rojos", "Azúcar", "Nata"],
+                        calories: "420 kcal"
+                    },
+                    {
+                        id: 9,
+                        name: "Crème Brûlée con Vainilla y Naranja",
+                        description: "Clásica crema catalana con vainilla de Tahití y toques cítricos de naranja.",
+                        image: "https://images.unsplash.com/photo-1558319024-7b6a0046968d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                        ingredients: ["Nata", "Yema de huevo", "Vainilla", "Naranja", "Azúcar", "Leche"],
+                        calories: "380 kcal"
+                    }
+                ]
+            },
+            bebidas: {
+                title: "Bebidas",
+                description: "Selección de vinos, cocktails y bebidas refrescantes",
+                image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-1.2.1&auto=format&fit=crop&w=1349&q=80",
+                dishes: [
+                    {
+                        id: 10,
+                        name: "Copa de Vino Tinto Reserva",
+                        description: "Selección de vinos tintos reserva de la Ribera del Duero con crianza en barrica de roble.",
+                        image: "https://images.unsplash.com/photo-1474722883778-792e7990302f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1348&q=80",
+                        ingredients: ["Uva tempranillo", "Barrica de roble"],
+                        calories: "120 kcal"
+                    },
+                    {
+                        id: 11,
+                        name: "Cóctel Signature 'Garden Spritz'",
+                        description: "Nuestra interpretación del clásico Aperol Spritz con hierbas del jardín y cítricos.",
+                        image: "https://images.unsplash.com/photo-1536935338788-846bb9981813?ixlib=rb-1.2.1&auto=format&fit=crop&w=1348&q=80",
+                        ingredients: ["Aperol", "Prosecco", "Soda", "Hierbas aromáticas", "Naranja"],
+                        calories: "180 kcal"
+                    },
+                    {
+                        id: 12,
+                        name: "Jugo de Granada y Jengibre Prensado en Frío",
+                        description: "Jugo natural prensado en frío de granada con un toque de jengibre y menta.",
+                        image: "https://images.unsplash.com/photo-1532303548535-105434ef9df1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
+                        ingredients: ["Granada", "Jengibre", "Menta"],
+                        calories: "90 kcal"
+                    }
+                ]
+            }
         };
 
         // Variables globales
-        let currentCategoryIndex = 0;
-        let currentDishes = [];
-        let startX = 0;
-        let endX = 0;
+        let currentCategory = 'entradas';
+        let currentAngle = 0;
+        const categoryKeys = Object.keys(menuData);
+        const totalCategories = categoryKeys.length;
 
-        // Elementos del DOM
-        const categoriesView = document.getElementById('categoriesView');
-        const categoriesCarousel = document.getElementById('categoriesCarousel');
-        const carouselIndicators = document.getElementById('carouselIndicators');
-        const dishesView = document.getElementById('dishesView');
-        const dishesCategoryTitle = document.getElementById('dishesCategoryTitle');
-        const dishesList = document.getElementById('dishesList');
-        const detailView = document.getElementById('detailView');
-        const detailImage = document.getElementById('detailImage');
-        const detailName = document.getElementById('detailName');
-        const detailPrice = document.getElementById('detailPrice');
-        const detailDescription = document.getElementById('detailDescription');
-        const detailIngredients = document.getElementById('detailIngredients');
-        const detailNutrition = document.getElementById('detailNutrition');
-        const backFromDishes = document.getElementById('backFromDishes');
-        const backFromDetail = document.getElementById('backFromDetail');
-        const prevButton = document.getElementById('prevButton');
-        const nextButton = document.getElementById('nextButton');
+        // Inicializar la aplicación cuando el DOM esté listo
+        document.addEventListener('DOMContentLoaded', initApp);
 
-        // Inicializar la aplicación
         function initApp() {
             renderCategories();
             setupEventListeners();
@@ -623,181 +604,213 @@
 
         // Renderizar las categorías en el carrusel
         function renderCategories() {
-            categoriesCarousel.innerHTML = '';
-            carouselIndicators.innerHTML = '';
+            const carousel = document.querySelector('.categories-carousel');
+            const nav = document.querySelector('.category-nav');
             
-            menuData.categories.forEach((category, index) => {
-                // Crear tarjeta de categoría
-                const categoryCard = document.createElement('div');
-                categoryCard.className = `category-card ${index === currentCategoryIndex ? 'active' : index === currentCategoryIndex - 1 || index === currentCategoryIndex + 1 ? 'inactive' : 'hidden'}`;
-                categoryCard.style.backgroundImage = `url(${category.image})`;
-                categoryCard.dataset.index = index;
+            carousel.innerHTML = '';
+            nav.innerHTML = '';
+            
+            categoryKeys.forEach((key, index) => {
+                const category = menuData[key];
                 
-                const categoryContent = document.createElement('div');
-                categoryContent.className = 'category-content';
-                categoryContent.innerHTML = `
-                    <h3 class="category-name">${category.name}</h3>
-                    <p class="category-desc">${category.description}</p>
+                // Crear elemento de categoría
+                const categoryEl = document.createElement('div');
+                categoryEl.className = 'category';
+                categoryEl.dataset.category = key;
+                
+                // Posicionar la categoría en el carrusel
+                if (index === 0) {
+                    categoryEl.classList.add('active');
+                } else if (index === 1) {
+                    categoryEl.classList.add('category-right');
+                } else if (index === totalCategories - 1) {
+                    categoryEl.classList.add('category-left');
+                }
+                
+                categoryEl.innerHTML = `
+                    <div class="category-bg" style="background-image: url('${category.image}')"></div>
+                    <div class="category-content">
+                        <h3 class="category-title">${category.title}</h3>
+                        <p class="category-desc">${category.description}</p>
+                    </div>
                 `;
                 
-                categoryCard.appendChild(categoryContent);
-                categoriesCarousel.appendChild(categoryCard);
+                carousel.appendChild(categoryEl);
                 
-                // Crear indicador
-                const indicator = document.createElement('div');
-                indicator.className = `indicator ${index === currentCategoryIndex ? 'active' : ''}`;
-                indicator.dataset.index = index;
-                carouselIndicators.appendChild(indicator);
+                // Crear punto de navegación
+                const dot = document.createElement('div');
+                dot.className = 'nav-dot';
+                if (index === 0) dot.classList.add('active');
+                dot.dataset.target = key;
+                nav.appendChild(dot);
             });
-
-            // Actualizar estado de botones de navegación
-            prevButton.style.display = currentCategoryIndex === 0 ? 'none' : 'flex';
-            nextButton.style.display = currentCategoryIndex === menuData.categories.length - 1 ? 'none' : 'flex';
         }
 
         // Configurar event listeners
         function setupEventListeners() {
-            // Navegación por categorías (tap)
-            categoriesCarousel.addEventListener('click', (e) => {
-                const categoryCard = e.target.closest('.category-card');
-                if (categoryCard) {
-                    const index = parseInt(categoryCard.dataset.index);
-                    showDishesView(index);
-                }
-            });
-
-            // Navegación por swipe
-            categoriesCarousel.addEventListener('touchstart', (e) => {
-                startX = e.touches[0].clientX;
-            });
-
-            categoriesCarousel.addEventListener('touchend', (e) => {
-                endX = e.changedTouches[0].clientX;
-                handleSwipe();
-            });
-
-            // Botones de retroceso
-            backFromDishes.addEventListener('click', () => {
-                hideDishesView();
-            });
-
-            backFromDetail.addEventListener('click', () => {
-                hideDetailView();
-            });
-
-            // Botones de navegación entre categorías
-            prevButton.addEventListener('click', () => {
-                if (currentCategoryIndex > 0) {
-                    currentCategoryIndex--;
-                    renderCategories();
-                }
-            });
-
-            nextButton.addEventListener('click', () => {
-                if (currentCategoryIndex < menuData.categories.length - 1) {
-                    currentCategoryIndex++;
-                    renderCategories();
-                }
-            });
-        }
-
-        // Manejar gesto de swipe
-        function handleSwipe() {
-            const swipeThreshold = 50;
-            const diffX = startX - endX;
-            
-            if (Math.abs(diffX) > swipeThreshold) {
-                if (diffX > 0 && currentCategoryIndex < menuData.categories.length - 1) {
-                    // Swipe izquierda
-                    currentCategoryIndex++;
-                } else if (diffX < 0 && currentCategoryIndex > 0) {
-                    // Swipe derecha
-                    currentCategoryIndex--;
-                }
-                
-                renderCategories();
-            }
-        }
-
-        // Mostrar vista de platos
-        function showDishesView(categoryIndex) {
-            currentDishes = menuData.categories[categoryIndex].dishes;
-            dishesCategoryTitle.textContent = menuData.categories[categoryIndex].name;
-            
-            // Renderizar lista de platos
-            dishesList.innerHTML = '';
-            currentDishes.forEach((dish, index) => {
-                const dishItem = document.createElement('li');
-                dishItem.className = 'dish-item';
-                dishItem.innerHTML = `
-                    <h3 class="dish-name">${dish.name}</h3>
-                    <p class="dish-desc">${dish.description}</p>
-                    <div class="dish-price">${dish.price}</div>
-                `;
-                dishItem.dataset.index = index;
-                dishesList.appendChild(dishItem);
-            });
-            
-            // Añadir event listeners a los elementos de la lista
-            const dishItems = dishesList.querySelectorAll('.dish-item');
-            dishItems.forEach(item => {
-                item.addEventListener('click', (e) => {
-                    const index = parseInt(item.dataset.index);
-                    showDetailView(index);
+            // Navegación por puntos
+            document.querySelectorAll('.nav-dot').forEach(dot => {
+                dot.addEventListener('click', () => {
+                    const targetCategory = dot.dataset.target;
+                    rotateToCategory(targetCategory);
                 });
             });
             
-            // Mostrar vista con animación
-            categoriesView.classList.add('hidden');
-            dishesView.classList.add('active');
-        }
-
-        // Ocultar vista de platos
-        function hideDishesView() {
-            dishesView.classList.remove('active');
-            setTimeout(() => {
-                categoriesView.classList.remove('hidden');
-            }, 300);
-        }
-
-        // Mostrar vista de detalle
-        function showDetailView(dishIndex) {
-            const dish = currentDishes[dishIndex];
-            
-            // Llenar datos del plato
-            detailImage.src = dish.image;
-            detailName.textContent = dish.name;
-            detailPrice.textContent = dish.price;
-            detailDescription.textContent = dish.description;
-            
-            // Llenar ingredientes
-            detailIngredients.innerHTML = '';
-            dish.ingredients.forEach(ingredient => {
-                const li = document.createElement('li');
-                li.textContent = ingredient;
-                detailIngredients.appendChild(li);
+            // Navegación por categorías (clic en categoría)
+            document.querySelectorAll('.category').forEach(category => {
+                category.addEventListener('click', () => {
+                    const targetCategory = category.dataset.category;
+                    if (category.classList.contains('active')) {
+                        showMenuDetail(targetCategory);
+                    } else {
+                        rotateToCategory(targetCategory);
+                    }
+                });
             });
             
-            // Llenar información nutricional
-            detailNutrition.textContent = dish.nutrition;
+            // Botón de volver
+            document.querySelector('.back-button').addEventListener('click', () => {
+                showCategoriesView();
+            });
             
-            // Mostrar vista con animación
-            dishesView.classList.remove('active');
-            setTimeout(() => {
-                detailView.classList.add('active');
-            }, 300);
+            // Cerrar modal
+            document.querySelector('.modal-close').addEventListener('click', closeModal);
+            document.getElementById('dish-modal').addEventListener('click', (e) => {
+                if (e.target === document.getElementById('dish-modal')) {
+                    closeModal();
+                }
+            });
         }
 
-        // Ocultar vista de detalle
-        function hideDetailView() {
-            detailView.classList.remove('active');
-            setTimeout(() => {
-                dishesView.classList.add('active');
-            }, 300);
+        // Rotar el carrusel a la categoría seleccionada
+        function rotateToCategory(category) {
+            const currentIndex = categoryKeys.indexOf(currentCategory);
+            const targetIndex = categoryKeys.indexOf(category);
+            const diff = targetIndex - currentIndex;
+            
+            // Actualizar categoría actual
+            currentCategory = category;
+            
+            // Actualizar clases activas
+            document.querySelectorAll('.category').forEach((cat, index) => {
+                cat.className = 'category';
+                
+                if (index === targetIndex) {
+                    cat.classList.add('active');
+                } else if (index === (targetIndex + 1) % totalCategories) {
+                    cat.classList.add('category-right');
+                } else if (index === (targetIndex - 1 + totalCategories) % totalCategories) {
+                    cat.classList.add('category-left');
+                }
+            });
+            
+            // Actualizar puntos de navegación
+            document.querySelectorAll('.nav-dot').forEach((dot, index) => {
+                dot.classList.toggle('active', index === targetIndex);
+            });
         }
 
-        // Inicializar la aplicación cuando el DOM esté listo
-        document.addEventListener('DOMContentLoaded', initApp);
+        // Mostrar vista detallada del menú
+        function showMenuDetail(category) {
+            // Ocultar vista de categorías y mostrar vista de menú
+            document.getElementById('categories-view').style.display = 'none';
+            const menuDetail = document.getElementById('menu-detail');
+            menuDetail.style.display = 'block';
+            
+            // Actualizar título
+            document.querySelector('.menu-title').textContent = menuData[category].title;
+            
+            // Renderizar platos
+            const dishesGrid = document.querySelector('.dishes-grid');
+            dishesGrid.innerHTML = '';
+            
+            menuData[category].dishes.forEach((dish, index) => {
+                const dishCard = document.createElement('div');
+                dishCard.className = 'dish-card';
+                dishCard.dataset.id = dish.id;
+                
+                dishCard.innerHTML = `
+                    <img src="${dish.image}" alt="${dish.name}" class="dish-image">
+                    <div class="dish-content">
+                        <h3 class="dish-title">${dish.name}</h3>
+                        <p class="dish-desc">${dish.description}</p>
+                        <div class="dish-info">
+                            <span>${dish.calories}</span>
+                        </div>
+                    </div>
+                `;
+                
+                dishesGrid.appendChild(dishCard);
+                
+                // Añadir evento de clic para mostrar detalles del plato
+                dishCard.addEventListener('click', () => {
+                    showDishDetail(dish);
+                });
+                
+                // Animación de aparición con retraso escalonado
+                setTimeout(() => {
+                    dishCard.classList.add('visible');
+                }, 100 + (index * 100));
+            });
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+
+        // Mostrar vista de categorías
+        function showCategoriesView() {
+            document.getElementById('menu-detail').style.display = 'none';
+            document.getElementById('categories-view').style.display = 'block';
+        }
+
+        // Mostrar detalles del plato en modal
+        function showDishDetail(dish) {
+            const modal = document.getElementById('dish-modal');
+            const modalImage = document.querySelector('.modal-image');
+            const modalTitle = document.querySelector('.modal-title');
+            const modalDesc = document.querySelector('.modal-desc');
+            const ingredientsList = document.querySelector('.ingredients-list');
+            const calories = document.querySelector('.calories');
+            
+            // Actualizar contenido del modal
+            modalImage.src = dish.image;
+            modalImage.alt = dish.name;
+            modalTitle.textContent = dish.name;
+            modalDesc.textContent = dish.description;
+            calories.textContent = dish.calories;
+            
+            // Renderizar ingredientes
+            ingredientsList.innerHTML = '';
+            dish.ingredients.forEach(ingredient => {
+                const tag = document.createElement('span');
+                tag.className = 'ingredient-tag';
+                tag.textContent = ingredient;
+                ingredientsList.appendChild(tag);
+            });
+            
+            // Mostrar modal
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        // Cerrar modal
+        function closeModal() {
+            const modal = document.getElementById('dish-modal');
+            modal.classList.remove('active');
+            document.body.style.overflow = 'auto';
+            
+            // Pequeño retraso para permitir la transición antes de resetear
+            setTimeout(() => {
+                const modalImage = document.querySelector('.modal-image');
+                const modalTitle = document.querySelector('.modal-title');
+                const modalDesc = document.querySelector('.modal-desc');
+                
+                modalImage.src = '';
+                modalImage.alt = '';
+                modalTitle.textContent = '';
+                modalDesc.textContent = '';
+            }, 300);
+        }
     </script>
 </body>
 </html>
