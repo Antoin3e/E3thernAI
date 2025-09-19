@@ -257,7 +257,7 @@
             color: var(--color-secondary);
         }
 
-        /* Modal de detalle del plato */
+        /* Modal de detalle del plato - MODIFICADO PARA MÓVIL */
         .modal-overlay {
             position: fixed;
             top: 0;
@@ -272,6 +272,7 @@
             opacity: 0;
             visibility: hidden;
             transition: var(--transition);
+            padding: 15px;
         }
 
         .modal-overlay.active {
@@ -281,12 +282,15 @@
 
         .modal-content {
             background: white;
-            width: 90%;
+            width: 100%;
             max-width: 800px;
+            max-height: 90vh;
             border-radius: var(--border-radius);
             overflow: hidden;
             transform: scale(0.9);
             transition: var(--transition);
+            display: flex;
+            flex-direction: column;
         }
 
         .modal-overlay.active .modal-content {
@@ -295,11 +299,12 @@
 
         .modal-header {
             position: relative;
+            flex-shrink: 0;
         }
 
         .modal-image {
             width: 100%;
-            height: 300px;
+            height: 200px;
             object-fit: cover;
         }
 
@@ -307,40 +312,44 @@
             position: absolute;
             top: 15px;
             right: 15px;
-            background: rgba(255, 255, 255, 0.8);
-            width: 30px;
-            height: 30px;
+            background: rgba(255, 255, 255, 0.9);
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             transition: var(--transition);
+            z-index: 10;
         }
 
         .modal-close:hover {
             background: white;
+            transform: scale(1.1);
         }
 
         .modal-body {
-            padding: 30px;
+            padding: 20px;
+            overflow-y: auto;
+            flex-grow: 1;
         }
 
         .modal-title {
-            font-size: 2rem;
+            font-size: 1.8rem;
             margin-bottom: 15px;
             color: var(--color-primary);
         }
 
         .modal-desc {
-            margin-bottom: 20px;
-            font-size: 1.1rem;
+            margin-bottom: 15px;
+            font-size: 1rem;
             line-height: 1.6;
         }
 
         .modal-ingredients {
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .modal-ingredients h4, .modal-nutrition h4 {
@@ -352,7 +361,8 @@
         .ingredients-list {
             display: flex;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
+            margin-bottom: 15px;
         }
 
         .ingredient-tag {
@@ -366,14 +376,21 @@
             background: var(--color-light);
             padding: 15px;
             border-radius: var(--border-radius);
+            margin-bottom: 15px;
         }
 
-        /* Nuevos estilos para botones de cantidad y pago */
+        /* Nuevos estilos para botones de cantidad y pago - MEJORADO PARA MÓVIL */
         .quantity-selector {
             display: flex;
             justify-content: center;
-            gap: 10px;
-            margin: 25px 0;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin: 20px 0;
+            position: sticky;
+            bottom: 0;
+            background: white;
+            padding: 10px 0;
+            z-index: 5;
         }
 
         .quantity-btn {
@@ -386,6 +403,7 @@
             font-size: 1.2rem;
             cursor: pointer;
             transition: var(--transition);
+            flex-shrink: 0;
         }
 
         .quantity-btn:hover {
@@ -407,14 +425,19 @@
             background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
             color: white;
             border: none;
-            padding: 15px 30px;
+            padding: 15px 20px;
             border-radius: 50px;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
             cursor: pointer;
-            margin: 0 auto;
+            margin: 10px auto;
             transition: var(--transition);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 300px;
+            position: sticky;
+            bottom: 10px;
+            z-index: 10;
         }
 
         .pay-button:hover {
@@ -437,6 +460,7 @@
             opacity: 0;
             visibility: hidden;
             transition: var(--transition);
+            padding: 15px;
         }
 
         .payment-modal.active {
@@ -446,13 +470,15 @@
 
         .payment-content {
             background: white;
-            width: 90%;
+            width: 100%;
             max-width: 500px;
             border-radius: var(--border-radius);
             overflow: hidden;
             transform: scale(0.9);
             transition: var(--transition);
-            padding: 30px;
+            padding: 25px;
+            max-height: 90vh;
+            overflow-y: auto;
         }
 
         .payment-modal.active .payment-content {
@@ -475,14 +501,14 @@
             top: 15px;
             right: 15px;
             background: rgba(0, 0, 0, 0.1);
-            width: 30px;
-            height: 30px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1.5rem;
             transition: var(--transition);
         }
 
@@ -518,17 +544,20 @@
             display: flex;
             justify-content: space-between;
             margin-top: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
         }
 
         .continue-shopping {
             background: var(--color-light);
             color: var(--color-primary);
             border: none;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border-radius: var(--border-radius);
             cursor: pointer;
             font-family: inherit;
             transition: var(--transition);
+            flex: 1;
         }
 
         .continue-shopping:hover {
@@ -539,11 +568,12 @@
             background: var(--color-secondary);
             color: white;
             border: none;
-            padding: 10px 20px;
+            padding: 12px 20px;
             border-radius: var(--border-radius);
             cursor: pointer;
             font-family: inherit;
             transition: var(--transition);
+            flex: 1;
         }
 
         .confirm-payment:hover {
@@ -777,7 +807,7 @@
             animation: fadeInUp 0.6s ease forwards;
         }
 
-        /* Responsive */
+        /* Responsive - MEJORAS PARA MÓVIL */
         @media (max-width: 768px) {
             .categories-container {
                 height: 400px;
@@ -793,16 +823,41 @@
             }
             
             .modal-content {
-                width: 95%;
+                width: 100%;
+                max-height: 85vh;
+            }
+            
+            .modal-image {
+                height: 150px;
+            }
+            
+            .modal-title {
+                font-size: 1.5rem;
             }
             
             .quantity-selector {
-                flex-wrap: wrap;
+                gap: 5px;
+            }
+            
+            .quantity-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 1rem;
+            }
+            
+            .pay-button {
+                padding: 12px 20px;
+                font-size: 1rem;
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: calc(100% - 40px);
+                max-width: 300px;
             }
             
             .payment-actions {
                 flex-direction: column;
-                gap: 10px;
             }
             
             .continue-shopping, .confirm-payment {
@@ -813,6 +868,55 @@
             .cart-modal {
                 width: 100%;
                 right: -100%;
+            }
+            
+            .cart-item {
+                flex-direction: column;
+            }
+            
+            .cart-item-image {
+                width: 100%;
+                height: 120px;
+                margin-bottom: 10px;
+            }
+            
+            .logo {
+                font-size: 2rem;
+            }
+            
+            .menu-title {
+                font-size: 2rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            header {
+                padding: 15px 0;
+            }
+            
+            .modal-body {
+                padding: 15px;
+            }
+            
+            .modal-ingredients h4, .modal-nutrition h4 {
+                font-size: 1.1rem;
+            }
+            
+            .ingredient-tag {
+                font-size: 0.8rem;
+                padding: 4px 8px;
+            }
+            
+            .payment-content {
+                padding: 20px;
+            }
+            
+            .payment-title {
+                font-size: 1.5rem;
             }
         }
     </style>
