@@ -3,9 +3,9 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard de Aportaciones</title>
+  <title>Dashboard Profesional - Aportaciones</title>
 
-  <!-- Dependencias → DataTables, Chart.js, jQuery -->
+  <!-- Librerías -->
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
   <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
@@ -15,216 +15,348 @@
   <style>
     :root{
       --acqua: #00bcd4;
-      --acqua-dark: #0097a7;
+      --acqua-600: #00a7b3;
       --bg: #ffffff;
-      --muted: #6b7280;
-      --card-shadow: 0 6px 18px rgba(3, 60, 77, 0.08);
-      --radius: 14px;
-      font-family: "Inter", sans-serif;
+      --muted:#6b7280;
+      --glass: rgba(255,255,255,0.7);
+      --radius:14px;
+      --shadow: 0 8px 30px rgba(2,66,80,0.07);
+      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
     }
-
-    html,body{margin:0;background:linear-gradient(180deg,#f0fdff,#ffffff);color:#0f172a}
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7feff 0%, #ffffff 60%);color:#07202b}
 
     /* Layout */
-    .app{
-      display:grid;
-      grid-template-columns:300px 1fr;
-      height:100vh;
-      gap:20px;
-      padding:20px;
-    }
+    .container{display:grid;grid-template-columns:320px 1fr;gap:20px;padding:22px;height:100vh;box-sizing:border-box}
 
     /* Sidebar */
-    .sidebar{
-      background:white;padding:20px;border-radius:var(--radius);box-shadow:var(--card-shadow);
-      overflow-y:auto;
-      animation:fadeIn .6s ease;
-    }
+    .sidebar{background:var(--bg);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);overflow:auto}
+    .brand{display:flex;align-items:center;gap:12px;margin-bottom:8px}
+    .logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--acqua),var(--acqua-600));display:flex;align-items:center;justify-content:center;color:white;font-weight:800}
+    h1{font-size:18px;margin:0}
+    .muted{color:var(--muted);font-size:13px}
 
-    @keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
-
-    .logo{background:var(--acqua);color:white;width:50px;height:50px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:20px;margin-bottom:10px}
-
-    select,input{width:100%;padding:8px;border:1px solid #e5e7eb;border-radius:10px;margin-top:6px}
-    .btn{width:100%;padding:10px;border:none;border-radius:10px;background:var(--acqua);color:white;font-weight:700;margin-top:10px;cursor:pointer;transition:.2s}
-    .btn:hover{background:var(--acqua-dark)}
+    label{font-weight:600;font-size:13px;margin-top:12px;display:block}
+    select,input[type='date'],input[type='text']{width:100%;padding:8px;border-radius:10px;border:1px solid #e6eef0;margin-top:6px;background:#fbfeff}
+    input[type='file']{margin-top:8px}
+    .btn{display:inline-block;width:100%;padding:10px;border-radius:10px;border:none;background:var(--acqua);color:white;font-weight:700;margin-top:12px;cursor:pointer;box-shadow:0 6px 18px rgba(0,188,212,0.12)}
+    .btn.ghost{background:transparent;border:1px solid #e6f8fa;color:var(--acqua);font-weight:700}
 
     /* Main */
-    .card{background:white;padding:18px;border-radius:var(--radius);box-shadow:var(--card-shadow);animation:fadeIn .6s ease}
+    .main{display:flex;flex-direction:column;gap:14px}
+    .card{background:var(--bg);border-radius:12px;padding:14px;box-shadow:var(--shadow)}
 
     .kpis{display:flex;gap:12px}
-    .kpi{flex:1;background:#f5feff;padding:16px;border-radius:12px;text-align:center;border:1px solid #e2f9fd}
-    .kpi .value{font-size:26px;color:var(--acqua);font-weight:800}
+    .kpi{flex:1;padding:14px;border-radius:12px;background:linear-gradient(180deg, #ffffff, #fbffff);border:1px solid #e8fbfc;text-align:left}
+    .kpi .label{font-size:13px;color:var(--muted)}
+    .kpi .value{font-size:22px;color:var(--acqua);font-weight:800}
 
-    .charts{display:grid;grid-template-columns:1fr 350px;gap:20px;margin-top:20px}
+    .charts{display:grid;grid-template-columns:1fr 360px;gap:12px}
+    .small{font-size:12px;color:var(--muted)}
 
-    table{font-size:13px}
+    /* Table */
+    .table-wrap{overflow:auto}
+    #dataTable thead th{background:linear-gradient(90deg,#f2fcfd,#ffffff);font-weight:700}
+
+    /* Responsive */
+    @media (max-width:980px){
+      .container{grid-template-columns:1fr;height:auto;padding:12px}
+      .charts{grid-template-columns:1fr}
+      .kpis{flex-direction:column}
+    }
+
+    /* subtle hover for rows */
+    table.dataTable tbody tr:hover{background:rgba(0,188,212,0.03)}
 
   </style>
 </head>
 <body>
-<div class="app">
-
-  <!-- Sidebar -->
-  <aside class="sidebar">
-    <div class="logo">DA</div>
-    <h2 style="margin:0 0 10px 0">Dashboard Aportaciones</h2>
-    <p style="color:var(--muted);margin-top:0">Datos cargados automáticamente desde GitHub</p>
-
-    <hr style="margin:15px 0">
-
-    <!-- Filtro de Promotor (principal solicitado) -->
-    <label><b>Promotor</b></label>
-    <select id="filterPromotor"><option value="">-- Todos --</option></select>
-
-    <label style="margin-top:12px"><b>Sucursal</b></label>
-    <select id="filterSucursal"><option value="">-- Todas --</option></select>
-
-    <label style="margin-top:12px"><b>Estatus</b></label>
-    <select id="filterEstatus"><option value="">-- Todos --</option></select>
-
-    <label style="margin-top:12px"><b>Tipo Aportación</b></label>
-    <select id="filterTipo"><option value="">-- Todos --</option></select>
-
-    <button id="applyFilters" class="btn">Aplicar Filtros</button>
-    <button id="resetFilters" class="btn" style="background:#e0fafd;color:var(--acqua-dark)">Reiniciar</button>
-  </aside>
-
-  <!-- Main -->
-  <main>
-    <div class="card">
-      <h2 style="margin:0">Resumen</h2>
-      <div class="kpis">
-        <div class="kpi"><div class="value" id="kpiTotal">$0</div><div>Monto Total</div></div>
-        <div class="kpi"><div class="value" id="kpiCount">0</div><div>Registros</div></div>
-        <div class="kpi"><div class="value" id="kpiPromedio">$0</div><div>Monto Promedio</div></div>
+  <div class="container">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">DA</div>
+        <div>
+          <h1>Dashboard Aportaciones</h1>
+          <div class="muted">Elegante • Dinámico • Fácil de usar</div>
+        </div>
       </div>
-    </div>
 
-    <div class="charts">
-      <div class="card"><canvas id="chartMontos"></canvas></div>
-      <div class="card"><canvas id="chartEstatus"></canvas></div>
-    </div>
+      <label>Subir archivo Excel (.xlsx)</label>
+      <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" />
+      <div class="small">Si tu archivo es .xls, guárdalo como .xlsx o .csv para mejor compatibilidad.</div>
 
-    <div class="card">
-      <h3>Tabla de Aportaciones</h3>
-      <table id="dataTable" style="width:100%">
-        <thead></thead>
-        <tbody></tbody>
-      </table>
-    </div>
-  </main>
-</div>
+      <label>Buscar por cliente</label>
+      <input id="searchClient" type="text" placeholder="Nombre o número de cliente" />
 
-<script>
-// =====================================================
-// 1) OBTENER EXCEL DESDE GITHUB DIRECTO
-// =====================================================
-const GITHUB_URL = "https://raw.githubusercontent.com/Antoin3e/E3thernAI/main/ReporteAportaciones.xlsx"; // pon aquí la URL RAW
+      <label>Promotor</label>
+      <select id="filterPromotor"><option value="">-- Todos --</option></select>
 
-let rawData = [];
-let filtered = [];
-let dataTable = null;
-let chartMontos = null;
-let chartEstatus = null;
+      <label>Sucursal</label>
+      <select id="filterSucursal"><option value="">-- Todas --</option></select>
 
-fetch(GITHUB_URL)
-  .then(r => r.arrayBuffer())
-  .then(buf => {
-    const wb = XLSX.read(buf, {type:"array"});
-    const sheet = wb.Sheets[wb.SheetNames[0]];
-    const json = XLSX.utils.sheet_to_json(sheet, {defval:""});
-    rawData = json;
-    initFilters();
-    applyFilters();
-  })
-  .catch(err => alert("ERROR leyendo Excel desde GitHub: " + err));
+      <label>Estatus</label>
+      <select id="filterEstatus"><option value="">-- Todos --</option></select>
 
-// =====================================================
-// 2) Filtros Dinámicos
-// =====================================================
-function initFilters(){
-  fillSelect("filterPromotor", getUnique("Promotor"));
-  fillSelect("filterSucursal", getUnique("Sucursal"));
-  fillSelect("filterEstatus", getUnique("Estatus"));
-  fillSelect("filterTipo", getUnique("Tipo Aportación"));
-}
-function getUnique(col){ return [...new Set(rawData.map(r=>r[col]).filter(v=>v))].sort(); }
-function fillSelect(id, arr){ document.getElementById(id).innerHTML = '<option value="">-- Todos --</option>' + arr.map(v=>`<option>${v}</option>`).join(''); }
+      <label>Tipo de Aportación</label>
+      <select id="filterTipo"><option value="">-- Todos --</option></select>
 
-// =====================================================
-// 3) Aplicar Filtros
-// =====================================================
-document.getElementById("applyFilters").onclick = applyFilters;
-document.getElementById("resetFilters").onclick = ()=>{
-  ["filterPromotor","filterSucursal","filterEstatus","filterTipo"].forEach(id=>document.getElementById(id).value="");
-  applyFilters();
-};
+      <label>Rango Fecha Apertura</label>
+      <input id="dateFrom" type="date" />
+      <input id="dateTo" type="date" style="margin-top:8px" />
 
-function applyFilters(){
-  const fProm = document.getElementById("filterPromotor").value;
-  const fSuc = document.getElementById("filterSucursal").value;
-  const fEst = document.getElementById("filterEstatus").value;
-  const fTipo = document.getElementById("filterTipo").value;
+      <button id="applyBtn" class="btn">Aplicar filtros</button>
+      <button id="resetBtn" class="btn ghost">Reiniciar filtros</button>
 
-  filtered = rawData.filter(r=>
-     (!fProm || r["Promotor"]===fProm) &&
-     (!fSuc || r["Sucursal"]===fSuc) &&
-     (!fEst || r["Estatus"]===fEst) &&
-     (!fTipo || r["Tipo Aportación"]===fTipo)
-  );
+      <div style="margin-top:14px">
+        <div class="small">Exportar</div>
+        <button id="exportCsv" class="btn ghost" style="margin-top:8px">Exportar CSV (filtrado)</button>
+      </div>
 
-  refreshKPIs();
-  refreshCharts();
-  refreshTable();
-}
+    </aside>
 
-// =====================================================
-// 4) KPIs
-// =====================================================
-function refreshKPIs(){
-  const total = filtered.reduce((a,b)=>a+(Number(b.Monto)||0),0);
-  const count = filtered.length;
-  const avg = count ? total/count : 0;
-  document.getElementById("kpiTotal").innerText = mx(total);
-  document.getElementById("kpiCount").innerText = count;
-  document.getElementById("kpiPromedio").innerText = mx(avg);
-}
-function mx(n){ return new Intl.NumberFormat("es-MX",{style:"currency",currency:"MXN"}).format(n); }
+    <main class="main">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
+          <div>
+            <h2 style="margin:0">Resumen</h2>
+            <div class="small">KPIs calculados en tiempo real</div>
+          </div>
+          <div style="display:flex;gap:10px;align-items:center">
+            <div class="small">Registros: <strong id="countRec">0</strong></div>
+            <div class="small">Última carga: <strong id="lastLoad">--</strong></div>
+          </div>
+        </div>
 
-// =====================================================
-// 5) Gráficas
-// =====================================================
-function refreshCharts(){
-  const byMonth = {};
-  filtered.forEach(r=>{
-    const f = r["Fecha Apertura"] ? String(r["Fecha Apertura"]).slice(0,7) : "Sin fecha";
-    byMonth[f] = (byMonth[f]||0) + (Number(r.Monto)||0);
-  });
+        <div class="kpis" style="margin-top:12px">
+          <div class="kpi"><div class="label">Monto Total</div><div class="value" id="kpiTotal">$0</div></div>
+          <div class="kpi"><div class="label">Montos Promedio</div><div class="value" id="kpiAvg">$0</div></div>
+          <div class="kpi"><div class="label">Intereses Totales</div><div class="value" id="kpiIntereses">$0</div></div>
+        </div>
+      </div>
 
-  const labels = Object.keys(byMonth).sort();
-  const values = labels.map(k=>byMonth[k]);
+      <div class="charts">
+        <div class="card">
+          <h3 style="margin-top:0">Monto por Mes</h3>
+          <canvas id="chartLine" height="140"></canvas>
+        </div>
 
-  if(chartMontos) chartMontos.destroy();
-  chartMontos = new Chart(document.getElementById("chartMontos"),{
-    type:"line",
-    data:{ labels, datasets:[{ data:values, borderColor:"#00bcd4", backgroundColor:"rgba(0,188,212,.15)", tension:.3 }] },
-    options:{ plugins:{legend:{display:false}} }
-  });
+        <div class="card">
+          <h3 style="margin-top:0">Distribución</h3>
+          <canvas id="chartDonut" height="180"></canvas>
+        </div>
+      </div>
 
-  const byEst = {};
-  filtered.forEach(r=>{ const e=r.Estatus||"Sin Estatus"; byEst[e]=(byEst[e]||0)+1 });
-  if(chartEstatus) chartEstatus.destroy();
-  chartEstatus = new Chart(document.getElementById("chartEstatus"),{
-    type:"doughnut",
-    data:{ labels:Object.keys(byEst), datasets:[{ data:Object.values(byEst) }] },
-    options:{ plugins:{legend:{position:"bottom"}} }
-  });}
+      <div class="card">
+        <h3 style="margin-top:0">Análisis por Sucursal</h3>
+        <canvas id="chartBar" height="90"></canvas>
+      </div>
 
-// =====================================================
-// 6) Tabla
-// =====================================================
-function refreshTable(){
-  const cols = Object.keys(rawData[0]||{});
+      <div class="card table-wrap">
+        <h3 style="margin-top:0">Tabla de Aportaciones</h3>
+        <table id="dataTable" class="display" style="width:100%">
+          <thead></thead>
+          <tbody></tbody>
+        </table>
+      </div>
 
-  if($.fn.DataTable.is
+    </main>
+  </div>
+
+  <script>
+    // Variables globales
+    let rawData = [];
+    let filtered = [];
+    let chartLine=null, chartDonut=null, chartBar=null;
+    let dataTable = null;
+
+    // Helpers
+    const fmtCurrency = (n)=> new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:2}).format(n||0);
+    const safeNum = v=>{ if(v===undefined||v===null||v==='') return 0; const n = Number(String(v).replace(/[^0-9.-]+/g,'')); return isNaN(n)?0:n };
+    const parseDate = v=>{ if(!v) return null; if(typeof v === 'number'){ const d = XLSX.SSF.parse_date_code(v); if(d) return new Date(d.y,d.m-1,d.d); } const d = new Date(v); return isNaN(d)?null:d }
+
+    // Cargar archivo subido
+    document.getElementById('fileInput').addEventListener('change', function(e){
+      const f = e.target.files[0];
+      if(!f) return;
+      const reader = new FileReader();
+      reader.onload = (evt)=>{
+        const data = new Uint8Array(evt.target.result);
+        const wb = XLSX.read(data,{type:'array'});
+        const ws = wb.Sheets[wb.SheetNames[0]];
+        const json = XLSX.utils.sheet_to_json(ws,{defval:''});
+        procesarDatos(json);
+        document.getElementById('lastLoad').innerText = new Date().toLocaleString();
+      };
+      reader.readAsArrayBuffer(f);
+    });
+
+    // Procesar y normalizar datos
+    function procesarDatos(json){
+      rawData = json.map(r=>{
+        return {
+          Sucursal: r['Sucursal']||r['Sucursal ' ]||r['Sucursal
+']||'',
+          Promotor: r['Promotor']||'',
+          FechaApertura: (r['Fecha Apertura']||r['FechaApertura']||r['Fecha Apertura ']) || r['FechaApertura'],
+          FechaVencimiento: r['Fecha Vencimiento']||'',
+          Estatus: r['Estatus']||'',
+          ['Tipo Aportación']: r['Tipo Aportación']||r['TipoAportación']||'',
+          Monto: safeNum(r['Monto']||r['Monto ']),
+          Intereses: safeNum(r['Intereses Totales']||r['Intereses']||0),
+          NumCliente: r['Número de Cliente']||r['Numero de Cliente']||r['No. Cliente']||'',
+          NombreCliente: r['Nombre de Cliente']||r['Cliente']||'',
+          Institucion: r['Institución 1']||''
+        }
+      });
+      // Normalize dates
+      rawData.forEach(r=>{
+        const d = parseDate(r.FechaApertura);
+        r.FechaApertura = d ? d.toISOString().slice(0,10) : '';
+      });
+
+      // Inicializar filtros y UI
+      initFilters();
+      applyFilters();
+    }
+
+    function initFilters(){
+      const prom = [...new Set(rawData.map(r=>r.Promotor).filter(x=>x))].sort();
+      const suc = [...new Set(rawData.map(r=>r.Sucursal).filter(x=>x))].sort();
+      const est = [...new Set(rawData.map(r=>r.Estatus).filter(x=>x))].sort();
+      const tipo = [...new Set(rawData.map(r=>r['Tipo Aportación']).filter(x=>x))].sort();
+
+      const fill = (id,arr)=>{ document.getElementById(id).innerHTML = '<option value="">-- Todos --</option>' + arr.map(v=>`<option value="${v}">${v}</option>`).join(''); }
+      fill('filterPromotor',prom); fill('filterSucursal',suc); fill('filterEstatus',est); fill('filterTipo',tipo);
+    }
+
+    // Filtros y eventos
+    document.getElementById('applyBtn').addEventListener('click', applyFilters);
+    document.getElementById('resetBtn').addEventListener('click', ()=>{
+      ['filterPromotor','filterSucursal','filterEstatus','filterTipo','dateFrom','dateTo','searchClient'].forEach(id=>document.getElementById(id).value='');
+      applyFilters();
+    });
+
+    function applyFilters(){
+      const fProm = document.getElementById('filterPromotor').value;
+      const fSuc = document.getElementById('filterSucursal').value;
+      const fEst = document.getElementById('filterEstatus').value;
+      const fTipo = document.getElementById('filterTipo').value;
+      const from = document.getElementById('dateFrom').value;
+      const to = document.getElementById('dateTo').value;
+      const search = document.getElementById('searchClient').value.toLowerCase();
+
+      filtered = rawData.filter(r=>{
+        if(fProm && r.Promotor!==fProm) return false;
+        if(fSuc && r.Sucursal!==fSuc) return false;
+        if(fEst && r.Estatus!==fEst) return false;
+        if(fTipo && r['Tipo Aportación']!==fTipo) return false;
+        if(from && (!r.FechaApertura || r.FechaApertura < from)) return false;
+        if(to && (!r.FechaApertura || r.FechaApertura > to)) return false;
+        if(search){ const s = (r.NombreCliente + ' ' + r.NumCliente).toLowerCase(); if(!s.includes(search)) return false; }
+        return true;
+      });
+
+      updateKPIs(); renderCharts(); renderTable();
+    }
+
+    function updateKPIs(){
+      const total = filtered.reduce((s,r)=>s + (r.Monto||0),0);
+      const avg = filtered.length ? total/filtered.length : 0;
+      const intereses = filtered.reduce((s,r)=>s + (r.Intereses||0),0);
+      document.getElementById('kpiTotal').innerText = fmtCurrency(total);
+      document.getElementById('kpiAvg').innerText = fmtCurrency(avg);
+      document.getElementById('kpiIntereses').innerText = fmtCurrency(intereses);
+      document.getElementById('countRec').innerText = filtered.length;
+    }
+
+    // Charts
+    function renderCharts(){
+      // Line - Monto por mes
+      const byMonth = {};
+      filtered.forEach(r=>{
+        const m = r.FechaApertura ? r.FechaApertura.slice(0,7) : 'Sin fecha';
+        byMonth[m] = (byMonth[m]||0) + (r.Monto||0);
+      });
+      const months = Object.keys(byMonth).sort();
+      const vals = months.map(m=>byMonth[m]);
+
+      if(chartLine) chartLine.destroy();
+      const ctx1 = document.getElementById('chartLine').getContext('2d');
+      chartLine = new Chart(ctx1,{
+        type:'line',
+        data:{ labels:months, datasets:[{ label:'Monto', data:vals, tension:0.3, borderWidth:2, borderColor:'rgba(0,170,180,0.95)', fill:true, backgroundColor:'rgba(0,188,212,0.12)', pointRadius:3 }]},
+        options:{ responsive:true, plugins:{legend:{display:false}} }
+      });
+
+      // Donut - Estatus
+      const byEst = {};
+      filtered.forEach(r=>{ const k = r.Estatus || 'Sin estatus'; byEst[k] = (byEst[k]||0)+1 });
+      const estLabels = Object.keys(byEst);
+      const estVals = estLabels.map(k=>byEst[k]);
+      if(chartDonut) chartDonut.destroy();
+      const ctx2 = document.getElementById('chartDonut').getContext('2d');
+      chartDonut = new Chart(ctx2,{ type:'doughnut', data:{ labels:estLabels, datasets:[{ data:estVals, backgroundColor: generateColors(estLabels.length) }] }, options:{ plugins:{legend:{position:'bottom'}} } });
+
+      // Bar - Sucursal
+      const bySuc = {};
+      filtered.forEach(r=>{ const k = r.Sucursal||'Sin Sucursal'; bySuc[k] = (bySuc[k]||0) + (r.Monto||0) });
+      const sucLabels = Object.keys(bySuc).sort((a,b)=>bySuc[b]-bySuc[a]).slice(0,12);
+      const sucVals = sucLabels.map(k=>bySuc[k]);
+      if(chartBar) chartBar.destroy();
+      const ctx3 = document.getElementById('chartBar').getContext('2d');
+      chartBar = new Chart(ctx3,{ type:'bar', data:{ labels:sucLabels, datasets:[{ data:sucVals, backgroundColor:'rgba(0,188,212,0.7)' }] }, options:{ indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{ticks:{callback: v => v>=1000? (v/1000)+'k':v}}} });
+    }
+
+    function generateColors(n){ const base = [0,188,212]; const arr=[]; for(let i=0;i<n;i++){ const f=0.55+0.45*(i/n); arr.push(`rgba(${Math.round(base[0]*f)},${Math.round(base[1]*f)},${Math.round(base[2]*f)},0.9)`)} return arr }
+
+    // Tabla
+    function renderTable(){
+      const cols = ['Sucursal','Promotor','NumCliente','NombreCliente','Tipo Aportación','FechaApertura','FechaVencimiento','Estatus','Monto','Intereses','Institucion'];
+      const header = document.querySelector('#dataTable thead');
+      const body = document.querySelector('#dataTable tbody');
+      header.innerHTML = '<tr>' + cols.map(c=>`<th>${c}</th>`).join('') + '</tr>';
+      body.innerHTML = filtered.map(r=>{
+        return `<tr>
+          <td>${escapeHtml(r.Sucursal)}</td>
+          <td>${escapeHtml(r.Promotor)}</td>
+          <td>${escapeHtml(r.NumCliente)}</td>
+          <td>${escapeHtml(r.NombreCliente)}</td>
+          <td>${escapeHtml(r['Tipo Aportación'])}</td>
+          <td>${escapeHtml(r.FechaApertura)}</td>
+          <td>${escapeHtml(r.FechaVencimiento)}</td>
+          <td>${escapeHtml(r.Estatus)}</td>
+          <td>${fmtCurrency(r.Monto)}</td>
+          <td>${fmtCurrency(r.Intereses)}</td>
+          <td>${escapeHtml(r.Institucion)}</td>
+        </tr>`
+      }).join('');
+
+      // DataTable
+      if($.fn.DataTable.isDataTable('#dataTable')){ $('#dataTable').DataTable().destroy(); }
+      $('#dataTable').DataTable({ pageLength:10, order:[[8,'desc']], autoWidth:false });
+    }
+
+    function escapeHtml(s){ if(s===null||s===undefined) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+    // Export CSV
+    document.getElementById('exportCsv').addEventListener('click', ()=>{
+      if(!filtered.length) return alert('No hay datos para exportar');
+      const cols = ['Sucursal','Promotor','NumCliente','NombreCliente','Tipo Aportación','FechaApertura','FechaVencimiento','Estatus','Monto','Intereses','Institucion'];
+      const rows = filtered.map(r=>cols.map(c=>`"${String(r[c]===undefined? (r[mapCol(c)]||'') : r[c]).replace(/"/g,'""')}"`).join(','));
+      const csv = [cols.join(','), ...rows].join('
+');
+      const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='aportaciones_export.csv'; document.body.appendChild(a); a.click(); a.remove();
+    });
+
+    function mapCol(c){ // helper when different key names
+      const m = {NumCliente:'NumCliente',NombreCliente:'NombreCliente',Monto:'Monto',Intereses:'Intereses',Institucion:'Institucion'}; return m[c]||c }
+
+    // Allow pressing Enter in search to apply
+    document.getElementById('searchClient').addEventListener('keyup', (e)=>{ if(e.key==='Enter') applyFilters(); });
+
+    // Small guard: user may accidentally load files with different headers
+    // Example: if load fails, show helpful message
+    window.addEventListener('error', (evt)=>{ console.error(evt); });
+
+  </script>
+</body>
+</html>
