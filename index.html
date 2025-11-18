@@ -1,1649 +1,420 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Gourmet | Restaurante Exquisito</title>
-    <style>
-        /* Variables de colores y estilos */
-        :root {
-            --color-primary: #2c3e50;
-            --color-secondary: #c19a6b;
-            --color-accent: #e74c3c;
-            --color-light: #ecf0f1;
-            --color-dark: #2c3e50;
-            --color-background: #f9f9f9;
-            --color-text: #333333;
-            --shadow-soft: 0 5px 15px rgba(0, 0, 0, 0.1);
-            --shadow-medium: 0 8px 25px rgba(0, 0, 0, 0.15);
-            --transition: all 0.3s ease;
-            --border-radius: 8px;
-        }
-
-        /* Reset y estilos base */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Playfair Display', serif;
-            background-color: var(--color-background);
-            color: var(--color-text);
-            line-height: 1.6;
-            overflow-x: hidden;
-        }
-
-        /* Contenedor principal */
-        .container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 20px;
-        }
-
-        /* Encabezado */
-        header {
-            text-align: center;
-            padding: 20px 0;
-            margin-bottom: 30px;
-        }
-
-        .logo {
-            font-size: 2.5rem;
-            font-weight: 700;
-            color: var(--color-primary);
-            margin-bottom: 10px;
-            letter-spacing: 2px;
-        }
-
-        .tagline {
-            font-style: italic;
-            color: var(--color-secondary);
-            font-size: 1.2rem;
-        }
-
-        /* Vista de categorías (carrusel) */
-        .categories-container {
-            position: relative;
-            height: 500px;
-            perspective: 1000px;
-            margin-bottom: 50px;
-        }
-
-        .categories-carousel {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            transform-style: preserve-3d;
-            transition: transform 0.8s cubic-bezier(0.17, 0.67, 0.83, 0.67);
-        }
-
-        .category {
-            position: absolute;
-            width: 300px;
-            height: 400px;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            cursor: pointer;
-            transition: var(--transition);
-            box-shadow: var(--shadow-soft);
-            left: 50%;
-            top: 50%;
-            transform: translate(-50%, -50%) rotateY(0deg) scale(0.8);
-            opacity: 0.6;
-        }
-
-        .category.active {
-            transform: translate(-50%, -50%) rotateY(0deg) scale(1);
-            opacity: 1;
-            z-index: 10;
-            box-shadow: var(--shadow-medium);
-        }
-
-        .category-left {
-            transform: translate(-150%, -50%) rotateY(30deg) scale(0.8);
-        }
-
-        .category-right {
-            transform: translate(50%, -50%) rotateY(-30deg) scale(0.8);
-        }
-
-        .category-bg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background-size: cover;
-            background-position: center;
-            transition: var(--transition);
-        }
-
-        .category-content {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            padding: 20px;
-            background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
-            color: white;
-            text-align: center;
-        }
-
-        .category-title {
-            font-size: 1.8rem;
-            margin-bottom: 10px;
-        }
-
-        .category-desc {
-            font-size: 0.9rem;
-            opacity: 0;
-            max-height: 0;
-            transition: var(--transition);
-        }
-
-        .category.active .category-desc {
-            opacity: 1;
-            max-height: 100px;
-        }
-
-        /* Navegación de categorías */
-        .category-nav {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin-bottom: 40px;
-        }
-
-        .nav-dot {
-            width: 12px;
-            height: 12px;
-            border-radius: 50%;
-            background-color: var(--color-secondary);
-            opacity: 0.5;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .nav-dot.active {
-            opacity: 1;
-            transform: scale(1.2);
-        }
-
-        /* Vista de menú detallado */
-        .menu-detail {
-            display: none;
-            padding: 20px;
-        }
-
-        .menu-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 30px;
-        }
-
-        .back-button {
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-family: inherit;
-            transition: var(--transition);
-        }
-
-        .back-button:hover {
-            background: var(--color-secondary);
-        }
-
-        .menu-title {
-            font-size: 2.5rem;
-            color: var(--color-primary);
-        }
-
-        .dishes-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 30px;
-        }
-
-        .dish-card {
-            background: white;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            box-shadow: var(--shadow-soft);
-            transition: var(--transition);
-            opacity: 0;
-            transform: translateY(20px);
-        }
-
-        .dish-card.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        .dish-card:hover {
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-medium);
-        }
-
-        .dish-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .dish-content {
-            padding: 20px;
-        }
-
-        .dish-title {
-            font-size: 1.4rem;
-            margin-bottom: 10px;
-            color: var(--color-primary);
-        }
-
-        .dish-desc {
-            font-size: 0.9rem;
-            margin-bottom: 15px;
-            color: #666;
-        }
-
-        .dish-info {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.85rem;
-            color: var(--color-secondary);
-        }
-
-        /* Modal de detalle del plato - MODIFICADO PARA MÓVIL */
-        .modal-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 1000;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-            padding: 15px;
-        }
-
-        .modal-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .modal-content {
-            background: white;
-            width: 100%;
-            max-width: 800px;
-            max-height: 90vh;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            transform: scale(0.9);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .modal-overlay.active .modal-content {
-            transform: scale(1);
-        }
-
-        .modal-header {
-            position: relative;
-            flex-shrink: 0;
-        }
-
-        .modal-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(255, 255, 255, 0.9);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 1.5rem;
-            transition: var(--transition);
-            z-index: 10;
-        }
-
-        .modal-close:hover {
-            background: white;
-            transform: scale(1.1);
-        }
-
-        .modal-body {
-            padding: 20px;
-            overflow-y: auto;
-            flex-grow: 1;
-        }
-
-        .modal-title {
-            font-size: 1.8rem;
-            margin-bottom: 15px;
-            color: var(--color-primary);
-        }
-
-        .modal-desc {
-            margin-bottom: 15px;
-            font-size: 1rem;
-            line-height: 1.6;
-        }
-
-        .modal-ingredients {
-            margin-bottom: 15px;
-        }
-
-        .modal-ingredients h4, .modal-nutrition h4 {
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-            color: var(--color-primary);
-        }
-
-        .ingredients-list {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
-        .ingredient-tag {
-            background: var(--color-light);
-            padding: 5px 10px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-        }
-
-        .modal-nutrition {
-            background: var(--color-light);
-            padding: 15px;
-            border-radius: var(--border-radius);
-            margin-bottom: 15px;
-        }
-
-        /* Nuevos estilos para botones de cantidad y pago - MEJORADO PARA MÓVIL */
-        .quantity-selector {
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin: 20px 0;
-            position: sticky;
-            bottom: 0;
-            background: white;
-            padding: 10px 0;
-            z-index: 5;
-        }
-
-        .quantity-btn {
-            background: var(--color-primary);
-            color: white;
-            border: none;
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            font-size: 1.2rem;
-            cursor: pointer;
-            transition: var(--transition);
-            flex-shrink: 0;
-        }
-
-        .quantity-btn:hover {
-            background: var(--color-secondary);
-            transform: scale(1.1);
-        }
-
-        .selected-quantity {
-            font-size: 1.2rem;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 30px;
-        }
-
-        .pay-button {
-            display: block;
-            background: linear-gradient(135deg, var(--color-secondary), var(--color-primary));
-            color: white;
-            border: none;
-            padding: 15px 20px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            margin: 10px auto;
-            transition: var(--transition);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 300px;
-            position: sticky;
-            bottom: 10px;
-            z-index: 10;
-        }
-
-        .pay-button:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-        }
-
-        /* Modal de pago */
-        .payment-modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.8);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-            padding: 15px;
-        }
-
-        .payment-modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        .payment-content {
-            background: white;
-            width: 100%;
-            max-width: 500px;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            transform: scale(0.9);
-            transition: var(--transition);
-            padding: 25px;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .payment-modal.active .payment-content {
-            transform: scale(1);
-        }
-
-        .payment-header {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .payment-title {
-            font-size: 1.8rem;
-            color: var(--color-primary);
-            margin-bottom: 10px;
-        }
-
-        .payment-close {
-            position: absolute;
-            top: 15px;
-            right: 15px;
-            background: rgba(0, 0, 0, 0.1);
-            width: 40px;
-            height: 40px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            font-size: 1.5rem;
-            transition: var(--transition);
-        }
-
-        .payment-close:hover {
-            background: rgba(0, 0, 0, 0.2);
-        }
-
-        .payment-form {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 5px;
-        }
-
-        .form-group label {
-            font-weight: bold;
-            color: var(--color-primary);
-        }
-
-        .form-group input {
-            padding: 12px;
-            border: 1px solid #ddd;
-            border-radius: var(--border-radius);
-            font-family: inherit;
-        }
-
-        .payment-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 20px;
-            flex-wrap: wrap;
-            gap: 10px;
-        }
-
-        .continue-shopping {
-            background: var(--color-light);
-            color: var(--color-primary);
-            border: none;
-            padding: 12px 20px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-family: inherit;
-            transition: var(--transition);
-            flex: 1;
-        }
-
-        .continue-shopping:hover {
-            background: #ddd;
-        }
-
-        .confirm-payment {
-            background: var(--color-secondary);
-            color: white;
-            border: none;
-            padding: 12px 20px;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            font-family: inherit;
-            transition: var(--transition);
-            flex: 1;
-        }
-
-        .confirm-payment:hover {
-            background: var(--color-primary);
-        }
-
-        /* Carrito de compras */
-        .cart-icon {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: var(--color-primary);
-            color: white;
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            z-index: 100;
-            box-shadow: var(--shadow-medium);
-            transition: var(--transition);
-        }
-
-        .cart-icon:hover {
-            background: var(--color-secondary);
-            transform: scale(1.1);
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -5px;
-            right: -5px;
-            background: var(--color-accent);
-            color: white;
-            width: 22px;
-            height: 22px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-
-        /* Modal del carrito */
-        .cart-modal {
-            position: fixed;
-            top: 0;
-            right: -400px;
-            width: 400px;
-            height: 100vh;
-            background: white;
-            z-index: 1500;
-            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.1);
-            transition: var(--transition);
-            display: flex;
-            flex-direction: column;
-        }
-
-        .cart-modal.active {
-            right: 0;
-        }
-
-        .cart-header {
-            padding: 20px;
-            border-bottom: 1px solid #eee;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .cart-title {
-            font-size: 1.5rem;
-            color: var(--color-primary);
-        }
-
-        .cart-close {
-            background: none;
-            border: none;
-            font-size: 1.5rem;
-            cursor: pointer;
-            color: var(--color-primary);
-        }
-
-        .cart-items {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-        }
-
-        .cart-item {
-            display: flex;
-            margin-bottom: 20px;
-            padding-bottom: 20px;
-            border-bottom: 1px solid #eee;
-        }
-
-        .cart-item-image {
-            width: 80px;
-            height: 80px;
-            object-fit: cover;
-            border-radius: var(--border-radius);
-        }
-
-        .cart-item-details {
-            flex: 1;
-            padding: 0 15px;
-        }
-
-        .cart-item-name {
-            font-weight: bold;
-            margin-bottom: 5px;
-        }
-
-        .cart-item-price {
-            color: var(--color-secondary);
-            margin-bottom: 10px;
-        }
-
-        .cart-item-quantity {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .quantity-control {
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .quantity-control button {
-            background: var(--color-light);
-            border: none;
-            width: 25px;
-            height: 25px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .quantity-control button:hover {
-            background: var(--color-secondary);
-            color: white;
-        }
-
-        .cart-item-remove {
-            background: none;
-            border: none;
-            color: var(--color-accent);
-            cursor: pointer;
-            font-size: 0.9rem;
-        }
-
-        .cart-item-remove:hover {
-            text-decoration: underline;
-        }
-
-        .cart-footer {
-            padding: 20px;
-            border-top: 1px solid #eee;
-        }
-
-        .cart-total {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 20px;
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .checkout-button {
-            display: block;
-            width: 100%;
-            background: var(--color-secondary);
-            color: white;
-            border: none;
-            padding: 15px;
-            border-radius: var(--border-radius);
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: var(--transition);
-        }
-
-        .checkout-button:hover {
-            background: var(--color-primary);
-        }
-
-        .empty-cart {
-            text-align: center;
-            padding: 40px 20px;
-            color: #888;
-        }
-
-        /* Overlay para el carrito */
-        .cart-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1400;
-            opacity: 0;
-            visibility: hidden;
-            transition: var(--transition);
-        }
-
-        .cart-overlay.active {
-            opacity: 1;
-            visibility: visible;
-        }
-
-        /* Animaciones */
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
-        }
-
-        .fade-in-up {
-            animation: fadeInUp 0.6s ease forwards;
-        }
-
-        /* Responsive - MEJORAS PARA MÓVIL */
-        @media (max-width: 768px) {
-            .categories-container {
-                height: 400px;
-            }
-            
-            .category {
-                width: 250px;
-                height: 350px;
-            }
-            
-            .dishes-grid {
-                grid-template-columns: 1fr;
-            }
-            
-            .modal-content {
-                width: 100%;
-                max-height: 85vh;
-            }
-            
-            .modal-image {
-                height: 150px;
-            }
-            
-            .modal-title {
-                font-size: 1.5rem;
-            }
-            
-            .quantity-selector {
-                gap: 5px;
-            }
-            
-            .quantity-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 1rem;
-            }
-            
-            .pay-button {
-                padding: 12px 20px;
-                font-size: 1rem;
-                position: fixed;
-                bottom: 20px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: calc(100% - 40px);
-                max-width: 300px;
-            }
-            
-            .payment-actions {
-                flex-direction: column;
-            }
-            
-            .continue-shopping, .confirm-payment {
-                width: 100%;
-                text-align: center;
-            }
-            
-            .cart-modal {
-                width: 100%;
-                right: -100%;
-            }
-            
-            .cart-item {
-                flex-direction: column;
-            }
-            
-            .cart-item-image {
-                width: 100%;
-                height: 120px;
-                margin-bottom: 10px;
-            }
-            
-            .logo {
-                font-size: 2rem;
-            }
-            
-            .menu-title {
-                font-size: 2rem;
-            }
-        }
-
-        @media (max-width: 480px) {
-            .container {
-                padding: 10px;
-            }
-            
-            header {
-                padding: 15px 0;
-            }
-            
-            .modal-body {
-                padding: 15px;
-            }
-            
-            .modal-ingredients h4, .modal-nutrition h4 {
-                font-size: 1.1rem;
-            }
-            
-            .ingredient-tag {
-                font-size: 0.8rem;
-                padding: 4px 8px;
-            }
-            
-            .payment-content {
-                padding: 20px;
-            }
-            
-            .payment-title {
-                font-size: 1.5rem;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Dashboard de Aportaciones</title>
+  <!-- Dependencias CDN -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <style>
+    :root{
+      --acqua: #00bcd4; /* color principal */
+      --acqua-dark: #0097a7;
+      --bg: #ffffff;
+      --muted: #6b7280;
+      --card-shadow: 0 6px 18px rgba(3, 60, 77, 0.08);
+      --radius: 12px;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+    }
+
+    html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7fcfd 0%, #ffffff 100%);color:#0f172a}
+    .app{
+      display:grid;
+      grid-template-columns: 320px 1fr;
+      gap:20px;
+      padding:24px;
+      align-items:start;
+      height:100vh;
+      box-sizing:border-box;
+    }
+
+    /* SIDEBAR */
+    .sidebar{
+      background:var(--bg);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow:var(--card-shadow);
+      height:calc(100vh - 48px);
+      overflow:auto;
+    }
+    .brand{display:flex;gap:12px;align-items:center;margin-bottom:14px}
+    .logo{width:44px;height:44px;border-radius:10px;background:linear-gradient(135deg,var(--acqua),var(--acqua-dark));display:flex;align-items:center;justify-content:center;color:white;font-weight:700}
+    h3{margin:0}
+    .muted{color:var(--muted);font-size:13px}
+
+    .control{margin-top:12px}
+    label{font-weight:600;font-size:13px}
+    select,input[type="date"],input[type="text"]{
+      width:100%;padding:8px 10px;border-radius:8px;border:1px solid #e6eef0;margin-top:6px;background:#fbfeff
+    }
+    .small{font-size:12px;color:var(--muted);margin-top:6px}
+    .btn{display:inline-block;padding:10px 14px;border-radius:10px;background:var(--acqua);color:white;border:none;cursor:pointer;font-weight:700}
+    .btn.secondary{background:#eef9fa;color:var(--acqua)}
+
+    /* MAIN */
+    .main{
+      display:flex;flex-direction:column;gap:18px;
+    }
+    .card{background:var(--bg);padding:16px;border-radius:12px;box-shadow:var(--card-shadow)}
+
+    .kpi-row{display:flex;gap:12px}
+    .kpi{flex:1;padding:14px;border-radius:10px;background:linear-gradient(180deg,#ffffff, #fbffff);display:flex;flex-direction:column}
+    .kpi .value{font-size:20px;font-weight:800;color:var(--acqua)}
+    .kpi .label{color:var(--muted);font-size:13px;margin-top:6px}
+
+    .charts{display:grid;grid-template-columns:1fr 420px;gap:12px}
+    .chart-card{padding:12px}
+
+    /* table */
+    .table-wrap{overflow:auto}
+
+    footer{font-size:12px;color:var(--muted);margin-top:8px}
+
+    @media (max-width:980px){
+      .app{grid-template-columns:1fr; padding:12px}
+      .sidebar{height:auto}
+      .charts{grid-template-columns:1fr}
+    }
+  </style>
 </head>
 <body>
-    <div class="container">
-        <!-- Encabezado -->
-        <header>
-            <div class="logo">RESTAURANTE EXQUISITO</div>
-            <div class="tagline">Experiencia culinaria de alta gama</div>
-        </header>
+  <div class="app">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="logo">DA</div>
+        <div>
+          <h3>Dashboard Aportaciones</h3>
+          <div class="muted">Carga tu archivo .xls o .xlsx y filtra la información</div>
+        </div>
+      </div>
 
-        <!-- Icono del carrito -->
-        <div class="cart-icon" id="cart-icon">
-            🛒
-            <div class="cart-count" id="cart-count">0</div>
+      <div class="control">
+        <label>Subir archivo Excel</label>
+        <input id="file" type="file" accept=".xls,.xlsx" />
+        <div class="small">Se leerá la primera hoja del libro. Columnas esperadas incluidas en tu archivo.</div>
+      </div>
+
+      <hr style="margin:14px 0;border:none;border-top:1px solid #eef6f7">
+
+      <div class="control">
+        <label>Buscar por cliente</label>
+        <input id="searchClient" type="text" placeholder="Nombre o Número de Cliente" />
+      </div>
+
+      <div class="control">
+        <label>Sucursal</label>
+        <select id="filterSucursal"><option value="">-- Todas --</option></select>
+      </div>
+
+      <div class="control">
+        <label>Promotor</label>
+        <select id="filterPromotor"><option value="">-- Todos --</option></select>
+      </div>
+
+      <div class="control">
+        <label>Estatus</label>
+        <select id="filterEstatus"><option value="">-- Todos --</option></select>
+      </div>
+
+      <div class="control">
+        <label>Tipo de Aportación</label>
+        <select id="filterTipo"><option value="">-- Todos --</option></select>
+      </div>
+
+      <div class="control">
+        <label>Rango Fecha Apertura</label>
+        <input id="dateFrom" type="date" />
+        <input id="dateTo" type="date" style="margin-top:8px" />
+      </div>
+
+      <div style="display:flex;gap:8px;margin-top:12px">
+        <button id="applyFilters" class="btn">Aplicar filtros</button>
+        <button id="resetFilters" class="btn secondary">Reset</button>
+      </div>
+
+      <footer>Consejo: Ordena por columnas en la tabla para encontrar rápidamente registros.</footer>
+    </aside>
+
+    <main class="main">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <div>
+            <h2 style="margin:0">Resumen</h2>
+            <div class="muted">KPIs y visualizaciones rápidas</div>
+          </div>
+          <div>
+            <button id="downloadCsv" class="btn">Exportar CSV</button>
+          </div>
         </div>
 
-        <!-- Vista de categorías -->
-        <div id="categories-view">
-            <div class="categories-container">
-                <div class="categories-carousel">
-                    <!-- Las categorías se generarán dinámicamente con JavaScript -->
-                </div>
-            </div>
-            <div class="category-nav">
-                <!-- Los puntos de navegación se generarán dinámicamente con JavaScript -->
-            </div>
+        <div style="margin-top:12px" class="kpi-row">
+          <div class="kpi">
+            <div class="value" id="kpiTotal">$0</div>
+            <div class="label">Monto Total</div>
+          </div>
+          <div class="kpi">
+            <div class="value" id="kpiCount">0</div>
+            <div class="label">Número de Aportaciones</div>
+          </div>
+          <div class="kpi">
+            <div class="value" id="kpiPromedio">$0</div>
+            <div class="label">Monto Promedio</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card charts">
+        <div class="chart-card card">
+          <canvas id="chartPrincipal" height="220"></canvas>
         </div>
 
-        <!-- Vista de menú detallado -->
-        <div id="menu-detail" class="menu-detail">
-            <div class="menu-header">
-                <button class="back-button">← Volver</button>
-                <h2 class="menu-title"></h2>
-            </div>
-            <div class="dishes-grid">
-                <!-- Los platos se generarán dinámicamente con JavaScript -->
-            </div>
+        <div class="card">
+          <h4 style="margin-top:6px">Distribución por Estatus</h4>
+          <canvas id="chartEstatus" height="240"></canvas>
         </div>
-    </div>
+      </div>
 
-    <!-- Modal de detalle del plato -->
-    <div class="modal-overlay" id="dish-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <img class="modal-image" src="" alt="">
-                <div class="modal-close">×</div>
-            </div>
-            <div class="modal-body">
-                <h3 class="modal-title"></h3>
-                <p class="modal-desc"></p>
-                <div class="modal-ingredients">
-                    <h4>Ingredientes</h4>
-                    <div class="ingredients-list"></div>
-                </div>
-                <div class="modal-nutrition">
-                    <h4>Información Nutricional</h4>
-                    <p class="calories"></p>
-                </div>
-                
-                <!-- Selector de cantidad -->
-                <div class="quantity-selector">
-                    <button class="quantity-btn" data-action="decrease">-</button>
-                    <span class="selected-quantity" id="selected-quantity">1</span>
-                    <button class="quantity-btn" data-action="increase">+</button>
-                    <button class="quantity-btn" data-quantity="1">+1</button>
-                    <button class="quantity-btn" data-quantity="2">+2</button>
-                    <button class="quantity-btn" data-quantity="3">+3</button>
-                    <button class="quantity-btn" data-quantity="4">+4</button>
-                    <button class="quantity-btn" data-quantity="5">+5</button>
-                </div>
-                
-                <!-- Botón de pago -->
-                <button class="pay-button" id="pay-button">Agregar al pedido</button>
-            </div>
+      <div class="card">
+        <h3 style="margin-top:0">Tabla de Aportaciones</h3>
+        <div class="table-wrap">
+          <table id="dataTable" class="display" style="width:100%">
+            <thead></thead>
+            <tbody></tbody>
+          </table>
         </div>
-    </div>
+      </div>
 
-    <!-- Modal de pago -->
-    <div class="payment-modal" id="payment-modal">
-        <div class="payment-content">
-            <div class="payment-close">×</div>
-            <div class="payment-header">
-                <h2 class="payment-title">Finalizar Pedido</h2>
-                <p>Complete sus datos para procesar el pago</p>
-            </div>
-            <div class="payment-form">
-                <div class="form-group">
-                    <label for="card-name">Nombre en la tarjeta</label>
-                    <input type="text" id="card-name" placeholder="Como aparece en la tarjeta">
-                </div>
-                <div class="form-group">
-                    <label for="card-number">Número de tarjeta</label>
-                    <input type="text" id="card-number" placeholder="1234 5678 9012 3456">
-                </div>
-                <div class="form-group" style="display: flex; gap: 15px;">
-                    <div style="flex: 1;">
-                        <label for="card-expiry">Fecha de expiración</label>
-                        <input type="text" id="card-expiry" placeholder="MM/AA">
-                    </div>
-                    <div style="flex: 1;">
-                        <label for="card-cvc">CVC</label>
-                        <input type="text" id="card-cvc" placeholder="123">
-                    </div>
-                </div>
-            </div>
-            <div class="payment-actions">
-                <button class="continue-shopping" id="continue-shopping">Seguir comprando</button>
-                <button class="confirm-payment" id="confirm-payment">Confirmar pago</button>
-            </div>
-        </div>
-    </div>
+    </main>
+  </div>
 
-    <!-- Modal del carrito -->
-    <div class="cart-overlay" id="cart-overlay"></div>
-    <div class="cart-modal" id="cart-modal">
-        <div class="cart-header">
-            <h2 class="cart-title">Tu Pedido</h2>
-            <button class="cart-close">×</button>
-        </div>
-        <div class="cart-items" id="cart-items">
-            <!-- Los items del carrito se generarán dinámicamente con JavaScript -->
-        </div>
-        <div class="cart-footer">
-            <div class="cart-total">
-                <span>Total:</span>
-                <span id="cart-total-amount">$0.00</span>
-            </div>
-            <button class="checkout-button" id="checkout-button">Proceder al Pago</button>
-        </div>
-    </div>
+  <script>
+    // Utilidades
+    const expectedColumns = [
+      'Sucursal','Promotor','Fecha Creación Cte.','Número de Cliente','Nombre de Cliente','Tipo Aportación','No. Aportación','Fecha Apertura','Fecha Vencimiento','Fecha Prevencimiento','Estatus','Plazo (Días)','Plazo Real (Días)','Monto','Monto Liquidación Aportación Anterior','Intereses provenientes de Increm de Renov','Dinero Nuevo','Formula Interés','Tasa Fija','Tasa Base','Sobre Tasa','Piso','Techo','Intereses Totales','ISR Total','Total a Recibir','Intereses pagados en el perido','Intereses devengados no pagados en el periodo','Intereses por denvengar en el periodo','Interés Devengado en el mes','Tipo de Interés','Tasa Sugerida','Diferencia de Tasa','Tipo Documento','Cantidad','Monto renovado','Monto Global','Saldo Capital','Día de Pago','Reinversión Aut','Institución 1','Cta. Dispersar 1','Institución 2','Cta. Dispersar 2','Institución 3','Cta. Dispersar 3','Notas']
 
-    <script>
-        // Datos del menú (normalmente vendrían de una base de datos)
-        const menuData = {
-            entradas: {
-                title: "Entradas",
-                description: "Aperitivos exquisitos para comenzar su experiencia culinaria",
-                image: "https://images.unsplash.com/photo-1605522867157-380f6e1eeda8?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                dishes: [
-                    {
-                        id: 1,
-                        name: "Tartar de Atún con Aguacate",
-                        description: "Atún rojo de almadraba marinado con salsa ponzu, aguacate y chips de wonton.",
-                        image: "https://images.unsplash.com/photo-1579584425555-c3ce17fd4351?ixlib=rb-1.2.1&auto=format&fit=crop&w=675&q=80",
-                        ingredients: ["Atún rojo", "Aguacate", "Salsa ponzu", "Cebollino", "Sésamo", "Wonton"],
-                        calories: "320 kcal",
-                        price: 18.50
-                    },
-                    {
-                        id: 2,
-                        name: "Foie Gras con Compota de Manzana",
-                        description: "Foie gras de pato con compota de manzana caramelizada y pan brioche tostado.",
-                        image: "https://images.unsplash.com/photo-1544025162-d76694265947?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                        ingredients: ["Foie gras", "Manzana", "Azúcar moreno", "Brioche", "Sal Maldon"],
-                        calories: "450 kcal",
-                        price: 24.00
-                    },
-                    {
-                        id: 3,
-                        name: "Carpaccio de Res con Rúcula",
-                        description: "Finas láminas de res madurada con rúcula, parmesano y alcaparras.",
-                        image: "https://images.unsplash.com/photo-1546833999-b9f581a1996d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                        ingredients: ["Res Angus", "Rúcula", "Queso parmesano", "Alcaparras", "Aceite de oliva", "Limón"],
-                        calories: "280 kcal",
-                        price: 16.00
-                    }
-                ]
-            },
-            principales: {
-                title: "Platos Principales",
-                description: "Nuestras especialidades culinarias preparadas con ingredientes premium",
-                image: "https://images.unsplash.com/photo-1571091718767-18b5b1457add?ixlib=rb-1.2.1&auto=format&fit=crop&w=1352&q=80",
-                dishes: [
-                    {
-                        id: 4,
-                        name: "Solomillo Wellington",
-                        description: "Solomillo de ternera envuelto en hojaldre con duxelles de champiñones y foie gras.",
-                        image: "https://images.unsplash.com/photo-1588127333419-501a5c542a2c?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                        ingredients: ["Solomillo de ternera", "Hojaldre", "Champiñones", "Foie gras", "Jerez", "Hierbas provenzales"],
-                        calories: "720 kcal",
-                        price: 32.50
-                    },
-                    {
-                        id: 5,
-                        name: "Risotto de Bogavante",
-                        description: "Arroz arbóreo cremoso con bogavante, azafrán y queso parmesano.",
-                        image: "https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-1.2.1&auto=format&fit=crop&w=800&q=80",
-                        ingredients: ["Bogavante", "Arroz arbóreo", "Azafrán", "Parmesano", "Vino blanco", "Caldo de mariscos"],
-                        calories: "580 kcal",
-                        price: 28.00
-                    },
-                    {
-                        id: 6,
-                        name: "Pato Confitado con Salsa de Frutos Rojos",
-                        description: "Pato confitado lentamente con salsa agridulce de frutos rojos y puré de patata trufado.",
-                        image: "https://images.unsplash.com/photo-1563245372-f21724e3856d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1349&q=80",
-                        ingredients: ["Pato", "Frutos rojos", "Patata", "Trufa", "Miel", "Romero"],
-                        calories: "650 kcal",
-                        price: 26.50
-                    }
-                ]
-            },
-            postres: {
-                title: "Postres",
-                description: "Delicias dulces para culminar su experiencia gastronómica",
-                image: "https://images.unsplash.com/photo-1563729784474-d77dbb933a9e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1348&q=80",
-                dishes: [
-                    {
-                        id: 7,
-                        name: "Soufflé de Chocolate con Helado de Vainilla",
-                        description: "Soufflé de chocolate negro belga con corazón fundente y helado de vainilla de Madagascar.",
-                        image: "https://images.unsplash.com/photo-1578985545062-69928b1d9587?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                        ingredients: ["Chocolate negro 70%", "Huevos", "Azúcar", "Vainilla", "Nata", "Mantequilla"],
-                        calories: "480 kcal",
-                        price: 12.00
-                    },
-                    {
-                        id: 8,
-                        name: "Tarta de Queso avec Coulis de Frutos Rojos",
-                        description: "Tarta de queso cremosa al horno con base de galleta y coulis de frutos rojos.",
-                        image: "https://images.unsplash.com/photo-1524351199678-941a58a3df50?ixlib=rb-1.2.1&auto=format&fit=crop&w=1351&q=80",
-                        ingredients: ["Queso crema", "Huevos", "Galleta", "Frutos rojos", "Azúcar", "Nata"],
-                        calories: "420 kcal",
-                        price: 10.50
-                    },
-                    {
-                        id: 9,
-                        name: "Crème Brûlée con Vainilla y Naranja",
-                        description: "Clásica crema catalana con vainilla de Tahití y toques cítricos de naranja.",
-                        image: "https://images.unsplash.com/photo-1558319024-7b6a0046968d?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                        ingredients: ["Nata", "Yema de huevo", "Vainilla", "Naranja", "Azúcar", "Leche"],
-                        calories: "380 kcal",
-                        price: 9.50
-                    }
-                ]
-            },
-            bebidas: {
-                title: "Bebidas",
-                description: "Selección de vinos, cocktails y bebidas refrescantes",
-                image: "https://images.unsplash.com/photo-1470337458703-46ad1756a187?ixlib=rb-1.2.1&auto=format&fit=crop&w=1349&q=80",
-                dishes: [
-                    {
-                        id: 10,
-                        name: "Copa de Vino Tinto Reserva",
-                        description: "Selección de vinos tintos reserva de la Ribera del Duero con crianza en barrica de roble.",
-                        image: "https://images.unsplash.com/photo-1474722883778-792e7990302f?ixlib=rb-1.2.1&auto=format&fit=crop&w=1348&q=80",
-                        ingredients: ["Uva tempranillo", "Barrica de roble"],
-                        calories: "120 kcal",
-                        price: 8.00
-                    },
-                    {
-                        id: 11,
-                        name: "Cóctel Signature 'Garden Spritz'",
-                        description: "Nuestra interpretación del clásico Aperol Spritz con hierbas del jardín y cítricos.",
-                        image: "https://images.unsplash.com/photo-1536935338788-846bb9981813?ixlib=rb-1.2.1&auto=format&fit=crop&w=1348&q=80",
-                        ingredients: ["Aperol", "Prosecco", "Soda", "Hierbas aromáticas", "Naranja"],
-                        calories: "180 kcal",
-                        price: 14.00
-                    },
-                    {
-                        id: 12,
-                        name: "Jugo de Granada y Jengibre Prensado en Frío",
-                        description: "Jugo natural prensado en frío de granada con un toque de jengibre y menta.",
-                        image: "https://images.unsplash.com/photo-1532303548535-105434ef9df1?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80",
-                        ingredients: ["Granada", "Jengibre", "Menta"],
-                        calories: "90 kcal",
-                        price: 7.50
-                    }
-                ]
-            }
-        };
+    let rawData = [];
+    let filtered = [];
+    let dataTable = null;
+    let chartPrincipal = null;
+    let chartEstatus = null;
 
-        // Variables globales
-        let currentCategory = 'entradas';
-        let currentAngle = 0;
-        const categoryKeys = Object.keys(menuData);
-        const totalCategories = categoryKeys.length;
-        let currentDish = null;
-        let selectedQuantity = 1;
-        let cart = [];
+    // Leer Excel usando SheetJS
+    document.getElementById('file').addEventListener('change', (e)=>{
+      const f = e.target.files[0];
+      if(!f) return;
+      const reader = new FileReader();
+      reader.onload = (evt)=>{
+        const data = new Uint8Array(evt.target.result);
+        const workbook = XLSX.read(data,{type:'array'});
+        const firstSheet = workbook.SheetNames[0];
+        const ws = workbook.Sheets[firstSheet];
+        const json = XLSX.utils.sheet_to_json(ws, {defval: ''});
+        rawData = json.map(r => normalizeRow(r));
+        initFilters(rawData);
+        applyAllFilters();
+      }
+      reader.readAsArrayBuffer(f);
+    })
 
-        // Inicializar la aplicación cuando el DOM esté listo
-        document.addEventListener('DOMContentLoaded', initApp);
+    function normalizeRow(r){
+      // Ensure all expected columns exist (if not, add empty)
+      const out = {};
+      expectedColumns.forEach(c => out[c] = r[c] !== undefined ? r[c] : '');
+      // Try to coerce numeric fields
+      out['Monto'] = asNumber(out['Monto']);
+      out['Monto Global'] = asNumber(out['Monto Global']);
+      out['Total a Recibir'] = asNumber(out['Total a Recibir']);
+      // Parse dates
+      out['Fecha Apertura_raw'] = out['Fecha Apertura'];
+      out['Fecha Apertura'] = parseDate(out['Fecha Apertura']);
+      out['Fecha Vencimiento'] = parseDate(out['Fecha Vencimiento']);
+      return out;
+    }
+    function asNumber(v){
+      if(v === '' || v === null) return 0;
+      if(typeof v === 'number') return v;
+      // remove currency and thousand separators
+      return Number(String(v).replace(/[^0-9.-]+/g,'').trim()) || 0;
+    }
+    function parseDate(v){
+      if(!v) return '';
+      // If already Date
+      if(Object.prototype.toString.call(v) === '[object Date]') return v.toISOString().slice(0,10);
+      // Excel serial? if number
+      if(typeof v === 'number'){
+        const d = XLSX.SSF.parse_date_code(v);
+        if(d) return `${d.y.toString().padStart(4,'0')}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`;
+      }
+      // Try common formats
+      const dt = new Date(v);
+      if(!isNaN(dt)) return dt.toISOString().slice(0,10);
+      return String(v);
+    }
 
-        function initApp() {
-            renderCategories();
-            setupEventListeners();
-            updateCartCount();
-            updateCartDisplay();
-        }
+    // Inicializar filtros dinámicamente
+    function initFilters(data){
+      populateSelect('filterSucursal', uniqueValues(data,'Sucursal'));
+      populateSelect('filterPromotor', uniqueValues(data,'Promotor'));
+      populateSelect('filterEstatus', uniqueValues(data,'Estatus'));
+      populateSelect('filterTipo', uniqueValues(data,'Tipo Aportación'));
+    }
+    function uniqueValues(data,key){
+      const s = new Set();
+      data.forEach(r => { if(r[key] !== undefined && r[key] !== '') s.add(r[key]); });
+      return Array.from(s).sort();
+    }
+    function populateSelect(id,items){
+      const sel = document.getElementById(id);
+      sel.innerHTML = '<option value="">-- Todos --</option>' + items.map(i=>`<option value="${escapeHtml(i)}">${escapeHtml(i)}</option>`).join('');
+    }
+    function escapeHtml(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;') }
 
-        // Renderizar las categorías en el carrusel
-        function renderCategories() {
-            const carousel = document.querySelector('.categories-carousel');
-            const nav = document.querySelector('.category-nav');
-            
-            carousel.innerHTML = '';
-            nav.innerHTML = '';
-            
-            categoryKeys.forEach((key, index) => {
-                const category = menuData[key];
-                
-                // Crear elemento de categoría
-                const categoryEl = document.createElement('div');
-                categoryEl.className = 'category';
-                categoryEl.dataset.category = key;
-                
-                // Posicionar la categoría en el carrusel
-                if (index === 0) {
-                    categoryEl.classList.add('active');
-                } else if (index === 1) {
-                    categoryEl.classList.add('category-right');
-                } else if (index === totalCategories - 1) {
-                    categoryEl.classList.add('category-left');
-                }
-                
-                categoryEl.innerHTML = `
-                    <div class="category-bg" style="background-image: url('${category.image}')"></div>
-                    <div class="category-content">
-                        <h3 class="category-title">${category.title}</h3>
-                        <p class="category-desc">${category.description}</p>
-                    </div>
-                `;
-                
-                carousel.appendChild(categoryEl);
-                
-                // Crear punto de navegación
-                const dot = document.createElement('div');
-                dot.className = 'nav-dot';
-                if (index === 0) dot.classList.add('active');
-                dot.dataset.target = key;
-                nav.appendChild(dot);
-            });
-        }
+    // Botones
+    document.getElementById('applyFilters').addEventListener('click', applyAllFilters);
+    document.getElementById('resetFilters').addEventListener('click', ()=>{
+      ['filterSucursal','filterPromotor','filterEstatus','filterTipo'].forEach(id=>document.getElementById(id).value='');
+      document.getElementById('searchClient').value='';
+      document.getElementById('dateFrom').value='';
+      document.getElementById('dateTo').value='';
+      applyAllFilters();
+    });
 
-        // Configurar event listeners
-        function setupEventListeners() {
-            // Navegación por puntos
-            document.querySelectorAll('.nav-dot').forEach(dot => {
-                dot.addEventListener('click', () => {
-                    const targetCategory = dot.dataset.target;
-                    rotateToCategory(targetCategory);
-                });
-            });
-            
-            // Navegación por categorías (clic en categoría)
-            document.querySelectorAll('.category').forEach(category => {
-                category.addEventListener('click', () => {
-                    const targetCategory = category.dataset.category;
-                    if (category.classList.contains('active')) {
-                        showMenuDetail(targetCategory);
-                    } else {
-                        rotateToCategory(targetCategory);
-                    }
-                });
-            });
-            
-            // Botón de volver
-            document.querySelector('.back-button').addEventListener('click', () => {
-                showCategoriesView();
-            });
-            
-            // Cerrar modal
-            document.querySelector('.modal-close').addEventListener('click', closeModal);
-            document.getElementById('dish-modal').addEventListener('click', (e) => {
-                if (e.target === document.getElementById('dish-modal')) {
-                    closeModal();
-                }
-            });
-            
-            // Botones de cantidad
-            document.querySelectorAll('.quantity-btn').forEach(btn => {
-                btn.addEventListener('click', handleQuantityChange);
-            });
-            
-            // Botón de pago
-            document.getElementById('pay-button').addEventListener('click', handlePayment);
-            
-            // Modal de pago
-            document.querySelector('.payment-close').addEventListener('click', closePaymentModal);
-            document.getElementById('payment-modal').addEventListener('click', (e) => {
-                if (e.target === document.getElementById('payment-modal')) {
-                    closePaymentModal();
-                }
-            });
-            
-            // Botones del modal de pago
-            document.getElementById('continue-shopping').addEventListener('click', continueShopping);
-            document.getElementById('confirm-payment').addEventListener('click', confirmPayment);
-            
-            // Icono del carrito
-            document.getElementById('cart-icon').addEventListener('click', showCart);
-            
-            // Cerrar carrito
-            document.querySelector('.cart-close').addEventListener('click', hideCart);
-            document.getElementById('cart-overlay').addEventListener('click', hideCart);
-            
-            // Botón de checkout
-            document.getElementById('checkout-button').addEventListener('click', showPaymentModal);
-        }
+    document.getElementById('searchClient').addEventListener('keyup', ()=>{ applyAllFilters(); });
 
-        // Rotar el carrusel a la categoría seleccionada
-        function rotateToCategory(category) {
-            const currentIndex = categoryKeys.indexOf(currentCategory);
-            const targetIndex = categoryKeys.indexOf(category);
-            const diff = targetIndex - currentIndex;
-            
-            // Actualizar categoría actual
-            currentCategory = category;
-            
-            // Actualizar clases activas
-            document.querySelectorAll('.category').forEach((cat, index) => {
-                cat.className = 'category';
-                
-                if (index === targetIndex) {
-                    cat.classList.add('active');
-                } else if (index === (targetIndex + 1) % totalCategories) {
-                    cat.classList.add('category-right');
-                } else if (index === (targetIndex - 1 + totalCategories) % totalCategories) {
-                    cat.classList.add('category-left');
-                }
-            });
-            
-            // Actualizar puntos de navegación
-            document.querySelectorAll('.nav-dot').forEach((dot, index) => {
-                dot.classList.toggle('active', index === targetIndex);
-            });
-        }
+    function applyAllFilters(){
+      if(!rawData.length) return;
+      const suc = document.getElementById('filterSucursal').value;
+      const prom = document.getElementById('filterPromotor').value;
+      const est = document.getElementById('filterEstatus').value;
+      const tipo = document.getElementById('filterTipo').value;
+      const from = document.getElementById('dateFrom').value;
+      const to = document.getElementById('dateTo').value;
+      const search = document.getElementById('searchClient').value.toLowerCase();
 
-        // Mostrar vista detallada del menú
-        function showMenuDetail(category) {
-            // Ocultar vista de categorías y mostrar vista de menú
-            document.getElementById('categories-view').style.display = 'none';
-            const menuDetail = document.getElementById('menu-detail');
-            menuDetail.style.display = 'block';
-            
-            // Actualizar título
-            document.querySelector('.menu-title').textContent = menuData[category].title;
-            
-            // Renderizar platos
-            const dishesGrid = document.querySelector('.dishes-grid');
-            dishesGrid.innerHTML = '';
-            
-            menuData[category].dishes.forEach((dish, index) => {
-                const dishCard = document.createElement('div');
-                dishCard.className = 'dish-card';
-                dishCard.dataset.id = dish.id;
-                
-                dishCard.innerHTML = `
-                    <img src="${dish.image}" alt="${dish.name}" class="dish-image">
-                    <div class="dish-content">
-                        <h3 class="dish-title">${dish.name}</h3>
-                        <p class="dish-desc">${dish.description}</p>
-                        <div class="dish-info">
-                            <span>${dish.calories}</span>
-                            <span>$${dish.price.toFixed(2)}</span>
-                        </div>
-                    </div>
-                `;
-                
-                dishesGrid.appendChild(dishCard);
-                
-                // Añadir evento de clic para mostrar detalles del plato
-                dishCard.addEventListener('click', () => {
-                    showDishDetail(dish);
-                });
-                
-                // Animación de aparición con retraso escalonado
-                setTimeout(() => {
-                    dishCard.classList.add('visible');
-                }, 100 + (index * 100));
-            });
-            
-            // Scroll to top
-            window.scrollTo(0, 0);
-        }
+      filtered = rawData.filter(r=>{
+        if(suc && r['Sucursal'] !== suc) return false;
+        if(prom && r['Promotor'] !== prom) return false;
+        if(est && r['Estatus'] !== est) return false;
+        if(tipo && r['Tipo Aportación'] !== tipo) return false;
+        if(from){ if(!r['Fecha Apertura'] || r['Fecha Apertura'] < from) return false; }
+        if(to){ if(!r['Fecha Apertura'] || r['Fecha Apertura'] > to) return false; }
+        if(search){ const s = (r['Nombre de Cliente'] + ' ' + r['Número de Cliente']).toLowerCase(); if(!s.includes(search)) return false; }
+        return true;
+      });
 
-        // Mostrar vista de categorías
-        function showCategoriesView() {
-            document.getElementById('menu-detail').style.display = 'none';
-            document.getElementById('categories-view').style.display = 'block';
-        }
+      refreshKpis();
+      refreshCharts();
+      refreshTable();
+    }
 
-        // Mostrar detalles del plato en modal
-        function showDishDetail(dish) {
-            currentDish = dish;
-            selectedQuantity = 1;
-            
-            const modal = document.getElementById('dish-modal');
-            const modalImage = document.querySelector('.modal-image');
-            const modalTitle = document.querySelector('.modal-title');
-            const modalDesc = document.querySelector('.modal-desc');
-            const ingredientsList = document.querySelector('.ingredients-list');
-            const calories = document.querySelector('.calories');
-            const quantityDisplay = document.getElementById('selected-quantity');
-            
-            // Actualizar contenido del modal
-            modalImage.src = dish.image;
-            modalImage.alt = dish.name;
-            modalTitle.textContent = dish.name;
-            modalDesc.textContent = dish.description;
-            calories.textContent = `${dish.calories} - $${dish.price.toFixed(2)}`;
-            quantityDisplay.textContent = selectedQuantity;
-            
-            // Renderizar ingredientes
-            ingredientsList.innerHTML = '';
-            dish.ingredients.forEach(ingredient => {
-                const tag = document.createElement('span');
-                tag.className = 'ingredient-tag';
-                tag.textContent = ingredient;
-                ingredientsList.appendChild(tag);
-            });
-            
-            // Mostrar modal
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
+    function refreshKpis(){
+      const total = filtered.reduce((s,r)=>s + (r['Monto']||0),0);
+      const count = filtered.length;
+      const avg = count? (total/count):0;
+      document.getElementById('kpiTotal').innerText = formatCurrency(total);
+      document.getElementById('kpiCount').innerText = count;
+      document.getElementById('kpiPromedio').innerText = formatCurrency(avg);
+    }
+    function formatCurrency(n){
+      return new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:2}).format(n);
+    }
 
-        // Manejar cambios en la cantidad
-        function handleQuantityChange(e) {
-            const action = e.target.dataset.action;
-            const quantity = parseInt(e.target.dataset.quantity);
-            const quantityDisplay = document.getElementById('selected-quantity');
-            
-            if (action === 'increase') {
-                selectedQuantity++;
-            } else if (action === 'decrease' && selectedQuantity > 1) {
-                selectedQuantity--;
-            } else if (quantity) {
-                selectedQuantity += quantity;
-            }
-            
-            quantityDisplay.textContent = selectedQuantity;
-        }
+    // CHARTS
+    function refreshCharts(){
+      // Chart principal: Monto por Fecha Apertura (por mes)
+      const byMonth = {};
+      filtered.forEach(r=>{
+        const d = r['Fecha Apertura'] || 'Sin fecha';
+        const key = d === 'Sin fecha' ? 'Sin fecha' : d.slice(0,7); // YYYY-MM
+        byMonth[key] = (byMonth[key] || 0) + (r['Monto']||0);
+      });
+      const labels = Object.keys(byMonth).sort();
+      const values = labels.map(l=>byMonth[l]);
 
-        // Manejar el proceso de pago
-        function handlePayment() {
-            if (!currentDish) return;
-            
-            // Agregar al carrito
-            const existingItemIndex = cart.findIndex(item => item.id === currentDish.id);
-            
-            if (existingItemIndex !== -1) {
-                // Si el producto ya está en el carrito, aumentar la cantidad
-                cart[existingItemIndex].quantity += selectedQuantity;
-            } else {
-                // Si es un producto nuevo, agregarlo al carrito
-                cart.push({
-                    ...currentDish,
-                    quantity: selectedQuantity
-                });
-            }
-            
-            updateCartCount();
-            updateCartDisplay();
-            
-            // Mostrar mensaje de confirmación
-            alert(`${selectedQuantity} ${currentDish.name} ha sido agregado al pedido.`);
-            
-            // Cerrar modal
-            closeModal();
-        }
+      if(chartPrincipal) chartPrincipal.destroy();
+      const ctx = document.getElementById('chartPrincipal').getContext('2d');
+      chartPrincipal = new Chart(ctx, {
+        type: 'line',
+        data: { labels, datasets: [{ label: 'Monto por mes', data: values, tension:0.3, fill:true, backgroundColor: getGradient(ctx), borderColor: 'rgba(0,188,212,0.9)', pointRadius:3 }] },
+        options: { plugins:{legend:{display:false}}, scales:{x:{grid:{display:false}}, y:{ticks:{callback: v => formatShortCurrency(v)}} }
+      });
 
-        // Actualizar contador del carrito
-        function updateCartCount() {
-            const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-            document.getElementById('cart-count').textContent = totalItems;
-        }
+      // Pie: estatus
+      const byEstatus = {};
+      filtered.forEach(r=>{ const k = r['Estatus']||'Sin estatus'; byEstatus[k] = (byEstatus[k]||0)+1 });
+      const eLabels = Object.keys(byEstatus);
+      const eValues = eLabels.map(l=>byEstatus[l]);
+      if(chartEstatus) chartEstatus.destroy();
+      const ctx2 = document.getElementById('chartEstatus').getContext('2d');
+      chartEstatus = new Chart(ctx2, { type:'doughnut', data:{ labels:eLabels, datasets:[{ data:eValues, backgroundColor: generatePalette(eLabels.length) }] }, options:{ plugins:{legend:{position:'bottom'}} } });
+    }
+    function formatShortCurrency(v){
+      if(v >= 1e6) return (v/1e6).toFixed(1)+'M';
+      if(v >= 1e3) return (v/1e3).toFixed(1)+'k';
+      return v;
+    }
+    function getGradient(ctx){
+      const g = ctx.createLinearGradient(0,0,0,300);
+      g.addColorStop(0,'rgba(0,188,212,0.25)');
+      g.addColorStop(1,'rgba(0,188,212,0.05)');
+      return g;
+    }
+    function generatePalette(n){
+      // simple palette mixing aqua with shades
+      const base = [0,188,212];
+      const arr = [];
+      for(let i=0;i<n;i++){
+        const f = 0.6 + 0.4*(i/n);
+        const r = Math.round(base[0]*f);
+        const g = Math.round(base[1]*f);
+        const b = Math.round(base[2]*f);
+        arr.push(`rgba(${r},${g},${b},0.85)`);
+      }
+      return arr;
+    }
 
-        // Actualizar visualización del carrito
-        function updateCartDisplay() {
-            const cartItems = document.getElementById('cart-items');
-            const cartTotal = document.getElementById('cart-total-amount');
-            
-            // Calcular total
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            cartTotal.textContent = `$${total.toFixed(2)}`;
-            
-            // Limpiar carrito
-            cartItems.innerHTML = '';
-            
-            if (cart.length === 0) {
-                cartItems.innerHTML = '<div class="empty-cart">Tu carrito está vacío</div>';
-                return;
-            }
-            
-            // Renderizar items del carrito
-            cart.forEach((item, index) => {
-                const cartItem = document.createElement('div');
-                cartItem.className = 'cart-item';
-                cartItem.innerHTML = `
-                    <img src="${item.image}" alt="${item.name}" class="cart-item-image">
-                    <div class="cart-item-details">
-                        <div class="cart-item-name">${item.name}</div>
-                        <div class="cart-item-price">$${item.price.toFixed(2)} c/u</div>
-                        <div class="cart-item-quantity">
-                            <div class="quantity-control">
-                                <button class="decrease-quantity" data-index="${index}">-</button>
-                                <span>${item.quantity}</span>
-                                <button class="increase-quantity" data-index="${index}">+</button>
-                            </div>
-                            <button class="cart-item-remove" data-index="${index}">Eliminar</button>
-                        </div>
-                    </div>
-                `;
-                
-                cartItems.appendChild(cartItem);
-            });
-            
-            // Añadir event listeners a los botones de cantidad y eliminar
-            document.querySelectorAll('.decrease-quantity').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.dataset.index);
-                    if (cart[index].quantity > 1) {
-                        cart[index].quantity--;
-                    } else {
-                        cart.splice(index, 1);
-                    }
-                    updateCartCount();
-                    updateCartDisplay();
-                });
-            });
-            
-            document.querySelectorAll('.increase-quantity').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.dataset.index);
-                    cart[index].quantity++;
-                    updateCartCount();
-                    updateCartDisplay();
-                });
-            });
-            
-            document.querySelectorAll('.cart-item-remove').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    const index = parseInt(e.target.dataset.index);
-                    cart.splice(index, 1);
-                    updateCartCount();
-                    updateCartDisplay();
-                });
-            });
-        }
+    // Tabla
+    function refreshTable(){
+      const table = document.getElementById('dataTable');
+      // Build header from expectedColumns (you can reorder)
+      const header = table.querySelector('thead');
+      const body = table.querySelector('tbody');
+      header.innerHTML = '';
+      body.innerHTML = '';
 
-        // Mostrar carrito
-        function showCart() {
-            document.getElementById('cart-modal').classList.add('active');
-            document.getElementById('cart-overlay').classList.add('active');
-            document.body.style.overflow = 'hidden';
-        }
+      const cols = ['Sucursal','Promotor','Número de Cliente','Nombre de Cliente','Tipo Aportación','No. Aportación','Fecha Apertura','Fecha Vencimiento','Estatus','Plazo (Días)','Monto','Total a Recibir','Institución 1','Cta. Dispersar 1','Notas'];
 
-        // Ocultar carrito
-        function hideCart() {
-            document.getElementById('cart-modal').classList.remove('active');
-            document.getElementById('cart-overlay').classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
+      header.innerHTML = '<tr>' + cols.map(c=>`<th>${c}</th>`).join('') + '</tr>';
+      body.innerHTML = filtered.map(r=>{
+        return '<tr>' + cols.map(c=>`<td>${escapeHtml(displayCell(r,c))}</td>`).join('') + '</tr>'
+      }).join('');
 
-        // Mostrar modal de pago
-        function showPaymentModal() {
-            if (cart.length === 0) {
-                alert("Su carrito está vacío. Agregue algunos productos primero.");
-                return;
-            }
-            
-            hideCart();
-            document.getElementById('payment-modal').classList.add('active');
-        }
+      // Init DataTable (destroy if exists)
+      if($.fn.DataTable.isDataTable('#dataTable')){ $('#dataTable').DataTable().destroy(); }
+      $('#dataTable').DataTable({ pageLength:10, order:[[6,'desc']], autoWidth:false });
+    }
+    function displayCell(r,c){
+      const v = r[c] === undefined ? '' : r[c];
+      if(c === 'Monto' || c === 'Total a Recibir') return formatCurrency(Number(v)||0);
+      return v;
+    }
 
-        // Cerrar modal de pago
-        function closePaymentModal() {
-            document.getElementById('payment-modal').classList.remove('active');
-            document.body.style.overflow = 'auto';
-        }
+    // Export CSV
+    document.getElementById('downloadCsv').addEventListener('click', ()=>{
+      if(!filtered.length) return alert('No hay datos filtrados para exportar');
+      const cols = Object.keys(filtered[0]);
+      const rows = filtered.map(r => cols.map(c=>`"${String(r[c]).replace(/"/g,'""')}"`).join(','));
+      const csv = [cols.map(c=>`"${c}"`).join(','), ...rows].join('\n');
+      const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'});
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a'); a.href = url; a.download = 'aportaciones_export.csv'; document.body.appendChild(a); a.click(); a.remove();
+    })
 
-        // Continuar comprando
-        function continueShopping() {
-            closePaymentModal();
-            showCategoriesView();
-        }
-
-        // Confirmar pago
-        function confirmPayment() {
-            // Validar formulario de pago (simplificado)
-            const cardName = document.getElementById('card-name').value;
-            const cardNumber = document.getElementById('card-number').value;
-            const cardExpiry = document.getElementById('card-expiry').value;
-            const cardCvc = document.getElementById('card-cvc').value;
-            
-            if (!cardName || !cardNumber || !cardExpiry || !cardCvc) {
-                alert("Por favor, complete todos los campos del formulario de pago.");
-                return;
-            }
-            
-            // Calcular total
-            const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-            
-            // Mostrar mensaje de confirmación
-            alert(`¡Pago realizado con éxito! Total: $${total.toFixed(2)}. Gracias por su compra.`);
-            
-            // Limpiar carrito
-            cart = [];
-            updateCartCount();
-            updateCartDisplay();
-            
-            // Cerrar modal de pago
-            closePaymentModal();
-        }
-
-        // Cerrar modal
-        function closeModal() {
-            const modal = document.getElementById('dish-modal');
-            modal.classList.remove('active');
-            document.body.style.overflow = 'auto';
-            
-            // Pequeño retraso para permitir la transición antes de resetear
-            setTimeout(() => {
-                const modalImage = document.querySelector('.modal-image');
-                const modalTitle = document.querySelector('.modal-title');
-                const modalDesc = document.querySelector('.modal-desc');
-                
-                modalImage.src = '';
-                modalImage.alt = '';
-                modalTitle.textContent = '';
-                modalDesc.textContent = '';
-            }, 300);
-        }
-    </script>
+  </script>
 </body>
 </html>
