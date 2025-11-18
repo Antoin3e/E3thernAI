@@ -1,362 +1,160 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Dashboard Profesional - Aportaciones</title>
-
-  <!-- Librerías -->
-  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-  <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
-  <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
-  <style>
-    :root{
-      --acqua: #00bcd4;
-      --acqua-600: #00a7b3;
-      --bg: #ffffff;
-      --muted:#6b7280;
-      --glass: rgba(255,255,255,0.7);
-      --radius:14px;
-      --shadow: 0 8px 30px rgba(2,66,80,0.07);
-      font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
-    }
-    html,body{height:100%;margin:0;background:linear-gradient(180deg,#f7feff 0%, #ffffff 60%);color:#07202b}
-
-    /* Layout */
-    .container{display:grid;grid-template-columns:320px 1fr;gap:20px;padding:22px;height:100vh;box-sizing:border-box}
-
-    /* Sidebar */
-    .sidebar{background:var(--bg);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);overflow:auto}
-    .brand{display:flex;align-items:center;gap:12px;margin-bottom:8px}
-    .logo{width:52px;height:52px;border-radius:12px;background:linear-gradient(135deg,var(--acqua),var(--acqua-600));display:flex;align-items:center;justify-content:center;color:white;font-weight:800}
-    h1{font-size:18px;margin:0}
-    .muted{color:var(--muted);font-size:13px}
-
-    label{font-weight:600;font-size:13px;margin-top:12px;display:block}
-    select,input[type='date'],input[type='text']{width:100%;padding:8px;border-radius:10px;border:1px solid #e6eef0;margin-top:6px;background:#fbfeff}
-    input[type='file']{margin-top:8px}
-    .btn{display:inline-block;width:100%;padding:10px;border-radius:10px;border:none;background:var(--acqua);color:white;font-weight:700;margin-top:12px;cursor:pointer;box-shadow:0 6px 18px rgba(0,188,212,0.12)}
-    .btn.ghost{background:transparent;border:1px solid #e6f8fa;color:var(--acqua);font-weight:700}
-
-    /* Main */
-    .main{display:flex;flex-direction:column;gap:14px}
-    .card{background:var(--bg);border-radius:12px;padding:14px;box-shadow:var(--shadow)}
-
-    .kpis{display:flex;gap:12px}
-    .kpi{flex:1;padding:14px;border-radius:12px;background:linear-gradient(180deg, #ffffff, #fbffff);border:1px solid #e8fbfc;text-align:left}
-    .kpi .label{font-size:13px;color:var(--muted)}
-    .kpi .value{font-size:22px;color:var(--acqua);font-weight:800}
-
-    .charts{display:grid;grid-template-columns:1fr 360px;gap:12px}
-    .small{font-size:12px;color:var(--muted)}
-
-    /* Table */
-    .table-wrap{overflow:auto}
-    #dataTable thead th{background:linear-gradient(90deg,#f2fcfd,#ffffff);font-weight:700}
-
-    /* Responsive */
-    @media (max-width:980px){
-      .container{grid-template-columns:1fr;height:auto;padding:12px}
-      .charts{grid-template-columns:1fr}
-      .kpis{flex-direction:column}
-    }
-
-    /* subtle hover for rows */
-    table.dataTable tbody tr:hover{background:rgba(0,188,212,0.03)}
-
-  </style>
+<meta charset="UTF-8">
+<title>Dashboard Aportaciones</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+<style>
+body{font-family:Arial;background:#f5fcff;margin:0;padding:25px;color:#023b40}
+h1{color:#027b8a;text-align:center;margin-bottom:25px}
+.card{display:inline-block;padding:20px;background:white;margin:10px;border-radius:18px;box-shadow:0 4px 10px #0002;min-width:200px}
+#charts{display:flex;flex-wrap:wrap;gap:30px;margin-top:20px}
+.chartBox{background:white;padding:20px;border-radius:18px;box-shadow:0 4px 10px #0002}
+button{padding:12px 22px;background:#02a1b3;color:white;border:none;border-radius:10px;font-size:15px;cursor:pointer}
+input,select{padding:10px;border-radius:8px;border:1px solid #ccc;margin:5px 0}
+</style>
 </head>
 <body>
-  <div class="container">
-    <aside class="sidebar">
-      <div class="brand">
-        <div class="logo">DA</div>
-        <div>
-          <h1>Dashboard Aportaciones</h1>
-          <div class="muted">Elegante • Dinámico • Fácil de usar</div>
-        </div>
-      </div>
+<h1>Dashboard Dinámico de Aportaciones</h1>
 
-      <label>Subir archivo Excel (.xlsx)</label>
-      <input id="fileInput" type="file" accept=".xlsx,.xls,.csv" />
-      <div class="small">Si tu archivo es .xls, guárdalo como .xlsx o .csv para mejor compatibilidad.</div>
+<input type="file" id="fileInput" accept=".xlsx,.csv"><br><br>
 
-      <label>Buscar por cliente</label>
-      <input id="searchClient" type="text" placeholder="Nombre o número de cliente" />
+<div class="card"><h3 id="kpiMonto">Monto Total: $0</h3></div>
+<div class="card"><h3 id="kpiPromedio">Promedio: $0</h3></div>
+<div class="card"><h3 id="kpiRegistros">Registros: 0</h3></div>
 
-      <label>Promotor</label>
-      <select id="filterPromotor"><option value="">-- Todos --</option></select>
+<h3>Filtros</h3>
+<select id="fSucursal"></select>
+<select id="fPromotor"></select>
+<select id="fEstatus"></select>
+<select id="fTipo"></select>
+<input type="date" id="fIni">
+<input type="date" id="fFin">
+<button onclick="aplicarFiltros()">Aplicar</button>
 
-      <label>Sucursal</label>
-      <select id="filterSucursal"><option value="">-- Todas --</option></select>
+<div id="charts">
+<div class="chartBox"><canvas id="chartLinea"></canvas></div>
+<div class="chartBox"><canvas id="chartDona"></canvas></div>
+</div>
 
-      <label>Estatus</label>
-      <select id="filterEstatus"><option value="">-- Todos --</option></select>
+<table id="tabla" class="display" style="width:100%;margin-top:30px;"></table>
 
-      <label>Tipo de Aportación</label>
-      <select id="filterTipo"><option value="">-- Todos --</option></select>
+<script>
+let rawData = [];
+let filtrado = [];
+let tabla;
+let chartLinea, chartDona;
 
-      <label>Rango Fecha Apertura</label>
-      <input id="dateFrom" type="date" />
-      <input id="dateTo" type="date" style="margin-top:8px" />
+document.getElementById('fileInput').addEventListener('change', async e =>{
+ const file = e.target.files[0];
+ if(!file) return;
+ const data = await file.arrayBuffer();
+ const workbook = XLSX.read(data);
+ const sheet = workbook.SheetNames[0];
+ const json = XLSX.utils.sheet_to_json(workbook.Sheets[sheet],{defval:''});
+ procesarDatos(json);
+});
 
-      <button id="applyBtn" class="btn">Aplicar filtros</button>
-      <button id="resetBtn" class="btn ghost">Reiniciar filtros</button>
+function procesarDatos(json){
+ rawData = json.map(r=>({
+   Sucursal: limpiar(r['Sucursal']),
+   Promotor: limpiar(r['Promotor']),
+   Estatus: limpiar(r['Estatus']),
+   Tipo: limpiar(r['Tipo Aportación']),
+   Monto: Number(r['Monto']||0),
+   FechaApertura: parseFecha(r['Fecha Apertura'])
+ }));
+ cargarFiltros();
+ aplicarFiltros();
+}
 
-      <div style="margin-top:14px">
-        <div class="small">Exportar</div>
-        <button id="exportCsv" class="btn ghost" style="margin-top:8px">Exportar CSV (filtrado)</button>
-      </div>
+function limpiar(v){ return (v||'').toString().trim(); }
+function parseFecha(v){ return v? new Date(v): null; }
 
-    </aside>
+function cargarFiltros(){
+ setOpciones('fSucursal', [...new Set(rawData.map(x=>x.Sucursal))]);
+ setOpciones('fPromotor', [...new Set(rawData.map(x=>x.Promotor))]);
+ setOpciones('fEstatus', [...new Set(rawData.map(x=>x.Estatus))]);
+ setOpciones('fTipo', [...new Set(rawData.map(x=>x.Tipo))]);
+}
 
-    <main class="main">
-      <div class="card">
-        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px">
-          <div>
-            <h2 style="margin:0">Resumen</h2>
-            <div class="small">KPIs calculados en tiempo real</div>
-          </div>
-          <div style="display:flex;gap:10px;align-items:center">
-            <div class="small">Registros: <strong id="countRec">0</strong></div>
-            <div class="small">Última carga: <strong id="lastLoad">--</strong></div>
-          </div>
-        </div>
+function setOpciones(id, arr){
+ const sel = document.getElementById(id);
+ sel.innerHTML = '<option value="">Todos</option>' + arr.map(x=>`<option>${x}</option>`).join('');
+}
 
-        <div class="kpis" style="margin-top:12px">
-          <div class="kpi"><div class="label">Monto Total</div><div class="value" id="kpiTotal">$0</div></div>
-          <div class="kpi"><div class="label">Montos Promedio</div><div class="value" id="kpiAvg">$0</div></div>
-          <div class="kpi"><div class="label">Intereses Totales</div><div class="value" id="kpiIntereses">$0</div></div>
-        </div>
-      </div>
+function aplicarFiltros(){
+ let suc = fSucursal.value;
+ let pro = fPromotor.value;
+ let est = fEstatus.value;
+ let tip = fTipo.value;
+ let ini = fIni.value? new Date(fIni.value):null;
+ let fin = fFin.value? new Date(fFin.value):null;
 
-      <div class="charts">
-        <div class="card">
-          <h3 style="margin-top:0">Monto por Mes</h3>
-          <canvas id="chartLine" height="140"></canvas>
-        </div>
+ filtrado = rawData.filter(r=>{
+   if(suc && r.Sucursal!==suc) return false;
+   if(pro && r.Promotor!==pro) return false;
+   if(est && r.Estatus!==est) return false;
+   if(tip && r.Tipo!==tip) return false;
+   if(ini && (!r.FechaApertura || r.FechaApertura<ini)) return false;
+   if(fin && (!r.FechaApertura || r.FechaApertura>fin)) return false;
+   return true;
+ });
+ actualizarKPIs();
+ actualizarTabla();
+ actualizarGraficas();
+}
 
-        <div class="card">
-          <h3 style="margin-top:0">Distribución</h3>
-          <canvas id="chartDonut" height="180"></canvas>
-        </div>
-      </div>
+function actualizarKPIs(){
+ let total = filtrado.reduce((a,b)=>a + (b.Monto||0),0);
+ let prom = filtrado.length? total/filtrado.length:0;
+ kpiMonto.innerText = 'Monto Total: $'+total.toLocaleString();
+ kpiPromedio.innerText = 'Promedio: $'+prom.toLocaleString();
+ kpiRegistros.innerText = 'Registros: '+filtrado.length;
+}
 
-      <div class="card">
-        <h3 style="margin-top:0">Análisis por Sucursal</h3>
-        <canvas id="chartBar" height="90"></canvas>
-      </div>
+function actualizarTabla(){
+ if(tabla) tabla.destroy();
+ tabla = $('#tabla').DataTable({
+ data: filtrado,
+ columns:[
+   {title:'Sucursal',data:'Sucursal'},
+   {title:'Promotor',data:'Promotor'},
+   {title:'Estatus',data:'Estatus'},
+   {title:'Tipo',data:'Tipo'},
+   {title:'Monto',data:'Monto'},
+   {title:'Fecha Apertura',data:'FechaApertura',render:v=>v? v.toLocaleDateString():''}
+ ]
+ });
+}
 
-      <div class="card table-wrap">
-        <h3 style="margin-top:0">Tabla de Aportaciones</h3>
-        <table id="dataTable" class="display" style="width:100%">
-          <thead></thead>
-          <tbody></tbody>
-        </table>
-      </div>
+function actualizarGraficas(){
+ const porMes = {};
+ filtrado.forEach(r=>{
+   if(!r.FechaApertura) return;
+   let m = r.FechaApertura.getFullYear()+'-'+(r.FechaApertura.getMonth()+1);
+   porMes[m] = (porMes[m]||0) + r.Monto;
+ });
 
-    </main>
-  </div>
+ if(chartLinea) chartLinea.destroy();
+ chartLinea = new Chart(document.getElementById('chartLinea'),{
+   type:'line',
+   data:{ labels:Object.keys(porMes), datasets:[{ label:'Monto', data:Object.values(porMes)}] }
+ });
 
-  <script>
-    // Variables globales
-    let rawData = [];
-    let filtered = [];
-    let chartLine=null, chartDonut=null, chartBar=null;
-    let dataTable = null;
+ const porEstatus = {};
+ filtrado.forEach(r=> porEstatus[r.Estatus]=(porEstatus[r.Estatus]||0)+1);
 
-    // Helpers
-    const fmtCurrency = (n)=> new Intl.NumberFormat('es-MX',{style:'currency',currency:'MXN',maximumFractionDigits:2}).format(n||0);
-    const safeNum = v=>{ if(v===undefined||v===null||v==='') return 0; const n = Number(String(v).replace(/[^0-9.-]+/g,'')); return isNaN(n)?0:n };
-    const parseDate = v=>{ if(!v) return null; if(typeof v === 'number'){ const d = XLSX.SSF.parse_date_code(v); if(d) return new Date(d.y,d.m-1,d.d); } const d = new Date(v); return isNaN(d)?null:d }
-
-    // Cargar archivo subido
-    document.getElementById('fileInput').addEventListener('change', function(e){
-      const f = e.target.files[0];
-      if(!f) return;
-      const reader = new FileReader();
-      reader.onload = (evt)=>{
-        const data = new Uint8Array(evt.target.result);
-        const wb = XLSX.read(data,{type:'array'});
-        const ws = wb.Sheets[wb.SheetNames[0]];
-        const json = XLSX.utils.sheet_to_json(ws,{defval:''});
-        procesarDatos(json);
-        document.getElementById('lastLoad').innerText = new Date().toLocaleString();
-      };
-      reader.readAsArrayBuffer(f);
-    });
-
-    // Procesar y normalizar datos
-    function procesarDatos(json){
-      rawData = json.map(r=>{
-        return {
-          Sucursal: r['Sucursal']||r['Sucursal ' ]||r['Sucursal
-']||'',
-          Promotor: r['Promotor']||'',
-          FechaApertura: (r['Fecha Apertura']||r['FechaApertura']||r['Fecha Apertura ']) || r['FechaApertura'],
-          FechaVencimiento: r['Fecha Vencimiento']||'',
-          Estatus: r['Estatus']||'',
-          ['Tipo Aportación']: r['Tipo Aportación']||r['TipoAportación']||'',
-          Monto: safeNum(r['Monto']||r['Monto ']),
-          Intereses: safeNum(r['Intereses Totales']||r['Intereses']||0),
-          NumCliente: r['Número de Cliente']||r['Numero de Cliente']||r['No. Cliente']||'',
-          NombreCliente: r['Nombre de Cliente']||r['Cliente']||'',
-          Institucion: r['Institución 1']||''
-        }
-      });
-      // Normalize dates
-      rawData.forEach(r=>{
-        const d = parseDate(r.FechaApertura);
-        r.FechaApertura = d ? d.toISOString().slice(0,10) : '';
-      });
-
-      // Inicializar filtros y UI
-      initFilters();
-      applyFilters();
-    }
-
-    function initFilters(){
-      const prom = [...new Set(rawData.map(r=>r.Promotor).filter(x=>x))].sort();
-      const suc = [...new Set(rawData.map(r=>r.Sucursal).filter(x=>x))].sort();
-      const est = [...new Set(rawData.map(r=>r.Estatus).filter(x=>x))].sort();
-      const tipo = [...new Set(rawData.map(r=>r['Tipo Aportación']).filter(x=>x))].sort();
-
-      const fill = (id,arr)=>{ document.getElementById(id).innerHTML = '<option value="">-- Todos --</option>' + arr.map(v=>`<option value="${v}">${v}</option>`).join(''); }
-      fill('filterPromotor',prom); fill('filterSucursal',suc); fill('filterEstatus',est); fill('filterTipo',tipo);
-    }
-
-    // Filtros y eventos
-    document.getElementById('applyBtn').addEventListener('click', applyFilters);
-    document.getElementById('resetBtn').addEventListener('click', ()=>{
-      ['filterPromotor','filterSucursal','filterEstatus','filterTipo','dateFrom','dateTo','searchClient'].forEach(id=>document.getElementById(id).value='');
-      applyFilters();
-    });
-
-    function applyFilters(){
-      const fProm = document.getElementById('filterPromotor').value;
-      const fSuc = document.getElementById('filterSucursal').value;
-      const fEst = document.getElementById('filterEstatus').value;
-      const fTipo = document.getElementById('filterTipo').value;
-      const from = document.getElementById('dateFrom').value;
-      const to = document.getElementById('dateTo').value;
-      const search = document.getElementById('searchClient').value.toLowerCase();
-
-      filtered = rawData.filter(r=>{
-        if(fProm && r.Promotor!==fProm) return false;
-        if(fSuc && r.Sucursal!==fSuc) return false;
-        if(fEst && r.Estatus!==fEst) return false;
-        if(fTipo && r['Tipo Aportación']!==fTipo) return false;
-        if(from && (!r.FechaApertura || r.FechaApertura < from)) return false;
-        if(to && (!r.FechaApertura || r.FechaApertura > to)) return false;
-        if(search){ const s = (r.NombreCliente + ' ' + r.NumCliente).toLowerCase(); if(!s.includes(search)) return false; }
-        return true;
-      });
-
-      updateKPIs(); renderCharts(); renderTable();
-    }
-
-    function updateKPIs(){
-      const total = filtered.reduce((s,r)=>s + (r.Monto||0),0);
-      const avg = filtered.length ? total/filtered.length : 0;
-      const intereses = filtered.reduce((s,r)=>s + (r.Intereses||0),0);
-      document.getElementById('kpiTotal').innerText = fmtCurrency(total);
-      document.getElementById('kpiAvg').innerText = fmtCurrency(avg);
-      document.getElementById('kpiIntereses').innerText = fmtCurrency(intereses);
-      document.getElementById('countRec').innerText = filtered.length;
-    }
-
-    // Charts
-    function renderCharts(){
-      // Line - Monto por mes
-      const byMonth = {};
-      filtered.forEach(r=>{
-        const m = r.FechaApertura ? r.FechaApertura.slice(0,7) : 'Sin fecha';
-        byMonth[m] = (byMonth[m]||0) + (r.Monto||0);
-      });
-      const months = Object.keys(byMonth).sort();
-      const vals = months.map(m=>byMonth[m]);
-
-      if(chartLine) chartLine.destroy();
-      const ctx1 = document.getElementById('chartLine').getContext('2d');
-      chartLine = new Chart(ctx1,{
-        type:'line',
-        data:{ labels:months, datasets:[{ label:'Monto', data:vals, tension:0.3, borderWidth:2, borderColor:'rgba(0,170,180,0.95)', fill:true, backgroundColor:'rgba(0,188,212,0.12)', pointRadius:3 }]},
-        options:{ responsive:true, plugins:{legend:{display:false}} }
-      });
-
-      // Donut - Estatus
-      const byEst = {};
-      filtered.forEach(r=>{ const k = r.Estatus || 'Sin estatus'; byEst[k] = (byEst[k]||0)+1 });
-      const estLabels = Object.keys(byEst);
-      const estVals = estLabels.map(k=>byEst[k]);
-      if(chartDonut) chartDonut.destroy();
-      const ctx2 = document.getElementById('chartDonut').getContext('2d');
-      chartDonut = new Chart(ctx2,{ type:'doughnut', data:{ labels:estLabels, datasets:[{ data:estVals, backgroundColor: generateColors(estLabels.length) }] }, options:{ plugins:{legend:{position:'bottom'}} } });
-
-      // Bar - Sucursal
-      const bySuc = {};
-      filtered.forEach(r=>{ const k = r.Sucursal||'Sin Sucursal'; bySuc[k] = (bySuc[k]||0) + (r.Monto||0) });
-      const sucLabels = Object.keys(bySuc).sort((a,b)=>bySuc[b]-bySuc[a]).slice(0,12);
-      const sucVals = sucLabels.map(k=>bySuc[k]);
-      if(chartBar) chartBar.destroy();
-      const ctx3 = document.getElementById('chartBar').getContext('2d');
-      chartBar = new Chart(ctx3,{ type:'bar', data:{ labels:sucLabels, datasets:[{ data:sucVals, backgroundColor:'rgba(0,188,212,0.7)' }] }, options:{ indexAxis:'y', plugins:{legend:{display:false}}, scales:{x:{ticks:{callback: v => v>=1000? (v/1000)+'k':v}}} });
-    }
-
-    function generateColors(n){ const base = [0,188,212]; const arr=[]; for(let i=0;i<n;i++){ const f=0.55+0.45*(i/n); arr.push(`rgba(${Math.round(base[0]*f)},${Math.round(base[1]*f)},${Math.round(base[2]*f)},0.9)`)} return arr }
-
-    // Tabla
-    function renderTable(){
-      const cols = ['Sucursal','Promotor','NumCliente','NombreCliente','Tipo Aportación','FechaApertura','FechaVencimiento','Estatus','Monto','Intereses','Institucion'];
-      const header = document.querySelector('#dataTable thead');
-      const body = document.querySelector('#dataTable tbody');
-      header.innerHTML = '<tr>' + cols.map(c=>`<th>${c}</th>`).join('') + '</tr>';
-      body.innerHTML = filtered.map(r=>{
-        return `<tr>
-          <td>${escapeHtml(r.Sucursal)}</td>
-          <td>${escapeHtml(r.Promotor)}</td>
-          <td>${escapeHtml(r.NumCliente)}</td>
-          <td>${escapeHtml(r.NombreCliente)}</td>
-          <td>${escapeHtml(r['Tipo Aportación'])}</td>
-          <td>${escapeHtml(r.FechaApertura)}</td>
-          <td>${escapeHtml(r.FechaVencimiento)}</td>
-          <td>${escapeHtml(r.Estatus)}</td>
-          <td>${fmtCurrency(r.Monto)}</td>
-          <td>${fmtCurrency(r.Intereses)}</td>
-          <td>${escapeHtml(r.Institucion)}</td>
-        </tr>`
-      }).join('');
-
-      // DataTable
-      if($.fn.DataTable.isDataTable('#dataTable')){ $('#dataTable').DataTable().destroy(); }
-      $('#dataTable').DataTable({ pageLength:10, order:[[8,'desc']], autoWidth:false });
-    }
-
-    function escapeHtml(s){ if(s===null||s===undefined) return ''; return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-
-    // Export CSV
-    document.getElementById('exportCsv').addEventListener('click', ()=>{
-      if(!filtered.length) return alert('No hay datos para exportar');
-      const cols = ['Sucursal','Promotor','NumCliente','NombreCliente','Tipo Aportación','FechaApertura','FechaVencimiento','Estatus','Monto','Intereses','Institucion'];
-      const rows = filtered.map(r=>cols.map(c=>`"${String(r[c]===undefined? (r[mapCol(c)]||'') : r[c]).replace(/"/g,'""')}"`).join(','));
-      const csv = [cols.join(','), ...rows].join('
-');
-      const blob = new Blob([csv],{type:'text/csv;charset=utf-8;'}); const url = URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='aportaciones_export.csv'; document.body.appendChild(a); a.click(); a.remove();
-    });
-
-    function mapCol(c){ // helper when different key names
-      const m = {NumCliente:'NumCliente',NombreCliente:'NombreCliente',Monto:'Monto',Intereses:'Intereses',Institucion:'Institucion'}; return m[c]||c }
-
-    // Allow pressing Enter in search to apply
-    document.getElementById('searchClient').addEventListener('keyup', (e)=>{ if(e.key==='Enter') applyFilters(); });
-
-    // Small guard: user may accidentally load files with different headers
-    // Example: if load fails, show helpful message
-    window.addEventListener('error', (evt)=>{ console.error(evt); });
-
-  </script>
+ if(chartDona) chartDona.destroy();
+ chartDona = new Chart(document.getElementById('chartDona'),{
+   type:'doughnut',
+   data:{ labels:Object.keys(porEstatus), datasets:[{ data:Object.values(porEstatus)}] }
+ });
+}
+</script>
 </body>
 </html>
