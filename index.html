@@ -1,262 +1,541 @@
-<!doctype html>
+<!DOCTYPE MODKEY>
 <html lang="es">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>JP Barbería — JP</title>
-  <style>
-    :root{
-      --bg:#0a0a0a;
-      --red:#d0021b;
-      --muted:#8a8a8a;
-      --glass: rgba(255,255,255,0.03);
-    }
-    *{box-sizing:border-box}
-    html,body{height:100%;margin:0;font-family:Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;color:#eee;background:var(--bg);}
-    a{color:inherit;text-decoration:none}
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JG Barbershop | Estilo y Clase</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;700&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        jgred: '#D90429',
+                        jgdark: '#0a0a0a',
+                        jggray: '#1a1a1a',
+                    },
+                    fontFamily: {
+                        sans: ['Roboto', 'sans-serif'],
+                        header: ['Oswald', 'sans-serif'],
+                    },
+                    animation: {
+                        'float': 'float 6s ease-in-out infinite',
+                        'pulse-slow': 'pulse 4s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0)' },
+                            '50%': { transform: 'translateY(-10px)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
 
-    /* page layout */
-    .wrap{max-width:1200px;margin:0 auto;padding:24px}
-    header{display:flex;align-items:center;justify-content:space-between;gap:16px}
+    <style>
+        body {
+            background-color: #050505;
+            color: #ffffff;
+            overflow-x: hidden;
+        }
 
-    /* logo */
-    .logo{display:flex;align-items:center;gap:12px}
-    .logo img{height:64px;width:64px;object-fit:contain;border-radius:8px;filter:drop-shadow(0 6px 20px rgba(0,0,0,0.8));}
-    .brand{font-weight:700;font-size:20px;color:var(--red);letter-spacing:1px}
+        /* Efecto de Humo CSS */
+        .fog-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            z-index: 0;
+            pointer-events: none;
+        }
+        .fog-img {
+            position: absolute;
+            height: 100vh;
+            width: 300vw;
+            z-index: 1;
+            opacity: 0.3;
+            background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog1.png') repeat-x;
+            background-size: contain;
+            animation: fog 60s linear infinite;
+        }
+        .fog-img-2 {
+            position: absolute;
+            height: 100vh;
+            width: 300vw;
+            z-index: 2;
+            opacity: 0.2;
+            background: url('https://raw.githubusercontent.com/danielstuart14/CSS_FOG_ANIMATION/master/fog2.png') repeat-x;
+            background-size: contain;
+            animation: fog 40s linear infinite;
+        }
 
-    nav ul{display:flex;gap:14px;list-style:none;padding:0;margin:0}
-    nav a{padding:8px 12px;border-radius:8px;color:var(--muted);font-weight:600}
-    nav a:hover{color:#fff;background:linear-gradient(90deg, rgba(255,255,255,0.03), rgba(255,255,255,0.01));}
+        @keyframes fog {
+            0% { background-position: 0 0; }
+            100% { background-position: -1000px 0; }
+        }
 
-    /* hero */
-    .hero{position:relative;height:66vh;border-radius:12px;overflow:hidden;margin-top:18px;display:grid;align-items:center}
-    .hero-bg{position:absolute;inset:0;background:linear-gradient(180deg, rgba(0,0,0,0.6), rgba(0,0,0,0.8));z-index:1}
-    .hero .content{position:relative;z-index:2;padding:48px;display:flex;gap:24px;align-items:center}
-    .hero .content .left{max-width:540px}
-    h1{font-size:42px;margin:0 0 10px;color:#fff;text-shadow:0 6px 30px rgba(0,0,0,0.7)}
-    p.lead{color:var(--muted);margin:0 0 18px}
-    .cta{display:inline-block;padding:12px 20px;background:var(--red);border-radius:999px;color:white;font-weight:700;box-shadow:0 8px 30px rgba(208,2,27,0.18)}
+        /* Scroll Reveal */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: all 0.8s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
+        }
 
-    /* Smoke layers */
-    .smoke{position:absolute;inset:0;pointer-events:none;z-index:0;overflow:hidden}
-    .smoke i{position:absolute;display:block;background:radial-gradient(circle at 30% 30%, rgba(255,255,255,0.06), rgba(255,255,255,0.01) 30%);width:420px;height:260px;border-radius:50%;filter:blur(36px);opacity:0.06;transform:translate3d(0,0,0)}
-    .s1{left:-10%;top:10%;animation:drift 26s linear infinite}
-    .s2{right:-5%;top:30%;width:520px;height:320px;animation:drift 36s linear infinite reverse}
-    .s3{left:10%;bottom:-10%;width:640px;height:360px;animation:drift 48s linear infinite}
-    @keyframes drift{0%{transform:translateY(0) scale(0.9) rotate(0)}50%{transform:translateY(-40px) scale(1.02) rotate(6deg)}100%{transform:translateY(0) scale(0.9) rotate(0)}}
+        /* Red Glow Text */
+        .text-glow {
+            text-shadow: 0 0 10px rgba(217, 4, 41, 0.5);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #D90429;
+            border-radius: 4px;
+        }
 
-    /* glass card */
-    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.03);padding:18px;border-radius:12px}
+        .service-card {
+            background: linear-gradient(145deg, #111111, #0a0a0a);
+            border: 1px solid #222;
+        }
+        .service-card:hover {
+            border-color: #D90429;
+            transform: scale(1.02);
+        }
 
-    /* gallery */
-    .gallery{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:18px}
-    .gallery img{width:100%;height:180px;object-fit:cover;border-radius:10px;transition:transform .35s ease,filter .35s ease;box-shadow:0 10px 30px rgba(0,0,0,0.6)}
-    .gallery img:hover{transform:scale(1.04);filter:brightness(1.06)}
-
-    /* services */
-    .services{display:grid;grid-template-columns:1fr 320px;gap:18px;margin-top:22px}
-    .price-list{list-style:none;padding:0;margin:0}
-    .price-list li{display:flex;justify-content:space-between;padding:10px 12px;border-bottom:1px dashed rgba(255,255,255,0.03);align-items:center}
-    .price{font-weight:700;color:var(--red)}
-
-    /* products */
-    .products{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px}
-    .product{border-radius:10px;overflow:hidden;background:var(--glass);padding:10px}
-    .product img{height:220px;width:100%;object-fit:cover;border-radius:8px}
-    .product h4{margin:8px 0 0;font-size:16px}
-    .product p{margin:6px 0 0;color:var(--muted);font-size:14px}
-
-    footer{margin-top:36px;padding:18px 0;border-top:1px solid rgba(255,255,255,0.03);color:var(--muted);display:flex;justify-content:space-between;align-items:center}
-
-    /* subtle grain texture */
-    .grain{position:fixed;inset:0;pointer-events:none;mix-blend-mode:overlay;opacity:0.03;background-image:radial-gradient(rgba(255,255,255,0.02) 1px, transparent 1px);background-size:3px 3px;z-index:9999}
-
-    /* responsive */
-    @media (max-width:820px){.services{grid-template-columns:1fr}header{flex-direction:column;align-items:flex-start}h1{font-size:30px}}
-
-  </style>
+        .package-card {
+            background: linear-gradient(145deg, #2a0a0a, #000);
+            border: 1px solid #D90429;
+            box-shadow: 0 0 15px rgba(217, 4, 41, 0.2);
+        }
+    </style>
 </head>
-<body>
-  <div class="grain"></div>
-  <div class="wrap">
-    <header>
-      <div class="logo">
-        <img src="Captura de pantalla 2025-11-26 161943.png" alt="JP Barbería - logo">
-        <div>
-          <div class="brand">JP BARBERÍA</div>
-          <div style="color:var(--muted);font-size:12px">Estilo. Precisión. Actitud.</div>
-        </div>
-      </div>
+<body class="relative">
 
-      <nav>
-        <ul>
-          <li><a href="#servicios">Servicios</a></li>
-          <li><a href="#galeria">Galería</a></li>
-          <li><a href="#productos">Productos</a></li>
-          <li><a href="#contacto">Contacto</a></li>
-        </ul>
-      </nav>
-    </header>
+    <!-- Fondo de humo animado -->
+    <div class="fog-container fixed top-0 left-0 w-full h-full">
+        <div class="fog-img"></div>
+        <div class="fog-img-2"></div>
+    </div>
 
-    <section class="hero card" aria-label="hero">
-      <div class="smoke" aria-hidden="true">
-        <i class="s1"></i>
-        <i class="s2"></i>
-        <i class="s3"></i>
-      </div>
-      <div class="hero-bg"></div>
-      <div class="content">
-        <div class="left">
-          <h1>JP — Barbería Masculina</h1>
-          <p class="lead">Cortes, diseños y experiencia premium en un ambiente sobrio y con actitud. Reserva tu turno o visita nuestra tienda de gorras y playeras PsychoBunny y accesorios de marca.</p>
-          <a class="cta" href="#contacto">Reserva ahora</a>
+    <!-- Navegación -->
+    <nav class="fixed w-full z-50 bg-black/90 backdrop-blur-md border-b border-jgred/30">
+        <div class="container mx-auto px-6 py-4 flex justify-between items-center">
+            <a href="#" class="text-2xl font-header font-bold text-jgred tracking-widest hover:text-white transition-colors">
+                JG <span class="text-white">BARBERSHOP</span>
+            </a>
+            <button id="menu-btn" class="text-white md:hidden focus:outline-none">
+                <i class="fas fa-bars text-2xl"></i>
+            </button>
+            <div class="hidden md:flex space-x-8">
+                <a href="#inicio" class="hover:text-jgred transition-colors font-medium">INICIO</a>
+                <a href="#servicios" class="hover:text-jgred transition-colors font-medium">SERVICIOS</a>
+                <a href="#galeria" class="hover:text-jgred transition-colors font-medium">CORTES</a>
+                <a href="#tienda" class="hover:text-jgred transition-colors font-medium">TIENDA</a>
+                <a href="#contacto" class="hover:text-jgred transition-colors font-medium">CONTACTO</a>
+            </div>
         </div>
-        <div class="right" style="flex:1;display:flex;justify-content:center">
-          <img src="Captura de pantalla 2025-11-26 161923.png" alt="Corte formal hacia atrás" style="max-width:420px;border-radius:12px;box-shadow:0 20px 60px rgba(0,0,0,0.7);">
+        <!-- Menú Móvil -->
+        <div id="mobile-menu" class="hidden md:hidden bg-black border-t border-gray-800">
+            <a href="#inicio" class="block py-3 px-6 hover:bg-jgred/20">INICIO</a>
+            <a href="#servicios" class="block py-3 px-6 hover:bg-jgred/20">SERVICIOS</a>
+            <a href="#galeria" class="block py-3 px-6 hover:bg-jgred/20">CORTES</a>
+            <a href="#tienda" class="block py-3 px-6 hover:bg-jgred/20">TIENDA</a>
+            <a href="#contacto" class="block py-3 px-6 hover:bg-jgred/20">CONTACTO</a>
         </div>
-      </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section id="inicio" class="relative h-screen flex items-center justify-center overflow-hidden">
+        <!-- Imagen de fondo: Interior Barbería -->
+        <div class="absolute inset-0 z-0">
+            <img src="Captura de pantalla 2025-11-26 155132.png" 
+                 onerror="this.src='https://images.unsplash.com/photo-1503951914875-befbb7470d03?q=80&w=2068&auto=format&fit=crop'" 
+                 alt="Interior Barberia" 
+                 class="w-full h-full object-cover opacity-40">
+            <div class="absolute inset-0 bg-gradient-to-t from-black via-black/50 to-transparent"></div>
+        </div>
+
+        <div class="relative z-10 text-center px-4 mt-16">
+            <!-- LOGO -->
+            <div class="mb-6 flex justify-center animate-float">
+                <img src="Captura de pantalla 2025-11-26 161943.png" 
+                     onerror="this.style.display='none'; document.getElementById('alt-logo').style.display='block'"
+                     alt="JG Logo" 
+                     class="w-48 md:w-64 drop-shadow-[0_0_15px_rgba(255,255,255,0.2)]">
+                <!-- Logo Alternativo Texto por si falla la imagen -->
+                <h1 id="alt-logo" style="display:none" class="text-6xl md:text-8xl font-header font-bold text-white tracking-tighter border-4 border-jgred p-4">
+                    JG
+                </h1>
+            </div>
+            
+            <h2 class="text-xl md:text-3xl font-light tracking-[0.5em] text-gray-300 mb-8 uppercase">Estilo & Precisión</h2>
+            
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <a href="#servicios" class="bg-jgred text-white px-8 py-3 font-bold font-header tracking-wider hover:bg-red-700 transition-all clip-path-slant shadow-[0_0_20px_rgba(217,4,41,0.4)]">
+                    VER SERVICIOS
+                </a>
+                <a href="https://wa.me/" class="border border-white text-white px-8 py-3 font-bold font-header tracking-wider hover:bg-white hover:text-black transition-all clip-path-slant">
+                    RESERVAR CITA
+                </a>
+            </div>
+        </div>
     </section>
 
-    <section id="servicios" style="margin-top:18px">
-      <div class="services">
-        <div class="card">
-          <h2 style="margin-top:0;color:var(--red)">Servicios y Precios</h2>
-          <ul class="price-list">
-            <li><span>Corte normal</span><span class="price">$180</span></li>
-            <li><span>Corte navaja</span><span class="price">$200</span></li>
-            <li><span>Corte y barba</span><span class="price">$280</span></li>
-            <li><span>Corte niño</span><span class="price">$150</span></li>
-            <li><span>Ceja</span><span class="price">$30</span></li>
-            <li><span>Delineado</span><span class="price">$100</span></li>
-            <li><span>Diseño</span><span class="price">$50</span></li>
-            <li><span>Barba</span><span class="price">$100</span></li>
-            <li><span>Mascarilla</span><span class="price">$100</span></li>
-            <li style="border-top:1px solid rgba(255,255,255,0.04);font-weight:800"><span>Paquete completo</span><span class="price">$400</span></li>
-          </ul>
-          <p style="color:var(--muted);font-size:13px;margin-top:12px">Paquete completo: corte, barba, ceja, pigmento, mascarilla, toalla caliente y parche.</p>
-        </div>
+    <!-- Servicios y Precios -->
+    <section id="servicios" class="relative z-10 py-20 bg-jgdark">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl md:text-5xl font-header font-bold text-center mb-16 text-glow"><span class="text-jgred">LISTA</span> DE PRECIOS</h2>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                
+                <!-- Paquete Destacado -->
+                <div class="lg:col-span-3 reveal">
+                    <div class="package-card p-6 rounded-lg relative overflow-hidden group">
+                        <div class="absolute top-0 right-0 bg-jgred text-white text-xs font-bold px-3 py-1 uppercase tracking-wider">Recomendado</div>
+                        <div class="flex justify-between items-center mb-4 relative z-10">
+                            <h3 class="text-2xl font-header text-white group-hover:text-jgred transition-colors">PAQUETE COMPLETO</h3>
+                            <span class="text-3xl font-bold text-jgred">$400</span>
+                        </div>
+                        <p class="text-gray-400 text-sm mb-2">La experiencia definitiva JG.</p>
+                        <ul class="text-gray-300 text-sm grid grid-cols-2 md:grid-cols-4 gap-2 mt-4">
+                            <li class="flex items-center"><i class="fas fa-check text-jgred mr-2"></i> Corte</li>
+                            <li class="flex items-center"><i class="fas fa-check text-jgred mr-2"></i> Barba</li>
+                            <li class="flex items-center"><i class="fas fa-check text-jgred mr-2"></i> Ceja</li>
+                            <li class="flex items-center"><i class="fas fa-check text-jgred mr-2"></i> Pigmento</li>
+                            <li class="flex items-center"><i class="fas fa-check text-jgred mr-2"></i> Mascarilla</li>
+                            <li class="flex items-center"><i class="fas fa-check text-jgred mr-2"></i> Toalla Caliente</li>
+                            <li class="flex items-center"><i class="fas fa-check text-jgred mr-2"></i> Parche</li>
+                        </ul>
+                    </div>
+                </div>
 
-        <aside class="card">
-          <h3 style="margin-top:0;color:#fff">Promoción</h3>
-          <p style="color:var(--muted)">Reserva online y obtén 10% de descuento en tu primer corte.</p>
-          <div style="margin-top:12px">
-            <img src="Captura de pantalla 2025-11-26 155132.png" alt="Interior barbería" style="width:100%;border-radius:8px;">
-          </div>
-        </aside>
-      </div>
+                <!-- Servicios Regulares -->
+                <div class="service-card p-6 rounded-lg flex justify-between items-center cursor-pointer transition-all reveal">
+                    <div>
+                        <h3 class="text-xl font-header font-bold text-gray-200">Corte Normal</h3>
+                        <p class="text-gray-500 text-sm">Clásico y limpio</p>
+                    </div>
+                    <span class="text-xl font-bold text-jgred">$180</span>
+                </div>
+
+                <div class="service-card p-6 rounded-lg flex justify-between items-center cursor-pointer transition-all reveal">
+                    <div>
+                        <h3 class="text-xl font-header font-bold text-gray-200">Corte Navaja</h3>
+                        <p class="text-gray-500 text-sm">Acabado ultra rasurado</p>
+                    </div>
+                    <span class="text-xl font-bold text-jgred">$200</span>
+                </div>
+
+                <div class="service-card p-6 rounded-lg flex justify-between items-center cursor-pointer transition-all reveal">
+                    <div>
+                        <h3 class="text-xl font-header font-bold text-gray-200">Corte y Barba</h3>
+                        <p class="text-gray-500 text-sm">Servicio combinado</p>
+                    </div>
+                    <span class="text-xl font-bold text-jgred">$280</span>
+                </div>
+
+                <div class="service-card p-6 rounded-lg flex justify-between items-center cursor-pointer transition-all reveal">
+                    <div>
+                        <h3 class="text-xl font-header font-bold text-gray-200">Corte Niño</h3>
+                        <p class="text-gray-500 text-sm">Menores de 12 años</p>
+                    </div>
+                    <span class="text-xl font-bold text-jgred">$150</span>
+                </div>
+
+                <div class="service-card p-6 rounded-lg flex justify-between items-center cursor-pointer transition-all reveal">
+                    <div>
+                        <h3 class="text-xl font-header font-bold text-gray-200">Delineado</h3>
+                        <p class="text-gray-500 text-sm">Contornos perfectos</p>
+                    </div>
+                    <span class="text-xl font-bold text-jgred">$100</span>
+                </div>
+
+                <div class="service-card p-6 rounded-lg flex justify-between items-center cursor-pointer transition-all reveal">
+                    <div>
+                        <h3 class="text-xl font-header font-bold text-gray-200">Diseño / Greca</h3>
+                        <p class="text-gray-500 text-sm">Arte en el cabello</p>
+                    </div>
+                    <span class="text-xl font-bold text-jgred">$50</span>
+                </div>
+
+                <div class="service-card p-6 rounded-lg flex justify-between items-center cursor-pointer transition-all reveal">
+                    <div>
+                        <h3 class="text-xl font-header font-bold text-gray-200">Arreglo Barba</h3>
+                        <p class="text-gray-500 text-sm">Perfilado y toalla</p>
+                    </div>
+                    <span class="text-xl font-bold text-jgred">$100</span>
+                </div>
+
+                <div class="service-card p-6 rounded-lg flex justify-between items-center cursor-pointer transition-all reveal">
+                    <div>
+                        <h3 class="text-xl font-header font-bold text-gray-200">Mascarilla Negra</h3>
+                        <p class="text-gray-500 text-sm">Limpieza facial profunda</p>
+                    </div>
+                    <span class="text-xl font-bold text-jgred">$100</span>
+                </div>
+
+                <div class="service-card p-6 rounded-lg flex justify-between items-center cursor-pointer transition-all reveal">
+                    <div>
+                        <h3 class="text-xl font-header font-bold text-gray-200">Ceja</h3>
+                        <p class="text-gray-500 text-sm">Limpieza con navaja</p>
+                    </div>
+                    <span class="text-xl font-bold text-jgred">$30</span>
+                </div>
+
+            </div>
+        </div>
     </section>
 
-    <section id="galeria" style="margin-top:18px">
-      <h2 style="color:var(--red)">Galería de cortes</h2>
-      <div class="gallery">
-        <img src="Captura de pantalla 2025-11-26 155117.png" alt="Corte con la cero y uno">
-        <img src="Captura de pantalla 2025-11-26 155044.png" alt="Corte personalizado">
-        <img src="Captura de pantalla 2025-11-26 161923.png" alt="Corte formal hacia atras">
-        <img src="Captura de pantalla 2025-11-26 161910.png" alt="Playera Psychobunny negra">
-      </div>
+    <!-- Galería de Trabajos -->
+    <section id="galeria" class="relative z-10 py-20 bg-black">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl md:text-5xl font-header font-bold text-center mb-12 text-glow">NUESTROS <span class="text-jgred">TRABAJOS</span></h2>
+            
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                
+                <!-- Corte 0 y 1 -->
+                <div class="group relative overflow-hidden rounded-lg aspect-[3/4] reveal">
+                    <img src="Captura de pantalla 2025-11-26 155117.png" 
+                         onerror="this.src='https://images.unsplash.com/photo-1621605815971-fbc98d665033?q=80&w=2070&auto=format&fit=crop'"
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0">
+                    <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black to-transparent p-4">
+                        <p class="text-white font-header text-lg">Fade Cero y Uno</p>
+                    </div>
+                </div>
+
+                <!-- Corte Formal -->
+                <div class="group relative overflow-hidden rounded-lg aspect-[3/4] reveal">
+                    <img src="Captura de pantalla 2025-11-26 161923.png" 
+                         onerror="this.src='https://images.unsplash.com/photo-1593702295094-aea8c5c13d99?q=80&w=1974&auto=format&fit=crop'"
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0">
+                    <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black to-transparent p-4">
+                        <p class="text-white font-header text-lg">Formal Slick Back</p>
+                    </div>
+                </div>
+
+                <!-- Corte Personalizado -->
+                <div class="group relative overflow-hidden rounded-lg aspect-[3/4] reveal">
+                    <img src="Captura de pantalla 2025-11-26 155044.png" 
+                         onerror="this.src='https://images.unsplash.com/photo-1599351431202-6e0000a94b5f?q=80&w=2000&auto=format&fit=crop'"
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0">
+                    <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black to-transparent p-4">
+                        <p class="text-white font-header text-lg">Diseño Personalizado</p>
+                    </div>
+                </div>
+
+                <!-- Mascarilla -->
+                <div class="group relative overflow-hidden rounded-lg aspect-[3/4] reveal">
+                    <img src="Captura de pantalla 2025-11-26 155013.png" 
+                         onerror="this.src='https://images.unsplash.com/photo-1512690459411-b9245aed8ad6?q=80&w=2080&auto=format&fit=crop'"
+                         class="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110 grayscale group-hover:grayscale-0">
+                    <div class="absolute bottom-0 left-0 w-full bg-gradient-to-t from-black to-transparent p-4">
+                        <p class="text-white font-header text-lg">Tratamiento Facial</p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </section>
 
-    <section id="productos" style="margin-top:18px">
-      <h2 style="color:var(--red)">Productos en venta</h2>
-      <div class="products">
-        <div class="product card">
-          <img src="Captura de pantalla 2025-11-26 161910.png" alt="Playera psychobunny negra">
-          <h4>Playera PsychoBunny - Negra</h4>
-          <p>Playera oficial - edición limitada</p>
-        </div>
-        <div class="product card">
-          <img src="Captura de pantalla 2025-11-26 161901.png" alt="Playera psychobunny">
-          <h4>Playera PsychoBunny</h4>
-          <p>Diseños variados y tallas disponibles</p>
-        </div>
-        <div class="product card">
-          <img src="Captura de pantalla 2025-11-26 161851.png" alt="Playera psychobunny">
-          <h4>Playera PsychoBunny</h4>
-          <p>Negra y con logo bordado</p>
-        </div>
-        <div class="product card">
-          <img src="Captura de pantalla 2025-11-26 161818.png" alt="Gorra">
-          <h4>Gorra JP</h4>
-          <p>Gorra edición barber shop</p>
-        </div>
+    <!-- Tienda / Merch -->
+    <section id="tienda" class="relative z-10 py-20 bg-jgdark">
+        <div class="container mx-auto px-4">
+            <h2 class="text-4xl md:text-5xl font-header font-bold text-center mb-6 text-glow">JG <span class="text-jgred">STORE</span></h2>
+            <p class="text-center text-gray-400 mb-12">Marcas exclusivas disponibles en sucursal</p>
 
-        <!-- bolsos de marca -->
-        <div class="product card">
-          <img src="Captura de pantalla 2025-11-26 163246.png" alt="Bolso Gucci">
-          <h4>Bolso Gucci</h4>
-          <p>Accesorio premium</p>
-        </div>
-        <div class="product card">
-          <img src="Captura de pantalla 2025-11-26 163223.png" alt="Bolso Steve Madden">
-          <h4>Bolso Steve Madden</h4>
-          <p>Elegancia urbana</p>
-        </div>
-        <div class="product card">
-          <img src="Captura de pantalla 2025-11-26 163212.png" alt="Bolso Guess">
-          <h4>Bolso Guess</h4>
-          <p>Modelo clásico</p>
-        </div>
-        <div class="product card">
-          <img src="Captura de pantalla 2025-11-26 163131.png" alt="Bolso Lacoste">
-          <h4>Bolso Lacoste</h4>
-          <p>Estilo deportivo</p>
-        </div>
-        <div class="product card">
-          <img src="Captura de pantalla 2025-11-26 163159.png" alt="Bolso Coach">
-          <h4>Bolso Coach</h4>
-          <p>Diseño contemporáneo</p>
-        </div>
+            <!-- Categoría: Playeras -->
+            <h3 class="text-2xl font-header text-white mb-6 border-l-4 border-jgred pl-4">APPAREL - PSYCHO BUNNY</h3>
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+                
+                <!-- Playera 1 -->
+                <div class="bg-black/50 p-4 rounded-lg border border-gray-800 hover:border-jgred transition-colors reveal">
+                    <div class="aspect-square bg-gray-900 mb-4 overflow-hidden rounded">
+                        <img src="Captura de pantalla 2025-11-26 161910.png" 
+                             onerror="this.src='https://images.unsplash.com/photo-1583743814966-8936f5b7be1a?q=80&w=1974&auto=format&fit=crop'"
+                             class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold">Black Edition</h4>
+                    <p class="text-sm text-gray-400">Psycho Bunny</p>
+                </div>
 
-      </div>
+                <!-- Playera 2 -->
+                <div class="bg-black/50 p-4 rounded-lg border border-gray-800 hover:border-jgred transition-colors reveal">
+                    <div class="aspect-square bg-gray-900 mb-4 overflow-hidden rounded">
+                        <img src="Captura de pantalla 2025-11-26 161901.png" 
+                             onerror="this.src='https://images.unsplash.com/photo-1521572163474-6864f9cf17ab?q=80&w=2080&auto=format&fit=crop'"
+                             class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold">Graphic Tee</h4>
+                    <p class="text-sm text-gray-400">Psycho Bunny</p>
+                </div>
+
+                <!-- Playera 3 -->
+                <div class="bg-black/50 p-4 rounded-lg border border-gray-800 hover:border-jgred transition-colors reveal">
+                    <div class="aspect-square bg-gray-900 mb-4 overflow-hidden rounded">
+                        <img src="Captura de pantalla 2025-11-26 161851.png" 
+                             onerror="this.src='https://images.unsplash.com/photo-1576566588028-4147f3842f27?q=80&w=1964&auto=format&fit=crop'"
+                             class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold">Classic Polo</h4>
+                    <p class="text-sm text-gray-400">Psycho Bunny</p>
+                </div>
+
+                <!-- Gorra -->
+                 <div class="bg-black/50 p-4 rounded-lg border border-gray-800 hover:border-jgred transition-colors reveal">
+                    <div class="aspect-square bg-gray-900 mb-4 overflow-hidden rounded">
+                        <img src="Captura de pantalla 2025-11-26 161818.png" 
+                             onerror="this.src='https://images.unsplash.com/photo-1588850561407-ed78c282e89b?q=80&w=2080&auto=format&fit=crop'"
+                             class="w-full h-full object-cover">
+                    </div>
+                    <h4 class="font-bold">Snapback</h4>
+                    <p class="text-sm text-gray-400">Exclusiva</p>
+                </div>
+
+            </div>
+
+            <!-- Categoría: Bolsos -->
+            <h3 class="text-2xl font-header text-white mb-6 border-l-4 border-jgred pl-4">ACCESORIOS DE LUJO</h3>
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+                
+                <!-- GUCCI -->
+                <div class="reveal">
+                    <div class="relative group overflow-hidden rounded-lg aspect-[3/4]">
+                        <img src="Captura de pantalla 2025-11-26 163246.png" 
+                             onerror="this.src='https://images.unsplash.com/photo-1584917865442-de89df76afd3?q=80&w=1935&auto=format&fit=crop'"
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="font-bold text-lg">GUCCI</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- STEVE MADDEN -->
+                <div class="reveal">
+                    <div class="relative group overflow-hidden rounded-lg aspect-[3/4]">
+                        <img src="Captura de pantalla 2025-11-26 163223.png" 
+                             onerror="this.src='https://images.unsplash.com/photo-1548036328-c9fa89d128fa?q=80&w=2069&auto=format&fit=crop'"
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="font-bold text-lg">STEVE MADDEN</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- GUESS -->
+                <div class="reveal">
+                    <div class="relative group overflow-hidden rounded-lg aspect-[3/4]">
+                        <img src="Captura de pantalla 2025-11-26 163212.png" 
+                             onerror="this.src='https://images.unsplash.com/photo-1591561954557-26941169b49e?q=80&w=1974&auto=format&fit=crop'"
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="font-bold text-lg">GUESS</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- LACOSTE -->
+                <div class="reveal">
+                    <div class="relative group overflow-hidden rounded-lg aspect-[3/4]">
+                        <img src="Captura de pantalla 2025-11-26 163131.png" 
+                             onerror="this.src='https://images.unsplash.com/photo-1598532163257-5216f91d8b9d?q=80&w=2008&auto=format&fit=crop'"
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="font-bold text-lg">LACOSTE</span>
+                        </div>
+                    </div>
+                </div>
+
+                 <!-- COACH -->
+                 <div class="reveal">
+                    <div class="relative group overflow-hidden rounded-lg aspect-[3/4]">
+                        <img src="Captura de pantalla 2025-11-26 163159.png" 
+                             onerror="this.src='https://images.unsplash.com/photo-1590874103328-eac38a683ce7?q=80&w=2076&auto=format&fit=crop'"
+                             class="w-full h-full object-cover">
+                        <div class="absolute inset-0 bg-black/60 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+                            <span class="font-bold text-lg">COACH</span>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </div>
     </section>
 
-    <section id="contacto" style="margin-top:22px">
-      <div class="card">
-        <h2 style="color:var(--red);margin-top:0">Contacto & Reservas</h2>
-        <p style="color:var(--muted)">Visítanos o reserva por WhatsApp/llamada</p>
-        <form onsubmit="event.preventDefault();alert('Gracias! Nos contactamos pronto.');" style="display:grid;grid-template-columns:1fr 200px;gap:12px;align-items:end">
-          <div>
-            <label style="display:block;color:var(--muted);font-size:13px">Nombre</label>
-            <input required placeholder="Tu nombre" style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff">
-          </div>
-          <div>
-            <label style="display:block;color:var(--muted);font-size:13px">Teléfono / WhatsApp</label>
-            <input required placeholder="+52 8XXXXXXXX" style="width:100%;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff">
-          </div>
-          <div style="grid-column:1/-1">
-            <label style="display:block;color:var(--muted);font-size:13px">Mensaje</label>
-            <textarea placeholder="¿Qué servicio deseas?" style="width:100%;min-height:80px;padding:10px;margin-top:6px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;color:#fff"></textarea>
-          </div>
-          <div style="grid-column:1/-1;display:flex;gap:10px;justify-content:flex-end">
-            <button class="cta" type="submit">Enviar</button>
-            <a href="#" class="cta" style="background:transparent;border:1px solid var(--red);color:var(--red);padding:10px 16px">Llamar</a>
-          </div>
-        </form>
-      </div>
-    </section>
+    <!-- Footer -->
+    <footer id="contacto" class="relative z-10 bg-black border-t border-gray-900 py-12">
+        <div class="container mx-auto px-4 flex flex-col items-center">
+            <h2 class="text-3xl font-header font-bold mb-4">RESERVA <span class="text-jgred">AHORA</span></h2>
+            
+            <div class="flex space-x-6 mb-8">
+                <a href="#" class="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center hover:bg-jgred transition-colors group">
+                    <i class="fab fa-instagram text-xl group-hover:text-white"></i>
+                </a>
+                <a href="#" class="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center hover:bg-jgred transition-colors group">
+                    <i class="fab fa-facebook-f text-xl group-hover:text-white"></i>
+                </a>
+                <a href="#" class="w-12 h-12 rounded-full bg-gray-900 flex items-center justify-center hover:bg-jgred transition-colors group">
+                    <i class="fab fa-whatsapp text-xl group-hover:text-white"></i>
+                </a>
+            </div>
 
-    <footer>
-      <div>© JP Barbería — Hecho con actitud</div>
-      <div style="color:var(--muted)">Dirección • Horario • Redes</div>
+            <p class="text-gray-500 text-sm text-center">
+                © 2025 JG Barbershop. Todos los derechos reservados.<br>
+                Estilo, Clase y Precisión.
+            </p>
+        </div>
     </footer>
 
-  </div>
+    <!-- Scripts -->
+    <script>
+        // Toggle Mobile Menu
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
 
-  <script>
-    // small JS to add subtle parallax on hero image
-    (function(){
-      const hero = document.querySelector('.hero');
-      const img = hero.querySelector('img');
-      hero.addEventListener('mousemove', (e)=>{
-        const r = hero.getBoundingClientRect();
-        const x = (e.clientX - r.left)/r.width - 0.5;
-        const y = (e.clientY - r.top)/r.height - 0.5;
-        img.style.transform = `translate(${x*12}px,${y*8}px) scale(1.01)`;
-      });
-      hero.addEventListener('mouseleave', ()=>{img.style.transform='translate(0,0)';});
-    })();
-  </script>
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // Close mobile menu when clicking a link
+        document.querySelectorAll('#mobile-menu a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+            });
+        });
+
+        // Scroll Reveal Animation Logic
+        function reveal() {
+            var reveals = document.querySelectorAll(".reveal");
+
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var elementTop = reveals[i].getBoundingClientRect().top;
+                var elementVisible = 100;
+
+                if (elementTop < windowHeight - elementVisible) {
+                    reveals[i].classList.add("active");
+                }
+            }
+        }
+
+        window.addEventListener("scroll", reveal);
+        // Trigger once on load
+        reveal();
+    </script>
 </body>
 </html>
+
 
 
