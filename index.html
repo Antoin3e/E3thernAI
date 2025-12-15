@@ -562,14 +562,16 @@
                 btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i> PROCESANDO...';
                 btn.classList.add('opacity-75');
 
-                // 2. Intentar obtener ubicación
+               // 2. Intentar obtener ubicación
                 if (navigator.geolocation) {
                     navigator.geolocation.getCurrentPosition(
                         (position) => {
                             const lat = position.coords.latitude;
                             const long = position.coords.longitude;
-                            // Crea link de Google Maps
-                            const ubicacion = `https://maps.google.com/?q=${lat},${long}`;
+                            
+                            // CORRECCIÓN: Usamos el formato estándar de Google Maps y arreglamos la variable
+                            const ubicacion = `https://www.google.com/maps?q=${lat},${long}`;
+                            
                             enviarDatos(ubicacion);
                         },
                         (error) => {
@@ -580,7 +582,6 @@
                 } else {
                     enviarDatos("Navegador sin Soporte GPS");
                 }
-
                 // 3. Función de envío a Google Sheets
                 function enviarDatos(ubicacionString) {
                     const formData = new FormData(form);
@@ -709,4 +710,5 @@
     </script>
 </body>
 </html>
+
 
