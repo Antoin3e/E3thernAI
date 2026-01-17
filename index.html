@@ -15,7 +15,7 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
 
   <style>
-    /* --- CONFIGURACIÓN BASE & PALETA --- */
+    /* --- CONFIGURACIÓN BASE & PALETA (Mi Bello Ropón) --- */
     :root {
       --bg-body: #fdfcf8;
       --bg-card: #ffffff;
@@ -28,6 +28,17 @@
       --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
       --transition-slow: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
       --radius-lg: 20px;
+
+      /* Studio Dominguez (Night theme) */
+      --sd-bg: #0b0d14;
+      --sd-card: rgba(255,255,255,0.06);
+      --sd-border: rgba(255,255,255,0.10);
+      --sd-text: rgba(255,255,255,0.92);
+      --sd-muted: rgba(255,255,255,0.62);
+      --sd-accent: #8a5cff;
+      --sd-accent2: #00d4ff;
+      --sd-glow: 0 18px 60px rgba(138,92,255,0.18);
+      --sd-shadow: 0 14px 40px rgba(0,0,0,0.45);
     }
 
     * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -50,11 +61,20 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      z-index: 2000;
+      z-index: 3000;
       background: rgba(253, 252, 248, 0.85);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid rgba(0,0,0,0.05);
+      transition: background 0.35s ease, border-color 0.35s ease;
     }
+
+    /* Night nav style when Studio view is active */
+    body.sd-mode nav {
+      background: rgba(11, 13, 20, 0.75);
+      border-bottom: 1px solid rgba(255,255,255,0.10);
+    }
+    body.sd-mode .burger-line { background: rgba(255,255,255,0.88); }
+    body.sd-mode .logo { color: rgba(255,255,255,0.92); }
 
     .logo {
       font-size: 1.5rem;
@@ -64,6 +84,7 @@
       letter-spacing: 3px;
       cursor: pointer;
       user-select: none;
+      transition: color 0.35s ease;
     }
 
     /* Burger button as real <button> for accessibility */
@@ -71,7 +92,7 @@
       cursor: pointer;
       width: 40px; height: 28px;
       position: relative;
-      z-index: 2001;
+      z-index: 3001;
       background: transparent;
       border: none;
       padding: 0;
@@ -80,6 +101,9 @@
       outline: 2px solid var(--gold-accent);
       outline-offset: 6px;
       border-radius: 10px;
+    }
+    body.sd-mode .burger-btn:focus-visible {
+      outline-color: var(--sd-accent);
     }
 
     .burger-line {
@@ -97,19 +121,25 @@
     .burger-btn.open .burger-line:nth-child(1) { transform: rotate(45deg); top: 13px; background: var(--gold-accent); }
     .burger-btn.open .burger-line:nth-child(2) { opacity: 0; }
     .burger-btn.open .burger-line:nth-child(3) { transform: rotate(-45deg); top: 13px; background: var(--gold-accent); }
+    body.sd-mode .burger-btn.open .burger-line:nth-child(1),
+    body.sd-mode .burger-btn.open .burger-line:nth-child(3) { background: var(--sd-accent); }
 
     /* --- MENÚ OVERLAY --- */
     .overlay-menu {
       position: fixed; top: 0; left: 0;
       width: 100%; height: 100vh;
       background: var(--overlay-bg);
-      z-index: 1999;
+      z-index: 2999;
       display: flex; flex-direction: column;
       justify-content: center; align-items: center;
       opacity: 0; pointer-events: none;
-      transition: opacity 0.5s ease;
+      transition: opacity 0.5s ease, background 0.35s ease;
     }
     .overlay-menu.active { opacity: 1; pointer-events: all; }
+
+    body.sd-mode .overlay-menu {
+      background: rgba(11, 13, 20, 0.96);
+    }
 
     .overlay-menu li { margin: 1.2rem 0; overflow: hidden; text-align: center; }
 
@@ -122,12 +152,16 @@
       transition: transform 0.6s ease, color 0.25s ease;
       outline: none;
     }
+    body.sd-mode .overlay-menu a { color: rgba(255,255,255,0.92); }
+    body.sd-mode .overlay-menu a:hover { color: var(--sd-accent2); }
+
     /* Stagger reveal */
     .overlay-menu.active li:nth-child(1) a { transition-delay: 0.05s; }
     .overlay-menu.active li:nth-child(2) a { transition-delay: 0.12s; }
     .overlay-menu.active li:nth-child(3) a { transition-delay: 0.19s; }
     .overlay-menu.active li:nth-child(4) a { transition-delay: 0.26s; }
     .overlay-menu.active li:nth-child(5) a { transition-delay: 0.33s; }
+    .overlay-menu.active li:nth-child(6) a { transition-delay: 0.40s; }
     .overlay-menu.active a { transform: translateY(0); }
 
     .overlay-menu a:hover { color: var(--gold-accent); }
@@ -135,13 +169,14 @@
       color: var(--gold-accent);
       position: relative;
     }
+    body.sd-mode .overlay-menu a.active-link { color: var(--sd-accent2); }
     .overlay-menu a.active-link::after{
       content:"";
       position:absolute;
       left:0; right:0;
       bottom:-10px;
       height:1px;
-      background: var(--gold-accent);
+      background: currentColor;
       opacity: 0.7;
     }
 
@@ -220,21 +255,14 @@
       border: 1px solid transparent;
       cursor: pointer;
       transition: 0.25s ease;
+      border-radius: 999px;
     }
     .btn-main:hover { background: var(--gold-accent); border-color: var(--gold-accent); }
 
     /* --- HERO: Carrusel Destacados --- */
-    .home-section {
-      padding: 0 5% 2.5rem;
-    }
-    .section-title {
-      text-align: center;
-      padding: 3rem 1rem 1.5rem;
-    }
-    .section-title h2 {
-      font-size: 2.3rem;
-      margin-bottom: 0.4rem;
-    }
+    .home-section { padding: 0 5% 2.5rem; }
+    .section-title { text-align: center; padding: 3rem 1rem 1.5rem; }
+    .section-title h2 { font-size: 2.3rem; margin-bottom: 0.4rem; }
     .section-title p {
       color: var(--gold-accent);
       text-transform: uppercase;
@@ -242,26 +270,15 @@
       font-size: 0.85rem;
     }
 
-    .swiper {
-      width: 100%;
-      padding: 1rem 0 2rem;
-    }
+    .swiper { width: 100%; padding: 1rem 0 2rem; }
     .swiper-slide {
       background: white;
       border-radius: var(--radius-lg);
       overflow: hidden;
       box-shadow: var(--shadow-card);
     }
-    .slide-img {
-      height: 360px;
-      width: 100%;
-      object-fit: cover;
-      display: block;
-    }
-    .slide-info {
-      padding: 1.2rem 1.2rem 1.5rem;
-      text-align: center;
-    }
+    .slide-img { height: 360px; width: 100%; object-fit: cover; display: block; }
+    .slide-info { padding: 1.2rem 1.2rem 1.5rem; text-align: center; }
     .slide-info h3 {
       font-family: 'Lato', sans-serif;
       font-weight: 400;
@@ -334,11 +351,7 @@
       box-shadow: var(--shadow-card);
       border: 1px solid rgba(0,0,0,0.05);
     }
-    .quote p {
-      color: #555;
-      font-style: italic;
-      line-height: 1.6;
-    }
+    .quote p { color: #555; font-style: italic; line-height: 1.6; }
     .quote .who {
       margin-top: 1rem;
       display: flex;
@@ -349,22 +362,46 @@
     }
     .stars { color: var(--gold-accent); letter-spacing: 2px; }
 
-    /* --- Contact strip --- */
-    .contact-strip {
-      background: var(--gold-light);
-      padding: 3rem;
-      text-align: center;
-      margin-top: 2rem;
+    /* --- CTA inferior: Renta de vestidos --- */
+    .rent-cta {
+      margin: 2.2rem 1rem 0;
       border-radius: var(--radius-lg);
-      margin-left: 1rem;
-      margin-right: 1rem;
+      overflow: hidden;
+      position: relative;
+      box-shadow: var(--shadow-soft);
+      background: linear-gradient(135deg, rgba(58,58,58,0.95), rgba(197,160,89,0.65));
+      color: white;
+      padding: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1.5rem;
+      flex-wrap: wrap;
+    }
+    .rent-cta h3 { font-size: 1.6rem; margin-bottom: 0.35rem; }
+    .rent-cta p { opacity: 0.92; max-width: 520px; line-height: 1.55; }
+    .btn-rent {
+      background: rgba(255,255,255,0.15);
+      border: 1px solid rgba(255,255,255,0.35);
+      color: white;
+      padding: 0.95rem 1.5rem;
+      border-radius: 999px;
+      cursor: pointer;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.55rem;
+      transition: 0.25s ease;
+    }
+    .btn-rent:hover {
+      background: rgba(255,255,255,0.25);
+      transform: translateY(-2px);
     }
 
     /* --- VISTAS: NIÑO / NIÑA (GRID) --- */
-    .category-header {
-      text-align: center;
-      padding: 3.5rem 1rem 1.5rem;
-    }
+    .category-header { text-align: center; padding: 3.5rem 1rem 1.5rem; }
     .category-header h2 { font-size: 3rem; color: var(--text-dark); margin-bottom: 0.5rem; }
     .category-header p { color: var(--gold-accent); text-transform: uppercase; letter-spacing: 3px; }
 
@@ -384,6 +421,8 @@
       display: block;
       margin-bottom: 0.45rem;
     }
+    body.sd-mode .search-wrap label, body.sd-mode .filter-wrap label { color: var(--sd-muted); }
+
     .search-input {
       width: 100%;
       padding: 0.95rem 1rem;
@@ -391,16 +430,24 @@
       border: 1px solid rgba(0,0,0,0.12);
       background: rgba(255,255,255,0.9);
       outline: none;
+      transition: 0.25s ease;
     }
     .search-input:focus {
       border-color: var(--gold-accent);
       box-shadow: 0 0 0 4px rgba(197,160,89,0.18);
     }
-    .chips {
-      display: flex;
-      gap: 0.6rem;
-      flex-wrap: wrap;
+    body.sd-mode .search-input {
+      border-color: rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      color: var(--sd-text);
     }
+    body.sd-mode .search-input::placeholder { color: rgba(255,255,255,0.45); }
+    body.sd-mode .search-input:focus {
+      border-color: var(--sd-accent2);
+      box-shadow: 0 0 0 4px rgba(0,212,255,0.18);
+    }
+
+    .chips { display: flex; gap: 0.6rem; flex-wrap: wrap; }
     .chip {
       border: 1px solid rgba(0,0,0,0.12);
       padding: 0.6rem 0.9rem;
@@ -416,6 +463,18 @@
       background: var(--text-dark);
       color: white;
       border-color: var(--text-dark);
+    }
+    body.sd-mode .chip {
+      border-color: rgba(255,255,255,0.16);
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.88);
+    }
+    body.sd-mode .chip.active {
+      background: linear-gradient(135deg, rgba(138,92,255,0.9), rgba(0,212,255,0.7));
+      border-color: rgba(255,255,255,0.10);
+      box-shadow: var(--sd-glow);
+      color: #0b0d14;
+      font-weight: 700;
     }
 
     .products-grid {
@@ -436,9 +495,17 @@
       opacity: 0;
       transform: translateY(14px);
     }
-    .view-section.active-view .product-card {
-      animation: fadeInUp 0.55s ease forwards;
+
+    /* Studio product cards */
+    body.sd-mode .product-card {
+      background: var(--sd-card);
+      border-color: var(--sd-border);
+      box-shadow: var(--sd-shadow);
     }
+    body.sd-mode .product-info h3 { color: rgba(255,255,255,0.92); }
+    body.sd-mode .product-info p { color: var(--sd-accent2); }
+
+    .view-section.active-view .product-card { animation: fadeInUp 0.55s ease forwards; }
     .view-section.active-view .product-card:nth-child(1) { animation-delay: 0.08s; }
     .view-section.active-view .product-card:nth-child(2) { animation-delay: 0.14s; }
     .view-section.active-view .product-card:nth-child(3) { animation-delay: 0.20s; }
@@ -474,6 +541,7 @@
       margin-top: 1rem;
       padding-bottom: 0.25rem;
     }
+    body.sd-mode .back-link { border-bottom-color: var(--sd-accent2); color: rgba(255,255,255,0.65); }
 
     /* Empty state */
     .empty-state {
@@ -482,6 +550,7 @@
       text-align: center;
       display: none;
     }
+    body.sd-mode .empty-state { color: rgba(255,255,255,0.70); }
 
     /* --- FOOTER & CONTACTO --- */
     .contact-footer {
@@ -489,7 +558,16 @@
       padding: 4rem 5% 2rem;
       border-top: 1px solid #eee;
       margin-top: 2rem;
+      transition: background 0.35s ease, border-color 0.35s ease;
     }
+    body.sd-mode .contact-footer {
+      background: #080a10;
+      border-top: 1px solid rgba(255,255,255,0.10);
+      color: rgba(255,255,255,0.88);
+    }
+    body.sd-mode .contact-footer p,
+    body.sd-mode .contact-footer strong { color: rgba(255,255,255,0.86) !important; }
+
     .footer-grid {
       display: grid;
       grid-template-columns: 1fr 1.5fr;
@@ -508,6 +586,8 @@
       font-size: 1.2rem;
       margin-top: 4px;
     }
+    body.sd-mode .contact-row i { color: var(--sd-accent2); }
+
     .social-links { display: flex; gap: 1rem; margin-top: 2rem; flex-wrap: wrap; }
     .social-btn {
       width: 45px; height: 45px;
@@ -517,6 +597,15 @@
       transition: 0.25s ease;
     }
     .social-btn:hover { background: var(--gold-accent); color: white; border-color: var(--gold-accent); }
+    body.sd-mode .social-btn {
+      border-color: rgba(255,255,255,0.16);
+      color: rgba(255,255,255,0.88);
+    }
+    body.sd-mode .social-btn:hover {
+      background: linear-gradient(135deg, rgba(138,92,255,0.9), rgba(0,212,255,0.7));
+      border-color: rgba(255,255,255,0.10);
+      color: #0b0d14;
+    }
 
     /* Floating WhatsApp */
     .float-wa {
@@ -532,17 +621,117 @@
       align-items: center;
       justify-content: center;
       box-shadow: 0 12px 28px rgba(0,0,0,0.18);
-      z-index: 2500;
+      z-index: 3500;
       transition: 0.25s ease;
     }
     .float-wa:hover { transform: translateY(-4px); }
     .float-wa:focus-visible { outline: 3px solid rgba(197,160,89,0.55); outline-offset: 4px; }
+    body.sd-mode .float-wa { box-shadow: 0 14px 36px rgba(0,0,0,0.45); }
+
+    /* Studio Dominguez view wrapper */
+    .sd-hero {
+      margin: 0 1rem 1rem 1rem;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--sd-shadow);
+      position: relative;
+      min-height: 60vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: radial-gradient(800px 400px at 20% 10%, rgba(138,92,255,0.35), transparent 60%),
+                  radial-gradient(700px 380px at 80% 20%, rgba(0,212,255,0.25), transparent 55%),
+                  linear-gradient(180deg, rgba(11,13,20,1), rgba(7,8,12,1));
+    }
+    .sd-hero::after{
+      content:"";
+      position:absolute;
+      inset:0;
+      background-image:url('https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=2070&auto=format&fit=crop');
+      background-size:cover;
+      background-position:center;
+      opacity:0.20;
+      mix-blend-mode: screen;
+      pointer-events:none;
+    }
+    .sd-hero-content{
+      position:relative;
+      padding: 3rem 1.8rem;
+      max-width: 760px;
+      color: var(--sd-text);
+      z-index:1;
+    }
+    .sd-hero-content h1{
+      font-size: 3.1rem;
+      margin-bottom: 0.8rem;
+      letter-spacing: 2px;
+    }
+    .sd-hero-content p{
+      color: var(--sd-muted);
+      line-height: 1.65;
+      max-width: 620px;
+      margin: 0 auto;
+    }
+    .sd-pill{
+      display:inline-flex;
+      gap:.6rem;
+      align-items:center;
+      padding: .5rem .9rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      box-shadow: var(--sd-glow);
+      margin-bottom: 1rem;
+      font-size: 0.85rem;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    .sd-actions{
+      display:flex;
+      gap: 0.9rem;
+      justify-content:center;
+      flex-wrap:wrap;
+      margin-top: 1.6rem;
+    }
+    .btn-sd{
+      padding: 0.95rem 1.45rem;
+      border-radius: 999px;
+      border: 1px solid rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.06);
+      color: var(--sd-text);
+      cursor:pointer;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      font-size: 0.78rem;
+      transition: 0.25s ease;
+      display:inline-flex;
+      gap:.55rem;
+      align-items:center;
+      box-shadow: var(--sd-shadow);
+    }
+    .btn-sd:hover{
+      transform: translateY(-2px);
+      border-color: rgba(255,255,255,0.26);
+      box-shadow: var(--sd-glow);
+    }
+    .btn-sd.primary{
+      background: linear-gradient(135deg, rgba(138,92,255,0.95), rgba(0,212,255,0.75));
+      color: #0b0d14;
+      border-color: rgba(255,255,255,0.08);
+      font-weight: 800;
+    }
+
+    /* Studio section titles */
+    body.sd-mode .section-title p { color: var(--sd-accent2); }
+    body.sd-mode .section-title h2 { color: var(--sd-text); }
 
     /* Responsivo */
     @media (max-width: 980px) {
       .promo-grid, .testimonials-grid { grid-template-columns: 1fr; }
       .tools-bar { grid-template-columns: 1fr; }
       .slide-img { height: 280px; }
+      .sd-hero-content h1 { font-size: 2.2rem; }
     }
     @media (max-width: 768px) {
       .hero-content h1 { font-size: 2rem; }
@@ -550,7 +739,8 @@
       .img-container { height: 300px; }
       nav { padding: 1rem 1.3rem; }
       .hero-wrapper { margin: 0.8rem; }
-      .contact-strip { margin-left: 0.8rem; margin-right: 0.8rem; }
+      .rent-cta { margin: 1.6rem 0.8rem 0; }
+      .sd-hero { margin: 0.8rem; }
     }
   </style>
 </head>
@@ -563,6 +753,7 @@
       <li><a role="menuitem" data-nav="inicio" onclick="navigateTo('inicio')">Inicio</a></li>
       <li><a role="menuitem" data-nav="nina" onclick="navigateTo('nina')">Colección Niña</a></li>
       <li><a role="menuitem" data-nav="nino" onclick="navigateTo('nino')">Colección Niño</a></li>
+      <li><a role="menuitem" data-nav="studio" onclick="navigateTo('studio')">Studio Dominguez</a></li>
       <li><a role="menuitem" href="#contacto" onclick="closeMenuAndGoToFooter()">Contacto y Ubicación</a></li>
       <li>
         <a role="menuitem" href="https://wa.me/528180932362" target="_blank" onclick="toggleMenu()"
@@ -738,18 +929,20 @@
           </div>
         </div>
 
-      </div>
+        <!-- CTA inferior: Renta de vestidos -->
+        <div class="rent-cta">
+          <div>
+            <h3>¿Buscas renta de vestidos?</h3>
+            <p>
+              Descubre una experiencia más nocturna y sofisticada con catálogo exclusivo en
+              <strong>Studio Dominguez</strong>.
+            </p>
+          </div>
+          <button class="btn-rent" onclick="navigateTo('studio')" aria-label="Ir a renta de vestidos - Studio Dominguez">
+            <i class="fa-solid fa-moon"></i> Renta de vestidos
+          </button>
+        </div>
 
-      <!-- Contact strip -->
-      <div class="contact-strip">
-        <h3>Solo atendemos con previa cita</h3>
-        <p style="margin-top: 0.35rem;">Para darte el mejor servicio, agenda tu visita por WhatsApp.</p>
-
-        <a href="https://wa.me/528180932362" target="_blank" class="btn-main"
-           title="Contáctanos por WhatsApp para agendar una visita"
-           style="background: transparent; border: 1px solid var(--text-dark); color: var(--text-dark); margin-top: 1rem;">
-          <i class="fab fa-whatsapp"></i> 81 80 93 23 62
-        </a>
       </div>
     </section>
 
@@ -771,11 +964,11 @@
           <label>Filtrar por</label>
           <div class="chips" id="chipsNina">
             <div class="chip active" data-filter="all" onclick="setFilter('nina','all', this)">Todo</div>
-            <div class="chip" data-filter="bautizo" onclick="setFilter('nina','Bautizo', this)">Bautizo</div>
-            <div class="chip" data-filter="comunion" onclick="setFilter('nina','Comunión', this)">Comunión</div>
-            <div class="chip" data-filter="accesorios" onclick="setFilter('nina','Accesorios', this)">Accesorios</div>
-            <div class="chip" data-filter="calzado" onclick="setFilter('nina','Calzado', this)">Calzado</div>
-            <div class="chip" data-filter="ceremonia" onclick="setFilter('nina','Ceremonia', this)">Ceremonia</div>
+            <div class="chip" onclick="setFilter('nina','Bautizo', this)">Bautizo</div>
+            <div class="chip" onclick="setFilter('nina','Comunión', this)">Comunión</div>
+            <div class="chip" onclick="setFilter('nina','Accesorios', this)">Accesorios</div>
+            <div class="chip" onclick="setFilter('nina','Calzado', this)">Calzado</div>
+            <div class="chip" onclick="setFilter('nina','Ceremonia', this)">Ceremonia</div>
           </div>
         </div>
       </div>
@@ -869,12 +1062,12 @@
           <label>Filtrar por</label>
           <div class="chips" id="chipsNino">
             <div class="chip active" data-filter="all" onclick="setFilter('nino','all', this)">Todo</div>
-            <div class="chip" data-filter="bautizo" onclick="setFilter('nino','Bautizo', this)">Bautizo</div>
-            <div class="chip" data-filter="comunion" onclick="setFilter('nino','Comunión', this)">Comunión</div>
-            <div class="chip" data-filter="ceremonia" onclick="setFilter('nino','Ceremonia', this)">Ceremonia</div>
-            <div class="chip" data-filter="joyeria" onclick="setFilter('nino','Joyería', this)">Joyería</div>
-            <div class="chip" data-filter="calzado" onclick="setFilter('nino','Calzado', this)">Calzado</div>
-            <div class="chip" data-filter="tradicional" onclick="setFilter('nino','Tradicional', this)">Tradicional</div>
+            <div class="chip" onclick="setFilter('nino','Bautizo', this)">Bautizo</div>
+            <div class="chip" onclick="setFilter('nino','Comunión', this)">Comunión</div>
+            <div class="chip" onclick="setFilter('nino','Ceremonia', this)">Ceremonia</div>
+            <div class="chip" onclick="setFilter('nino','Joyería', this)">Joyería</div>
+            <div class="chip" onclick="setFilter('nino','Calzado', this)">Calzado</div>
+            <div class="chip" onclick="setFilter('nino','Tradicional', this)">Tradicional</div>
           </div>
         </div>
       </div>
@@ -950,6 +1143,128 @@
       </div>
     </section>
 
+    <!-- STUDIO DOMINGUEZ (Night theme + Catalog) -->
+    <section id="view-studio" class="view-section">
+      <header class="sd-hero">
+        <div class="sd-hero-content">
+          <div class="sd-pill"><i class="fa-solid fa-moon"></i> Renta de Vestidos</div>
+          <h1>Studio Dominguez</h1>
+          <p>
+            Una vibra más nocturna, elegante y moderna. Catálogo de vestidos para eventos y ocasiones especiales.
+            Agenda tu cita y vive la experiencia.
+          </p>
+
+          <div class="sd-actions">
+            <button class="btn-sd primary" onclick="document.getElementById('studioCatalog').scrollIntoView({behavior:'smooth'})">
+              <i class="fa-solid fa-shirt"></i> Ver catálogo
+            </button>
+            <a class="btn-sd" href="https://wa.me/528180932362" target="_blank" style="text-decoration:none;">
+              <i class="fab fa-whatsapp"></i> Agendar cita
+            </a>
+            <button class="btn-sd" onclick="navigateTo('inicio')">
+              <i class="fa-solid fa-arrow-left"></i> Volver
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <div class="home-section" id="studioCatalog">
+        <div class="section-title" style="padding-top: 1rem;">
+          <p>Catálogo</p>
+          <h2>Vestidos en renta</h2>
+        </div>
+
+        <div class="tools-bar">
+          <div class="search-wrap">
+            <label for="searchStudio">Buscar</label>
+            <input id="searchStudio" class="search-input" type="text" placeholder="Ej: satín, negro, gala..." oninput="applyFilters('studio')" />
+          </div>
+
+          <div class="filter-wrap">
+            <label>Filtrar por</label>
+            <div class="chips" id="chipsStudio">
+              <div class="chip active" onclick="setFilter('studio','all', this)">Todo</div>
+              <div class="chip" onclick="setFilter('studio','Gala', this)">Gala</div>
+              <div class="chip" onclick="setFilter('studio','Coctel', this)">Cóctel</div>
+              <div class="chip" onclick="setFilter('studio','Fiesta', this)">Fiesta</div>
+              <div class="chip" onclick="setFilter('studio','Negro', this)">Negro</div>
+              <div class="chip" onclick="setFilter('studio','Brillos', this)">Brillos</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="empty-state" id="emptyStudio">No encontramos vestidos con esa búsqueda/filtro.</div>
+
+        <div class="products-grid" id="gridStudio">
+          <article class="product-card" data-category="Gala" data-name="Satin Midnight">
+            <div class="img-container">
+              <img loading="lazy" src="https://images.unsplash.com/photo-1520975916090-3105956dac38?q=80&w=1000&auto=format&fit=crop"
+                   alt="Vestido Satin Midnight - Gala" />
+            </div>
+            <div class="product-info">
+              <h3>Satin Midnight</h3>
+              <p>Gala</p>
+            </div>
+          </article>
+
+          <article class="product-card" data-category="Coctel" data-name="Velvet Aura">
+            <div class="img-container">
+              <img loading="lazy" src="https://images.unsplash.com/photo-1520975674760-b5c6f12f4d3f?q=80&w=1000&auto=format&fit=crop"
+                   alt="Vestido Velvet Aura - Cóctel" />
+            </div>
+            <div class="product-info">
+              <h3>Velvet Aura</h3>
+              <p>Cóctel</p>
+            </div>
+          </article>
+
+          <article class="product-card" data-category="Fiesta" data-name="Neon Starlight">
+            <div class="img-container">
+              <img loading="lazy" src="https://images.unsplash.com/photo-1520975492864-9a64cf2b4df5?q=80&w=1000&auto=format&fit=crop"
+                   alt="Vestido Neon Starlight - Fiesta" />
+            </div>
+            <div class="product-info">
+              <h3>Neon Starlight</h3>
+              <p>Fiesta</p>
+            </div>
+          </article>
+
+          <article class="product-card" data-category="Negro" data-name="Black Icon">
+            <div class="img-container">
+              <img loading="lazy" src="https://images.unsplash.com/photo-1520975474020-90d1a4d7d0ae?q=80&w=1000&auto=format&fit=crop"
+                   alt="Vestido Black Icon - Negro" />
+            </div>
+            <div class="product-info">
+              <h3>Black Icon</h3>
+              <p>Negro</p>
+            </div>
+          </article>
+
+          <article class="product-card" data-category="Brillos" data-name="Crystal Night">
+            <div class="img-container">
+              <img loading="lazy" src="https://images.unsplash.com/photo-1520975758461-6b442b33cdb9?q=80&w=1000&auto=format&fit=crop"
+                   alt="Vestido Crystal Night - Brillos" />
+            </div>
+            <div class="product-info">
+              <h3>Crystal Night</h3>
+              <p>Brillos</p>
+            </div>
+          </article>
+
+          <article class="product-card" data-category="Gala" data-name="Blue Hour">
+            <div class="img-container">
+              <img loading="lazy" src="https://images.unsplash.com/photo-1520975773310-6e3c5f0a2a7c?q=80&w=1000&auto=format&fit=crop"
+                   alt="Vestido Blue Hour - Gala" />
+            </div>
+            <div class="product-info">
+              <h3>Blue Hour</h3>
+              <p>Gala</p>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
   </main>
 
   <!-- Footer -->
@@ -982,14 +1297,18 @@
           </div>
         </div>
 
+        <!-- Redes: Instagram cambiado a Studio Dominguez -->
         <div class="social-links">
-          <a href="https://www.facebook.com/share/17Yk3e61g3/?mibextid=wwXIfr" target="_blank" class="social-btn"><i class="fab fa-facebook-f"></i></a>
-          <a href="https://www.instagram.com/mibelloropon?igsh=MXFxbzNxNGYyaXk1ZQ==" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
-          <a href="https://www.tiktok.com/@mibelloropon?_r=1&_t=ZT-938D5TWvMdL" target="_blank" class="social-btn"><i class="fab fa-tiktok"></i></a>
-          <a href="https://wa.me/528180932362" target="_blank" class="social-btn" style="background: #25D366; color: white; border-color: #25D366;"><i class="fab fa-whatsapp"></i></a>
+          <a href="https://www.instagram.com/studio.vdominguez?igsh=bXNwZGtlNml2dG4w" target="_blank" class="social-btn" aria-label="Instagram Studio Dominguez">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href="https://wa.me/528180932362" target="_blank" class="social-btn" style="background: #25D366; color: white; border-color: #25D366;" aria-label="WhatsApp">
+            <i class="fab fa-whatsapp"></i>
+          </a>
         </div>
       </div>
 
+      <!-- MISMO MAPA -->
       <div style="border-radius: 20px; overflow: hidden; height: 350px; box-shadow: var(--shadow-card);">
         <iframe
           width="100%"
@@ -998,18 +1317,18 @@
           loading="lazy"
           allowfullscreen
           src="https://www.google.com/maps?q=Santa+Genoveva+1202+Guadalupe+Nuevo+Leon&output=embed"
-          title="Mapa ubicación Mi Bello Ropón"
+          title="Mapa ubicación"
         ></iframe>
       </div>
     </div>
 
     <div style="text-align: center; margin-top: 3rem; font-size: 0.8rem; color: #aaa;">
-      © 2024 Mi Bello Ropón. Todos los derechos reservados.
+      © 2024 Mi Bello Ropón / Studio Dominguez. Todos los derechos reservados.
     </div>
   </footer>
 
   <!-- Floating WhatsApp -->
-  <a class="float-wa" href="https://wa.me/528180932362" target="_blank" aria-label="WhatsApp Mi Bello Ropón">
+  <a class="float-wa" href="https://wa.me/528180932362" target="_blank" aria-label="WhatsApp">
     <i class="fab fa-whatsapp" style="font-size: 1.6rem;"></i>
   </a>
 
@@ -1020,7 +1339,7 @@
     // ----- STATE -----
     const state = {
       currentView: 'inicio',
-      filters: { nina: 'all', nino: 'all' }
+      filters: { nina: 'all', nino: 'all', studio: 'all' }
     };
 
     // ----- MENU (ACCESSIBLE) -----
@@ -1035,7 +1354,6 @@
       menu.setAttribute('aria-hidden', isOpen ? 'false' : 'true');
 
       if (isOpen) {
-        // Focus first link
         const firstLink = menu.querySelector('a');
         if (firstLink) firstLink.focus();
       }
@@ -1053,7 +1371,6 @@
       }
     }
 
-    // Close on Esc
     document.addEventListener('keydown', (e) => {
       if (e.key === 'Escape') {
         const menu = document.getElementById('overlayMenu');
@@ -1064,7 +1381,6 @@
       }
     });
 
-    // Close on click outside links (clicking overlay background)
     document.getElementById('overlayMenu').addEventListener('click', (e) => {
       if (e.target.id === 'overlayMenu') closeMenu();
     });
@@ -1074,7 +1390,6 @@
       document.getElementById('contacto').scrollIntoView({ behavior: 'smooth' });
     }
 
-    // Highlight active nav in overlay
     function setActiveMenuLink(viewName) {
       const links = document.querySelectorAll('.overlay-menu a[data-nav]');
       links.forEach(l => l.classList.remove('active-link'));
@@ -1082,25 +1397,33 @@
       if (active) active.classList.add('active-link');
     }
 
+    // Toggle body theme for Studio Dominguez
+    function setThemeForView(viewName) {
+      const isStudio = (viewName === 'studio');
+      document.body.classList.toggle('sd-mode', isStudio);
+
+      // Optional: change logo text while in Studio (keeps same logo element)
+      const logo = document.querySelector('.logo');
+      if (!logo) return;
+      logo.textContent = isStudio ? 'Studio Dominguez' : 'Mi Bello Ropón';
+    }
+
     // ----- SPA NAVIGATION -----
     function navigateTo(viewName) {
-      // close menu if open
       closeMenu();
 
-      // hide all views
       const views = document.querySelectorAll('.view-section');
       views.forEach(v => v.classList.remove('active-view'));
 
-      // show target
       const target = document.getElementById('view-' + viewName);
       if (target) {
         target.classList.add('active-view');
         state.currentView = viewName;
         setActiveMenuLink(viewName);
+        setThemeForView(viewName);
         window.scrollTo({ top: 0, behavior: 'smooth' });
 
-        // When entering nina/nino ensure filter applies
-        if (viewName === 'nina' || viewName === 'nino') {
+        if (viewName === 'nina' || viewName === 'nino' || viewName === 'studio') {
           applyFilters(viewName);
         }
       }
@@ -1111,7 +1434,11 @@
       state.filters[view] = category;
 
       // update chip active style
-      const chipsWrap = document.getElementById(view === 'nina' ? 'chipsNina' : 'chipsNino');
+      const chipsWrap =
+        view === 'nina' ? document.getElementById('chipsNina')
+        : view === 'nino' ? document.getElementById('chipsNino')
+        : document.getElementById('chipsStudio');
+
       chipsWrap.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
       el.classList.add('active');
 
@@ -1119,9 +1446,20 @@
     }
 
     function applyFilters(view) {
-      const grid = document.getElementById(view === 'nina' ? 'gridNina' : 'gridNino');
-      const empty = document.getElementById(view === 'nina' ? 'emptyNina' : 'emptyNino');
-      const searchInput = document.getElementById(view === 'nina' ? 'searchNina' : 'searchNino');
+      const grid =
+        view === 'nina' ? document.getElementById('gridNina')
+        : view === 'nino' ? document.getElementById('gridNino')
+        : document.getElementById('gridStudio');
+
+      const empty =
+        view === 'nina' ? document.getElementById('emptyNina')
+        : view === 'nino' ? document.getElementById('emptyNino')
+        : document.getElementById('emptyStudio');
+
+      const searchInput =
+        view === 'nina' ? document.getElementById('searchNina')
+        : view === 'nino' ? document.getElementById('searchNino')
+        : document.getElementById('searchStudio');
 
       const query = (searchInput.value || '').trim().toLowerCase();
       const selected = state.filters[view];
@@ -1157,8 +1495,9 @@
       }
     });
 
-    // Set initial active menu link
+    // Initial state
     setActiveMenuLink('inicio');
+    setThemeForView('inicio');
   </script>
 </body>
 </html>
