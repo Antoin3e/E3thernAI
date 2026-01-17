@@ -11,17 +11,17 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- 1. PALETA DE COLORES "CREAMY BOUTIQUE" --- */
+        /* --- CONFIGURACIÓN BASE & PALETA --- */
         :root {
-            --bg-body: #fdfcf8;      /* Blanco hueso muy suave */
-            --bg-card: #ffffff;      /* Blanco puro */
-            --gold-accent: #c5a059;  /* Dorado mate elegante */
-            --gold-light: #e6dace;   /* Arena suave */
-            --text-dark: #3a3a3a;    /* Gris carbón suave (no negro puro) */
+            --bg-body: #fdfcf8;      
+            --bg-card: #ffffff;      
+            --gold-accent: #c5a059;  
+            --gold-light: #e6dace;   
+            --text-dark: #3a3a3a;    
             --text-light: #777777;
-            --overlay-bg: rgba(253, 252, 248, 0.98); /* Fondo del menú */
-            --shadow-card: 0 15px 35px rgba(197, 160, 89, 0.1);
-            --transition-slow: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            --overlay-bg: rgba(253, 252, 248, 0.98);
+            --shadow-card: 0 15px 35px rgba(197, 160, 89, 0.15);
+            --transition-slow: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
@@ -34,10 +34,9 @@
         }
 
         h1, h2, h3 { font-family: 'Cinzel', serif; letter-spacing: 1px; }
+        a { text-decoration: none; color: inherit; transition: 0.3s; cursor: pointer; }
 
-        a { text-decoration: none; color: inherit; transition: 0.3s; }
-
-        /* --- 2. NAVEGACIÓN MINIMALISTA (SOLO HAMBURGUESA) --- */
+        /* --- NAVEGACIÓN --- */
         nav {
             position: fixed;
             top: 0; left: 0; width: 100%;
@@ -45,15 +44,10 @@
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 1000;
-            background: transparent; /* Transparente al inicio */
-            transition: 0.4s ease;
-        }
-
-        nav.scrolled {
-            background: rgba(255,255,255,0.95);
-            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
-            padding: 1rem 3rem;
+            z-index: 2000;
+            background: rgba(253, 252, 248, 0.8);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
 
         .logo {
@@ -62,324 +56,205 @@
             color: var(--text-dark);
             text-transform: uppercase;
             letter-spacing: 3px;
+            cursor: pointer;
         }
 
-        /* Botón Hamburguesa Estilizado */
         .burger-btn {
             cursor: pointer;
-            width: 40px;
-            height: 30px;
+            width: 35px; height: 25px;
             position: relative;
-            z-index: 1001;
+            z-index: 2001;
         }
 
         .burger-line {
             display: block;
-            width: 100%;
-            height: 2px;
+            width: 100%; height: 2px;
             background: var(--text-dark);
             position: absolute;
             transition: var(--transition-slow);
         }
 
         .burger-line:nth-child(1) { top: 0; }
-        .burger-line:nth-child(2) { top: 14px; width: 70%; right: 0; }
-        .burger-line:nth-child(3) { top: 28px; }
+        .burger-line:nth-child(2) { top: 11px; width: 70%; right: 0; }
+        .burger-line:nth-child(3) { top: 22px; }
 
-        /* Animación del botón al abrir */
-        .burger-btn.open .burger-line:nth-child(1) { transform: rotate(45deg); top: 14px; background: var(--gold-accent); }
+        .burger-btn.open .burger-line:nth-child(1) { transform: rotate(45deg); top: 11px; background: var(--gold-accent); }
         .burger-btn.open .burger-line:nth-child(2) { opacity: 0; }
-        .burger-btn.open .burger-line:nth-child(3) { transform: rotate(-45deg); top: 14px; background: var(--gold-accent); }
+        .burger-btn.open .burger-line:nth-child(3) { transform: rotate(-45deg); top: 11px; background: var(--gold-accent); }
 
-        /* --- MENÚ OVERLAY (PANTALLA COMPLETA) --- */
+        /* --- MENÚ OVERLAY --- */
         .overlay-menu {
-            position: fixed;
-            top: 0; left: 0;
+            position: fixed; top: 0; left: 0;
             width: 100%; height: 100vh;
             background: var(--overlay-bg);
-            z-index: 999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.6s ease;
+            z-index: 1999;
+            display: flex; flex-direction: column;
+            justify-content: center; align-items: center;
+            opacity: 0; pointer-events: none;
+            transition: opacity 0.5s ease;
         }
 
-        .overlay-menu.active {
-            opacity: 1;
-            pointer-events: all;
-        }
-
-        .overlay-menu ul { list-style: none; text-align: center; }
-        
-        .overlay-menu li { 
-            margin: 2rem 0; 
-            overflow: hidden; 
-        }
-
+        .overlay-menu.active { opacity: 1; pointer-events: all; }
+        .overlay-menu li { margin: 1.5rem 0; overflow: hidden; text-align: center; }
         .overlay-menu a {
-            font-family: 'Cinzel', serif;
-            font-size: 2.5rem;
-            color: var(--text-dark);
-            position: relative;
-            display: inline-block;
-            transform: translateY(100%); /* Oculto abajo */
-            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+            font-family: 'Cinzel', serif; font-size: 2rem;
+            color: var(--text-dark); display: inline-block;
+            transform: translateY(100%); transition: transform 0.6s ease;
         }
-
-        .overlay-menu.active a { transform: translateY(0); } /* Sube al abrir */
-        
+        .overlay-menu.active a { transform: translateY(0); }
         .overlay-menu a:hover { color: var(--gold-accent); }
 
-        /* --- 3. HERO SECTION (IMPACTO VISUAL) --- */
-        header {
-            height: 100vh;
+        /* --- GESTOR DE VISTAS (SPA) --- */
+        .main-container {
+            position: relative;
+            min-height: 100vh;
+            padding-top: 80px; /* Espacio para el nav fijo */
+        }
+
+        .view-section {
+            display: none; /* Oculto por defecto */
+            opacity: 0;
+            animation: fadeView 0.8s ease forwards;
+        }
+
+        .view-section.active-view {
+            display: block;
+        }
+
+        @keyframes fadeView {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- VISTA: INICIO (HERO) --- */
+        .hero-wrapper {
+            height: calc(100vh - 80px);
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             overflow: hidden;
+            margin: 0 1rem 1rem 1rem;
+            border-radius: 20px;
         }
 
-        /* Imagen de fondo Parallax */
         .hero-bg {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 120%; /* Más alto para parallax */
+            position: absolute; top: 0; left: 0; width: 100%; height: 110%;
             background-image: url('https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=2070&auto=format&fit=crop'); 
-            background-size: cover;
-            background-position: center;
+            background-size: cover; background-position: center;
             z-index: -2;
-            filter: brightness(0.9);
+            filter: brightness(0.95);
         }
-
-        /* Overlay crema para suavizar la imagen */
+        
         .hero-overlay {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(253, 252, 248, 0.3); /* Velo blanco suave */
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(253, 252, 248, 0.2);
             z-index: -1;
         }
 
         .hero-content {
-            background: rgba(255, 255, 255, 0.8);
-            backdrop-filter: blur(10px);
-            padding: 4rem 3rem;
-            max-width: 700px;
-            border: 1px solid rgba(255,255,255,0.9);
-            box-shadow: 0 20px 60px rgba(0,0,0,0.05);
-            opacity: 0;
-            animation: fadeIn 1.5s ease forwards;
-            animation-delay: 0.5s;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            padding: 3rem;
+            max-width: 600px;
+            border: 1px solid white;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
         }
 
-        .hero-content h1 {
-            font-size: 3.5rem;
-            margin-bottom: 1rem;
-            color: var(--text-dark);
-        }
-        
-        .hero-content p {
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-            color: var(--text-light);
-            letter-spacing: 2px;
-            text-transform: uppercase;
-        }
-
+        .hero-content h1 { font-size: 3rem; margin-bottom: 1rem; color: var(--text-dark); }
         .btn-main {
-            padding: 1rem 3rem;
-            background: var(--text-dark);
-            color: white;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            font-size: 0.8rem;
-            border: 1px solid var(--text-dark);
+            padding: 1rem 2.5rem;
+            background: var(--text-dark); color: white;
+            text-transform: uppercase; letter-spacing: 2px;
+            font-size: 0.8rem; margin-top: 1rem; display: inline-block;
         }
+        .btn-main:hover { background: var(--gold-accent); border-color: var(--gold-accent); }
 
-        .btn-main:hover {
-            background: transparent;
-            color: var(--text-dark);
+        /* --- VISTAS: NIÑO / NIÑA (GRID) --- */
+        .category-header {
+            text-align: center; padding: 4rem 1rem 2rem;
         }
-
-        /* --- 4. SECCIONES DE PRODUCTOS (6 ITEMS) --- */
-        .collection-section {
-            padding: 8rem 5%;
-        }
-
-        .section-title {
-            text-align: center;
-            margin-bottom: 5rem;
-        }
-
-        .section-title span {
-            display: block;
-            font-size: 0.9rem;
-            color: var(--gold-accent);
-            text-transform: uppercase;
-            letter-spacing: 4px;
-            margin-bottom: 1rem;
-        }
-
-        .section-title h2 {
-            font-size: 3rem;
-            color: var(--text-dark);
-        }
+        .category-header h2 { font-size: 3rem; color: var(--text-dark); margin-bottom: 0.5rem; }
+        .category-header p { color: var(--gold-accent); text-transform: uppercase; letter-spacing: 3px; }
 
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2.5rem;
+            gap: 2rem;
+            padding: 0 5% 4rem;
         }
 
         .product-card {
             background: var(--bg-card);
-            border: 1px solid #f0f0f0;
             transition: var(--transition-slow);
             cursor: pointer;
         }
-
-        .product-card:hover {
-            border-color: var(--gold-light);
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-card);
-        }
+        .product-card:hover { transform: translateY(-10px); }
 
         .img-container {
-            height: 380px;
-            overflow: hidden;
-            position: relative;
-            background-color: #f4f4f4;
+            height: 400px; overflow: hidden; position: relative;
         }
-
         .img-container img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+            width: 100%; height: 100%; object-fit: cover;
             transition: transform 1s ease;
         }
+        .product-card:hover .img-container img { transform: scale(1.05); }
 
-        .product-card:hover .img-container img {
-            transform: scale(1.05);
-        }
+        .product-info { padding: 1.5rem 0; text-align: center; }
+        .product-info h3 { font-family: 'Lato', sans-serif; font-weight: 400; font-size: 1.1rem; }
+        .product-info p { color: var(--gold-accent); font-size: 0.8rem; text-transform: uppercase; margin-top: 5px; }
 
-        .product-info {
-            padding: 1.5rem;
-            text-align: center;
+        /* --- FOOTER & CONTACTO --- */
+        .contact-strip {
+            background: var(--gold-light);
+            padding: 3rem; text-align: center; margin-top: 2rem;
         }
-
-        .product-info h3 {
-            font-family: 'Lato', sans-serif;
-            font-size: 1rem;
-            font-weight: 400;
-            color: var(--text-dark);
-            margin-bottom: 0.5rem;
-        }
-
-        .product-info p {
-            font-size: 0.85rem;
-            color: var(--gold-accent);
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-
-        /* --- 5. BANNER CITA & CONTACTO --- */
-        .appointment-strip {
-            background-color: var(--gold-light);
-            padding: 5rem 1rem;
-            text-align: center;
-            position: relative;
-        }
-        
-        .appointment-strip h2 {
-            font-size: 2.5rem;
-            color: var(--text-dark);
-            margin-bottom: 1rem;
-        }
-
-        .appointment-strip p {
-            font-size: 1.2rem;
-            margin-bottom: 2rem;
-            color: #555;
-        }
-
         .contact-footer {
-            background-color: #fff;
-            padding: 6rem 5% 3rem;
-            border-top: 1px solid #eee;
+            background: #fff; padding: 4rem 5% 2rem; border-top: 1px solid #eee;
         }
-
         .footer-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
+            display: grid; grid-template-columns: 1fr 1.5fr; gap: 4rem;
         }
-
-        .footer-info h3 { font-size: 1.5rem; margin-bottom: 2rem; }
-        
         .contact-row {
-            display: flex;
-            margin-bottom: 1.5rem;
-            align-items: center;
+            display: flex; margin-bottom: 1.5rem; align-items: flex-start;
         }
-
         .contact-row i {
-            color: var(--gold-accent);
-            width: 30px;
-            font-size: 1.2rem;
+            color: var(--gold-accent); width: 30px; font-size: 1.2rem; margin-top: 4px;
         }
-
-        .social-links {
-            margin-top: 2rem;
-            display: flex;
-            gap: 1rem;
-        }
-
+        .social-links { display: flex; gap: 1rem; margin-top: 2rem; }
         .social-btn {
-            width: 45px; height: 45px;
-            border: 1px solid var(--gold-light);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            color: var(--text-dark);
+            width: 45px; height: 45px; border: 1px solid #ddd;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; color: var(--text-dark);
         }
+        .social-btn:hover { background: var(--gold-accent); color: white; border-color: var(--gold-accent); }
 
-        .social-btn:hover {
-            background: var(--gold-accent);
-            color: white;
-            border-color: var(--gold-accent);
-        }
-
-        /* --- RESPONSIVE --- */
+        /* Responsivo */
         @media (max-width: 768px) {
-            .hero-content { padding: 2rem; width: 90%; }
-            .hero-content h1 { font-size: 2.2rem; }
-            .products-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
-            .img-container { height: 250px; }
+            .hero-content h1 { font-size: 2rem; }
             .footer-grid { grid-template-columns: 1fr; }
-            .overlay-menu a { font-size: 2rem; }
+            .img-container { height: 300px; }
+            nav { padding: 1rem 1.5rem; }
         }
-
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
 <body>
 
     <div class="overlay-menu" id="overlayMenu">
         <ul>
-            <li><a href="#inicio" onclick="toggleMenu()">Inicio</a></li>
-            <li><a href="#nina" onclick="toggleMenu()">Niña</a></li>
-            <li><a href="#nino" onclick="toggleMenu()">Niño</a></li>
-            <li><a href="#contacto" onclick="toggleMenu()">Contacto</a></li>
-            <li><a href="tel:+528180932362" onclick="toggleMenu()" style="font-size: 1.5rem; color: var(--gold-accent);">Agendar Cita</a></li>
+            <li><a onclick="navigateTo('inicio')">Inicio</a></li>
+            <li><a onclick="navigateTo('nina')">Colección Niña</a></li>
+            <li><a onclick="navigateTo('nino')">Colección Niño</a></li>
+            <li><a href="#contacto" onclick="toggleMenu()">Contacto y Ubicación</a></li>
+            <li><a href="https://wa.me/528180932362" target="_blank" onclick="toggleMenu()" style="color: var(--gold-accent); font-size: 1.5rem;">
+                <i class="fab fa-whatsapp"></i> Agendar Cita
+            </a></li>
         </ul>
     </div>
 
-    <nav id="navbar">
-        <div class="logo">Mi Bello Ropón</div>
+    <nav>
+        <div class="logo" onclick="navigateTo('inicio')">Mi Bello Ropón</div>
         <div class="burger-btn" onclick="toggleMenu()" id="burgerBtn">
             <span class="burger-line"></span>
             <span class="burger-line"></span>
@@ -387,151 +262,188 @@
         </div>
     </nav>
 
-    <header id="inicio">
-        <div class="hero-bg" id="parallaxBg"></div>
-        <div class="hero-overlay"></div>
+    <main class="main-container">
         
-        <div class="hero-content">
-            <p>Guadalupe, Nuevo León</p>
-            <h1>Ceremonias <br>Inolvidables</h1>
-            <p style="text-transform: none; font-style: italic; font-size: 1rem; margin-bottom: 2rem; color: #555;">
-                Creamos la atmósfera perfecta para el día más especial de tu bebé.
-            </p>
-            <a href="#contacto" class="btn-main">Reservar Visita</a>
-        </div>
-    </header>
-
-    <section id="nina" class="collection-section">
-        <div class="section-title">
-            <span>Colección Exclusiva</span>
-            <h2>Para Ellas</h2>
-        </div>
-
-        <div class="products-grid">
-            <div class="product-card">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1512413914633-b5043f4041ea?q=80&w=800&auto=format&fit=crop" alt="Vestido"></div>
-                <div class="product-info"><h3>Vestido Seda Real</h3><p>Primera Comunión</p></div>
-            </div>
-            <div class="product-card">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1603612803360-1e828464972c?q=80&w=800&auto=format&fit=crop" alt="Ropón"></div>
-                <div class="product-info"><h3>Ropón Princesa</h3><p>Bautizo</p></div>
-            </div>
-            <div class="product-card">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1473445361085-b5a6340187e1?q=80&w=800&auto=format&fit=crop" alt="Accesorio"></div>
-                <div class="product-info"><h3>Set de Velas</h3><p>Accesorios</p></div>
-            </div>
-            <div class="product-card">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1544265432-1c66289b7b9f?q=80&w=800&auto=format&fit=crop" alt="Vestido"></div>
-                <div class="product-info"><h3>Tocado Floral</h3><p>Accesorios</p></div>
-            </div>
-            <div class="product-card">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=800&auto=format&fit=crop" alt="Vestido"></div>
-                <div class="product-info"><h3>Modelo 'Sofía'</h3><p>Alta Costura</p></div>
-            </div>
-            <div class="product-card">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1618485232675-8f6df7103dfc?q=80&w=800&auto=format&fit=crop" alt="Zapatos"></div>
-                <div class="product-info"><h3>Zapatitos Perla</h3><p>Calzado</p></div>
+        <div id="view-inicio" class="view-section active-view">
+            <header class="hero-wrapper">
+                <div class="hero-bg"></div>
+                <div class="hero-overlay"></div>
+                <div class="hero-content">
+                    <p style="letter-spacing: 2px; text-transform: uppercase; font-size: 0.9rem;">Guadalupe, Nuevo León</p>
+                    <h1>Momentos que<br>Perduran</h1>
+                    <p style="margin-bottom: 2rem; color: #555; font-style: italic;">
+                        Especialistas en Bautizo y Primera Comunión.
+                    </p>
+                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
+                        <button onclick="navigateTo('nina')" class="btn-main" style="background: white; color: var(--text-dark);">Ver Niña</button>
+                        <button onclick="navigateTo('nino')" class="btn-main">Ver Niño</button>
+                    </div>
+                </div>
+            </header>
+            
+            <div class="contact-strip">
+                <h3>Atención Exclusiva</h3>
+                <p>Solo atendemos con previa cita para darte el mejor servicio.</p>
+                <a href="https://wa.me/528180932362" target="_blank" class="btn-main" style="background: transparent; border: 1px solid var(--text-dark); color: var(--text-dark); margin-top: 1rem;">
+                    <i class="fab fa-whatsapp"></i> 81 80 93 23 62
+                </a>
             </div>
         </div>
-    </section>
 
-    <section id="nino" class="collection-section" style="background-color: #faf9f6;">
-        <div class="section-title">
-            <span>Elegancia Clásica</span>
-            <h2>Para Ellos</h2>
+        <div id="view-nina" class="view-section">
+            <div class="category-header">
+                <p>Delicadeza y Gracia</p>
+                <h2>Mundo Niña</h2>
+                <button onclick="navigateTo('inicio')" style="background:none; border:none; border-bottom:1px solid var(--gold-accent); cursor:pointer; color: #999; margin-top: 1rem;">← Volver al inicio</button>
+            </div>
+            
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="img-container"><img src="https://images.unsplash.com/photo-1512413914633-b5043f4041ea?q=80&w=800&auto=format&fit=crop" alt="Vestido"></div>
+                    <div class="product-info"><h3>Vestido Seda Real</h3><p>Comunión</p></div>
+                </div>
+                <div class="product-card">
+                    <div class="img-container"><img src="https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?q=80&w=800&auto=format&fit=crop" alt="Ropón"></div>
+                    <div class="product-info"><h3>Ropón Princesa</h3><p>Bautizo</p></div>
+                </div>
+                <div class="product-card">
+                    <div class="img-container"><img src="https://images.unsplash.com/photo-1544265432-1c66289b7b9f?q=80&w=800&auto=format&fit=crop" alt="Tocado"></div>
+                    <div class="product-info"><h3>Tocado Floral</h3><p>Accesorios</p></div>
+                </div>
+                <div class="product-card">
+                    <div class="img-container"><img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=800&auto=format&fit=crop" alt="Modelo Sofia"></div>
+                    <div class="product-info"><h3>Modelo 'Sofía'</h3><p>Alta Costura</p></div>
+                </div>
+                <div class="product-card">
+                    <div class="img-container"><img src="https://images.unsplash.com/photo-1618485232675-8f6df7103dfc?q=80&w=800&auto=format&fit=crop" alt="Zapatos"></div>
+                    <div class="product-info"><h3>Zapatitos Perla</h3><p>Calzado</p></div>
+                </div>
+                <div class="product-card">
+                    <div class="img-container"><img src="https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?q=80&w=800&auto=format&fit=crop" alt="Accesorios"></div>
+                    <div class="product-info"><h3>Set de Velas</h3><p>Ceremonia</p></div>
+                </div>
+            </div>
         </div>
 
-        <div class="products-grid">
-            <div class="product-card">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1519757656972-02484a958e94?q=80&w=800&auto=format&fit=crop" alt="Traje"></div>
-                <div class="product-info"><h3>Traje de Lino</h3><p>Comunión</p></div>
+        <div id="view-nino" class="view-section">
+            <div class="category-header">
+                <p>Elegancia y Carácter</p>
+                <h2>Mundo Niño</h2>
+                <button onclick="navigateTo('inicio')" style="background:none; border:none; border-bottom:1px solid var(--gold-accent); cursor:pointer; color: #999; margin-top: 1rem;">← Volver al inicio</button>
             </div>
-            <div class="product-card">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?q=80&w=800&auto=format&fit=crop" alt="Ropón"></div>
-                <div class="product-info"><h3>Ropón Desmontable</h3><p>Bautizo</p></div>
-            </div>
-            <div class="product-card">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1507593163158-b643a6d365f5?q=80&w=800&auto=format&fit=crop" alt="Guayabera"></div>
-                <div class="product-info"><h3>Guayabera Fina</h3><p>Ceremonia</p></div>
-            </div>
-            <div class="product-card">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1621404134604-5831613589b9?q=80&w=800&auto=format&fit=crop" alt="Set"></div>
-                <div class="product-info"><h3>Set Bautizo Completo</h3><p>Tradicional</p></div>
-            </div>
-            <div class="product-card">
-                <div class="img-container"><img src="https://plus.unsplash.com/premium_photo-1682089874618-9c5952d76378?q=80&w=800&auto=format&fit=crop" alt="Cruz"></div>
-                <div class="product-info"><h3>Cadena y Cruz</h3><p>Accesorios</p></div>
-            </div>
-            <div class="product-card">
-                <div class="img-container"><img src="https://images.unsplash.com/photo-1514917951167-9c84964177b8?q=80&w=800&auto=format&fit=crop" alt="Zapatos"></div>
-                <div class="product-info"><h3>Mocasín Ceremonia</h3><p>Calzado</p></div>
+
+            <div class="products-grid">
+                <div class="product-card">
+                    <div class="img-container"><img src="https://images.unsplash.com/photo-1519757656972-02484a958e94?q=80&w=800&auto=format&fit=crop" alt="Traje"></div>
+                    <div class="product-info"><h3>Traje Lino Italiano</h3><p>Comunión</p></div>
+                </div>
+                <div class="product-card">
+                    <div class="img-container"><img src="https://images.unsplash.com/photo-1621404134604-5831613589b9?q=80&w=800&auto=format&fit=crop" alt="Ropón"></div>
+                    <div class="product-info"><h3>Ropón Desmontable</h3><p>Bautizo</p></div>
+                </div>
+                <div class="product-card">
+                    <div class="img-container"><img src="https://images.unsplash.com/photo-1507593163158-b643a6d365f5?q=80&w=800&auto=format&fit=crop" alt="Guayabera"></div>
+                    <div class="product-info"><h3>Guayabera Fina</h3><p>Ceremonia</p></div>
+                </div>
+                <div class="product-card">
+                    <div class="img-container"><img src="https://plus.unsplash.com/premium_photo-1682089874618-9c5952d76378?q=80&w=800&auto=format&fit=crop" alt="Cruz"></div>
+                    <div class="product-info"><h3>Cadena y Cruz</h3><p>Joyería</p></div>
+                </div>
+                <div class="product-card">
+                    <div class="img-container"><img src="https://images.unsplash.com/photo-1514917951167-9c84964177b8?q=80&w=800&auto=format&fit=crop" alt="Mocasín"></div>
+                    <div class="product-info"><h3>Mocasín Ceremonia</h3><p>Calzado</p></div>
+                </div>
+                <div class="product-card">
+                    <div class="img-container"><img src="https://images.unsplash.com/photo-1605518216938-7f31b709d043?q=80&w=800&auto=format&fit=crop" alt="Set"></div>
+                    <div class="product-info"><h3>Kit Bautizo Completo</h3><p>Tradicional</p></div>
+                </div>
             </div>
         </div>
-    </section>
 
-    <section class="appointment-strip">
-        <h2>Atención con Previa Cita</h2>
-        <p>Para brindarte la experiencia que mereces, agendamos tu visita.</p>
-        <a href="tel:+528180932362" class="btn-main" style="background: transparent; color: var(--text-dark); border: 1px solid var(--text-dark);">
-            <i class="fas fa-phone"></i> 81 80 93 23 62
-        </a>
-    </section>
+    </main>
 
     <footer id="contacto" class="contact-footer">
         <div class="footer-grid">
             <div class="footer-info">
-                <h3>Mi Bello Ropón</h3>
+                <h3 style="margin-bottom: 2rem;">Contáctanos</h3>
+                
                 <div class="contact-row">
                     <i class="fas fa-map-marker-alt"></i>
-                    <span>Santa Genoveva #1202, Col. La Purísima,<br>Guadalupe, NL.</span>
-                </div>
-                <div class="contact-row">
-                    <i class="fas fa-clock"></i>
-                    <span>Lun - Sáb: 9:00am - 8:00pm<br>Dom: 9:00am - 6:00pm</span>
+                    <div>
+                        <strong>Ubicación</strong>
+                        <p style="color: #666;">Santa Genoveva #1202, Col. La Purísima,<br>Guadalupe, Nuevo León.</p>
+                    </div>
                 </div>
                 
+                <div class="contact-row">
+                    <i class="fas fa-clock"></i>
+                    <div>
+                        <strong>Horario</strong>
+                        <p style="color: #666;">Lun - Sáb: 9:00am - 8:00pm<br>Dom: 9:00am - 6:00pm</p>
+                    </div>
+                </div>
+                
+                <div class="contact-row">
+                    <i class="fab fa-whatsapp"></i>
+                    <div>
+                        <strong>Citas</strong>
+                        <p><a href="https://wa.me/528180932362" target="_blank" style="text-decoration: underline;">81 80 93 23 62</a></p>
+                    </div>
+                </div>
+
                 <div class="social-links">
-                    <a href="https://www.facebook.com/share/17Yk3e61g3/?mibextid=wwXIfr" class="social-btn"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/mibelloropon?igsh=MXFxbzNxNGYyaXk1ZQ==" class="social-btn"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.tiktok.com/@mibelloropon?_r=1&_t=ZT-938D5TWvMdL" class="social-btn"><i class="fab fa-tiktok"></i></a>
-                    <a href="https://wa.me/528180932362" class="social-btn"><i class="fab fa-whatsapp"></i></a>
+                    <a href="https://www.facebook.com/share/17Yk3e61g3/?mibextid=wwXIfr" target="_blank" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/mibelloropon?igsh=MXFxbzNxNGYyaXk1ZQ==" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@mibelloropon?_r=1&_t=ZT-938D5TWvMdL" target="_blank" class="social-btn"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://wa.me/528180932362" target="_blank" class="social-btn" style="background: #25D366; color: white; border-color: #25D366;"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
 
-            <div style="border-radius: 10px; overflow: hidden; height: 300px;">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3595.6980489246547!2d-100.2245!3d25.6866!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDQxJzExLjgiTiAxMDDCsDEzJzI4LjIiVw!5e0!3m2!1ses-419!2smx!4v1600000000000!5m2!1ses-419!2smx" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            <div style="border-radius: 20px; overflow: hidden; height: 350px; box-shadow: var(--shadow-card);">
+                <iframe 
+                    width="100%" 
+                    height="100%" 
+                    style="border:0" 
+                    loading="lazy" 
+                    allowfullscreen 
+                    src="https://www.google.com/maps?q=Santa+Genoveva+1202+Guadalupe+Nuevo+Leon&output=embed">
+                </iframe>
             </div>
         </div>
-        <div style="text-align: center; margin-top: 3rem; font-size: 0.8rem; color: #999;">
-            © 2024 Mi Bello Ropón. Boutique High-End.
+        <div style="text-align: center; margin-top: 3rem; font-size: 0.8rem; color: #aaa;">
+            © 2024 Mi Bello Ropón. Todos los derechos reservados.
         </div>
     </footer>
 
     <script>
-        // Lógica del Menú Hamburguesa
+        // --- LÓGICA DE NAVEGACIÓN (SPA) ---
+        function navigateTo(viewName) {
+            // 1. Cerrar menú si está abierto
+            const menu = document.getElementById('overlayMenu');
+            const burger = document.getElementById('burgerBtn');
+            menu.classList.remove('active');
+            burger.classList.remove('open');
+
+            // 2. Ocultar todas las vistas
+            const views = document.querySelectorAll('.view-section');
+            views.forEach(v => v.classList.remove('active-view'));
+
+            // 3. Mostrar la vista seleccionada
+            const target = document.getElementById('view-' + viewName);
+            if(target) {
+                target.classList.add('active-view');
+                // Scroll suave al tope
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // Toggle del Menú
         function toggleMenu() {
             const menu = document.getElementById('overlayMenu');
             const burger = document.getElementById('burgerBtn');
             menu.classList.toggle('active');
             burger.classList.toggle('open');
         }
-
-        // Efecto Nav al hacer Scroll
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('navbar');
-            if (window.scrollY > 50) {
-                nav.classList.add('scrolled');
-            } else {
-                nav.classList.remove('scrolled');
-            }
-        });
-
-        // Efecto Parallax Simple
-        window.addEventListener('scroll', () => {
-            const parallax = document.getElementById('parallaxBg');
-            let scrollPosition = window.pageYOffset;
-            parallax.style.transform = 'translateY(' + scrollPosition * 0.5 + 'px)';
-        });
     </script>
 </body>
 </html>
