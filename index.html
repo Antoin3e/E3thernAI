@@ -1,449 +1,1191 @@
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Bello Ropón | Boutique Infantil</title>
-    
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Mi Bello Ropón | Boutique Infantil</title>
 
-    <style>
-        /* --- CONFIGURACIÓN BASE & PALETA --- */
-        :root {
-            --bg-body: #fdfcf8;      
-            --bg-card: #ffffff;      
-            --gold-accent: #c5a059;  
-            --gold-light: #e6dace;   
-            --text-dark: #3a3a3a;    
-            --text-light: #777777;
-            --overlay-bg: rgba(253, 252, 248, 0.98);
-            --shadow-card: 0 15px 35px rgba(197, 160, 89, 0.15);
-            --transition-slow: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-        }
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lato:wght@300;400;700&display=swap"
+    rel="stylesheet"
+  />
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        
-        body {
-            font-family: 'Lato', sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-dark);
-            overflow-x: hidden;
-        }
+  <!-- Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" />
 
-        h1, h2, h3 { font-family: 'Cinzel', serif; letter-spacing: 1px; }
-        a { text-decoration: none; color: inherit; transition: 0.3s; cursor: pointer; }
+  <!-- Swiper (Carrusel) -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css" />
 
-        /* --- NAVEGACIÓN --- */
-        nav {
-            position: fixed;
-            top: 0; left: 0; width: 100%;
-            padding: 1.5rem 3rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 2000;
-            background: rgba(253, 252, 248, 0.8);
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(0,0,0,0.05);
-        }
+  <!-- AOS (Animaciones) -->
+  <link rel="stylesheet" href="https://unpkg.com/aos@2.3.1/dist/aos.css" />
 
-        .logo {
-            font-size: 1.5rem;
-            font-weight: 600;
-            color: var(--text-dark);
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            cursor: pointer;
-        }
+  <style>
+    /* --- CONFIGURACIÓN BASE & PALETA --- */
+    :root {
+      --bg-body: #fdfcf8;
+      --bg-card: #ffffff;
+      --gold-accent: #c5a059;
+      --gold-light: #e6dace;
+      --text-dark: #3a3a3a;
+      --text-light: #777777;
+      --overlay-bg: rgba(253, 252, 248, 0.98);
+      --shadow-card: 0 15px 35px rgba(197, 160, 89, 0.15);
+      --shadow-soft: 0 10px 30px rgba(0, 0, 0, 0.08);
+      --ring: 0 0 0 4px rgba(197, 160, 89, 0.18);
+      --transition-slow: all 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+      --transition-fast: all 0.2s ease;
+      --radius: 20px;
+      --radius-sm: 14px;
+      --max: 1200px;
+    }
 
-        .burger-btn {
-            cursor: pointer;
-            width: 35px; height: 25px;
-            position: relative;
-            z-index: 2001;
-        }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Lato', sans-serif;
+      background-color: var(--bg-body);
+      color: var(--text-dark);
+      overflow-x: hidden;
+    }
+    h1, h2, h3 { font-family: 'Cinzel', serif; letter-spacing: 1px; }
+    a { text-decoration: none; color: inherit; transition: 0.3s; cursor: pointer; }
+    button { font-family: inherit; }
+    .sr-only {
+      position: absolute !important;
+      height: 1px; width: 1px;
+      overflow: hidden;
+      clip: rect(1px, 1px, 1px, 1px);
+      white-space: nowrap;
+    }
 
-        .burger-line {
-            display: block;
-            width: 100%; height: 2px;
-            background: var(--text-dark);
-            position: absolute;
-            transition: var(--transition-slow);
-        }
+    /* --- NAVEGACIÓN --- */
+    nav {
+      position: fixed;
+      top: 0; left: 0; width: 100%;
+      padding: 1.2rem 3rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 2000;
+      background: rgba(253, 252, 248, 0.8);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-dark);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      cursor: pointer;
+      user-select: none;
+    }
 
-        .burger-line:nth-child(1) { top: 0; }
-        .burger-line:nth-child(2) { top: 11px; width: 70%; right: 0; }
-        .burger-line:nth-child(3) { top: 22px; }
+    /* --- Botón hamburguesa accesible --- */
+    .burger-btn {
+      cursor: pointer;
+      width: 44px; height: 44px;
+      display: grid;
+      place-items: center;
+      border: none;
+      background: transparent;
+      border-radius: 999px;
+      transition: var(--transition-fast);
+    }
+    .burger-btn:focus-visible { outline: none; box-shadow: var(--ring); }
+    .burger-icon {
+      width: 35px; height: 25px;
+      position: relative;
+      display: block;
+    }
+    .burger-line {
+      display: block;
+      width: 100%; height: 2px;
+      background: var(--text-dark);
+      position: absolute;
+      transition: var(--transition-slow);
+      border-radius: 999px;
+    }
+    .burger-line:nth-child(1) { top: 0; }
+    .burger-line:nth-child(2) { top: 11px; width: 70%; right: 0; }
+    .burger-line:nth-child(3) { top: 22px; }
 
-        .burger-btn.open .burger-line:nth-child(1) { transform: rotate(45deg); top: 11px; background: var(--gold-accent); }
-        .burger-btn.open .burger-line:nth-child(2) { opacity: 0; }
-        .burger-btn.open .burger-line:nth-child(3) { transform: rotate(-45deg); top: 11px; background: var(--gold-accent); }
+    .burger-btn.open .burger-line:nth-child(1) { transform: rotate(45deg); top: 11px; background: var(--gold-accent); }
+    .burger-btn.open .burger-line:nth-child(2) { opacity: 0; }
+    .burger-btn.open .burger-line:nth-child(3) { transform: rotate(-45deg); top: 11px; background: var(--gold-accent); }
 
-        /* --- MENÚ OVERLAY --- */
-        .overlay-menu {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100vh;
-            background: var(--overlay-bg);
-            z-index: 1999;
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center;
-            opacity: 0; pointer-events: none;
-            transition: opacity 0.5s ease;
-        }
+    /* --- MENÚ OVERLAY --- */
+    .overlay-menu {
+      position: fixed; top: 0; left: 0;
+      width: 100%; height: 100vh;
+      background: var(--overlay-bg);
+      z-index: 1999;
+      display: flex; flex-direction: column;
+      justify-content: center; align-items: center;
+      opacity: 0; pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .overlay-menu.active { opacity: 1; pointer-events: all; }
+    .overlay-menu ul { list-style: none; padding: 0; margin: 0; }
+    .overlay-menu li { margin: 1.2rem 0; overflow: hidden; text-align: center; }
+    .overlay-menu a {
+      font-family: 'Cinzel', serif;
+      font-size: clamp(1.6rem, 3vw, 2rem);
+      color: var(--text-dark);
+      display: inline-block;
+      transform: translateY(120%);
+      transition: transform 0.55s ease, color 0.2s ease;
+      padding: 0.2rem 0.6rem;
+      border-radius: 10px;
+    }
+    .overlay-menu.active a { transform: translateY(0); }
+    .overlay-menu a:hover { color: var(--gold-accent); }
+    .overlay-menu a:focus-visible { outline: none; box-shadow: var(--ring); }
+    .overlay-menu a.is-active {
+      color: var(--gold-accent);
+      background: rgba(197, 160, 89, 0.08);
+    }
+    /* efecto escalonado */
+    .overlay-menu.active li:nth-child(1) a { transition-delay: 0.05s; }
+    .overlay-menu.active li:nth-child(2) a { transition-delay: 0.10s; }
+    .overlay-menu.active li:nth-child(3) a { transition-delay: 0.15s; }
+    .overlay-menu.active li:nth-child(4) a { transition-delay: 0.20s; }
+    .overlay-menu.active li:nth-child(5) a { transition-delay: 0.25s; }
 
-        .overlay-menu.active { opacity: 1; pointer-events: all; }
-        .overlay-menu li { margin: 1.5rem 0; overflow: hidden; text-align: center; }
-        .overlay-menu a {
-            font-family: 'Cinzel', serif; font-size: 2rem;
-            color: var(--text-dark); display: inline-block;
-            transform: translateY(100%); transition: transform 0.6s ease;
-        }
-        .overlay-menu.active a { transform: translateY(0); }
-        .overlay-menu a:hover { color: var(--gold-accent); }
+    /* --- CONTENEDOR PRINCIPAL (SPA) --- */
+    .main-container {
+      position: relative;
+      min-height: 100vh;
+      padding-top: 86px; /* espacio nav */
+    }
 
-        /* --- GESTOR DE VISTAS (SPA) --- */
-        .main-container {
-            position: relative;
-            min-height: 100vh;
-            padding-top: 80px; /* Espacio para el nav fijo */
-        }
+    .container {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 1rem;
+    }
 
-        .view-section {
-            display: none; /* Oculto por defecto */
-            opacity: 0;
-            animation: fadeView 0.8s ease forwards;
-        }
+    .view-section {
+      display: none;
+      opacity: 0;
+      animation: fadeView 0.55s ease forwards;
+    }
+    .view-section.active-view { display: block; }
 
-        .view-section.active-view {
-            display: block;
-        }
+    @keyframes fadeView {
+      from { opacity: 0; transform: translateY(16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        @keyframes fadeView {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    /* --- HERO + SLIDER --- */
+    .hero-wrapper {
+      min-height: calc(100vh - 86px);
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      overflow: hidden;
+      margin: 0 1rem 1rem 1rem;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow-soft);
+    }
 
-        /* --- VISTA: INICIO (HERO) --- */
-        .hero-wrapper {
-            height: calc(100vh - 80px);
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            overflow: hidden;
-            margin: 0 1rem 1rem 1rem;
-            border-radius: 20px;
-        }
+    .hero-bg {
+      position: absolute; inset: 0;
+      background-image: url('https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=2070&auto=format&fit=crop');
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.03);
+      z-index: -2;
+      filter: brightness(0.95);
+    }
+    .hero-overlay {
+      position: absolute; inset: 0;
+      background: linear-gradient(
+        to bottom,
+        rgba(253, 252, 248, 0.10),
+        rgba(253, 252, 248, 0.24)
+      );
+      z-index: -1;
+    }
 
-        .hero-bg {
-            position: absolute; top: 0; left: 0; width: 100%; height: 110%;
-            background-image: url('https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=2070&auto=format&fit=crop'); 
-            background-size: cover; background-position: center;
-            z-index: -2;
-            filter: brightness(0.95);
-        }
-        
-        .hero-overlay {
-            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(253, 252, 248, 0.2);
-            z-index: -1;
-        }
+    .hero-content {
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(10px);
+      padding: 2.6rem 2.2rem;
+      max-width: 720px;
+      border: 1px solid rgba(255,255,255,0.9);
+      box-shadow: var(--shadow-soft);
+    }
+    .hero-content h1 {
+      font-size: clamp(2.2rem, 4.2vw, 3.2rem);
+      margin: 0.7rem 0 0.8rem;
+      color: var(--text-dark);
+      line-height: 1.05;
+    }
+    .hero-content p.sub {
+      margin-bottom: 1.6rem;
+      color: #555;
+      font-style: italic;
+    }
+    .cta-row {
+      display: flex;
+      gap: 0.9rem;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-top: 1rem;
+    }
 
-        .hero-content {
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(8px);
-            padding: 3rem;
-            max-width: 600px;
-            border: 1px solid white;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.08);
-        }
+    .btn-main {
+      padding: 0.95rem 2.2rem;
+      background: var(--text-dark);
+      color: white;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-size: 0.78rem;
+      border: 1px solid transparent;
+      border-radius: 999px;
+      transition: var(--transition-fast);
+      display: inline-flex;
+      gap: 0.55rem;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .btn-main:hover { background: var(--gold-accent); border-color: var(--gold-accent); transform: translateY(-1px); }
+    .btn-main:active { transform: translateY(0); }
+    .btn-main:focus-visible { outline: none; box-shadow: var(--ring); }
 
-        .hero-content h1 { font-size: 3rem; margin-bottom: 1rem; color: var(--text-dark); }
-        .btn-main {
-            padding: 1rem 2.5rem;
-            background: var(--text-dark); color: white;
-            text-transform: uppercase; letter-spacing: 2px;
-            font-size: 0.8rem; margin-top: 1rem; display: inline-block;
-        }
-        .btn-main:hover { background: var(--gold-accent); border-color: var(--gold-accent); }
+    .btn-ghost {
+      background: rgba(255,255,255,0.85);
+      color: var(--text-dark);
+      border: 1px solid rgba(0,0,0,0.12);
+    }
+    .btn-ghost:hover { background: white; border-color: var(--gold-accent); color: var(--gold-accent); }
 
-        /* --- VISTAS: NIÑO / NIÑA (GRID) --- */
-        .category-header {
-            text-align: center; padding: 4rem 1rem 2rem;
-        }
-        .category-header h2 { font-size: 3rem; color: var(--text-dark); margin-bottom: 0.5rem; }
-        .category-header p { color: var(--gold-accent); text-transform: uppercase; letter-spacing: 3px; }
+    /* --- BARRA PROMO --- */
+    .promo-bar {
+      background: linear-gradient(135deg, rgba(197,160,89,0.18), rgba(230,218,206,0.55));
+      border: 1px solid rgba(197,160,89,0.25);
+      border-radius: var(--radius);
+      margin: 1.2rem 1rem;
+      box-shadow: var(--shadow-card);
+    }
+    .promo-inner {
+      display: grid;
+      grid-template-columns: 1.2fr 0.8fr;
+      gap: 1rem;
+      align-items: center;
+      padding: 1.2rem 1.4rem;
+    }
+    .promo-title {
+      font-family: 'Cinzel', serif;
+      font-size: 1.1rem;
+      letter-spacing: 1px;
+    }
+    .promo-sub {
+      color: #5a5a5a;
+      margin-top: 0.35rem;
+      line-height: 1.4;
+    }
+    .promo-actions {
+      display: flex;
+      gap: 0.7rem;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
 
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 2rem;
-            padding: 0 5% 4rem;
-        }
+    /* --- SLIDER DESTACADOS (SWIPER) --- */
+    .section-title {
+      text-align: center;
+      padding: 3.2rem 1rem 1rem;
+    }
+    .section-title p {
+      color: var(--gold-accent);
+      text-transform: uppercase;
+      letter-spacing: 3px;
+      font-size: 0.85rem;
+      margin-bottom: 0.4rem;
+    }
+    .section-title h2 {
+      font-size: clamp(2rem, 3.6vw, 2.8rem);
+    }
+    .swiper-wrap {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1rem 1rem 2rem;
+    }
+    .swiper {
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: var(--shadow-soft);
+      background: white;
+    }
+    .swiper-slide {
+      position: relative;
+      height: 420px;
+      display: grid;
+      align-items: end;
+    }
+    .slide-bg {
+      position: absolute; inset: 0;
+      background-size: cover;
+      background-position: center;
+      filter: brightness(0.88);
+      transform: scale(1.02);
+    }
+    .slide-card {
+      position: relative;
+      padding: 1.4rem 1.4rem 1.5rem;
+      background: linear-gradient(to top, rgba(0,0,0,0.55), rgba(0,0,0,0.05));
+      color: white;
+    }
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.35rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(197,160,89,0.9);
+      color: white;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+    }
+    .slide-card h3 {
+      margin-top: 0.7rem;
+      font-size: 1.6rem;
+      letter-spacing: 1px;
+    }
+    .slide-card p {
+      margin-top: 0.35rem;
+      opacity: 0.92;
+      line-height: 1.5;
+      max-width: 60ch;
+    }
+    .swiper-button-prev,
+    .swiper-button-next {
+      color: rgba(255,255,255,0.9);
+    }
+    .swiper-pagination-bullet { background: rgba(255,255,255,0.9); }
+    .swiper-pagination-bullet-active { background: var(--gold-accent); }
 
-        .product-card {
-            background: var(--bg-card);
-            transition: var(--transition-slow);
-            cursor: pointer;
-        }
-        .product-card:hover { transform: translateY(-10px); }
+    /* --- TESTIMONIOS --- */
+    .testimonials {
+      padding: 2.2rem 1rem 4rem;
+      max-width: var(--max);
+      margin: 0 auto;
+    }
+    .test-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 1.2rem;
+      margin-top: 1.2rem;
+    }
+    .quote-card {
+      background: white;
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: var(--radius-sm);
+      padding: 1.2rem 1.2rem 1.1rem;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.06);
+      transition: var(--transition-fast);
+    }
+    .quote-card:hover { transform: translateY(-4px); box-shadow: 0 14px 30px rgba(0,0,0,0.08); }
+    .quote-top {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      margin-bottom: 0.8rem;
+    }
+    .avatar {
+      width: 46px; height: 46px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, rgba(197,160,89,0.8), rgba(230,218,206,0.95));
+      display: grid; place-items: center;
+      color: white;
+      font-weight: 700;
+      letter-spacing: 1px;
+    }
+    .who strong { display: block; font-size: 0.95rem; }
+    .who span { color: #777; font-size: 0.82rem; }
+    .quote {
+      color: #555;
+      line-height: 1.55;
+      font-style: italic;
+    }
+    .stars {
+      margin-top: 0.8rem;
+      color: var(--gold-accent);
+      font-size: 0.95rem;
+    }
 
-        .img-container {
-            height: 400px; overflow: hidden; position: relative;
-        }
-        .img-container img {
-            width: 100%; height: 100%; object-fit: cover;
-            transition: transform 1s ease;
-        }
-        .product-card:hover .img-container img { transform: scale(1.05); }
+    /* --- STRIP CONTACTO (HOME) --- */
+    .contact-strip {
+      background: var(--gold-light);
+      padding: 2.5rem 1rem;
+      text-align: center;
+      margin: 0.5rem 1rem 2rem;
+      border-radius: var(--radius);
+    }
 
-        .product-info { padding: 1.5rem 0; text-align: center; }
-        .product-info h3 { font-family: 'Lato', sans-serif; font-weight: 400; font-size: 1.1rem; }
-        .product-info p { color: var(--gold-accent); font-size: 0.8rem; text-transform: uppercase; margin-top: 5px; }
+    /* --- VISTAS: NIÑO / NIÑA (HEADER + TOOLS + GRID) --- */
+    .category-header {
+      text-align: center;
+      padding: 3.2rem 1rem 1.6rem;
+    }
+    .category-header h2 { font-size: clamp(2.2rem, 4vw, 3rem); color: var(--text-dark); margin-bottom: 0.4rem; }
+    .category-header p { color: var(--gold-accent); text-transform: uppercase; letter-spacing: 3px; }
 
-        /* --- FOOTER & CONTACTO --- */
-        .contact-strip {
-            background: var(--gold-light);
-            padding: 3rem; text-align: center; margin-top: 2rem;
-        }
-        .contact-footer {
-            background: #fff; padding: 4rem 5% 2rem; border-top: 1px solid #eee;
-        }
-        .footer-grid {
-            display: grid; grid-template-columns: 1fr 1.5fr; gap: 4rem;
-        }
-        .contact-row {
-            display: flex; margin-bottom: 1.5rem; align-items: flex-start;
-        }
-        .contact-row i {
-            color: var(--gold-accent); width: 30px; font-size: 1.2rem; margin-top: 4px;
-        }
-        .social-links { display: flex; gap: 1rem; margin-top: 2rem; }
-        .social-btn {
-            width: 45px; height: 45px; border: 1px solid #ddd;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; color: var(--text-dark);
-        }
-        .social-btn:hover { background: var(--gold-accent); color: white; border-color: var(--gold-accent); }
+    /* barra de herramientas (búsqueda + filtros) */
+    .tools-bar {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 1rem 1.4rem;
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 1rem;
+      align-items: center;
+    }
+    .searchbox {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      background: white;
+      border: 1px solid rgba(0,0,0,0.08);
+      border-radius: 999px;
+      padding: 0.65rem 0.85rem;
+      box-shadow: 0 10px 22px rgba(0,0,0,0.05);
+    }
+    .searchbox i { color: var(--gold-accent); }
+    .searchbox input {
+      width: 100%;
+      border: none;
+      outline: none;
+      font-size: 0.95rem;
+      color: var(--text-dark);
+      background: transparent;
+    }
+    .filters {
+      display: flex;
+      gap: 0.6rem;
+      justify-content: flex-end;
+      flex-wrap: wrap;
+    }
+    .chip {
+      border: 1px solid rgba(0,0,0,0.12);
+      background: rgba(255,255,255,0.8);
+      padding: 0.55rem 0.9rem;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition-fast);
+      user-select: none;
+    }
+    .chip:hover { border-color: rgba(197,160,89,0.6); color: var(--gold-accent); }
+    .chip.active { background: rgba(197,160,89,0.14); border-color: rgba(197,160,89,0.65); color: var(--gold-accent); }
 
-        /* Responsivo */
-        @media (max-width: 768px) {
-            .hero-content h1 { font-size: 2rem; }
-            .footer-grid { grid-template-columns: 1fr; }
-            .img-container { height: 300px; }
-            nav { padding: 1rem 1.5rem; }
-        }
-    </style>
+    .products-grid {
+      max-width: var(--max);
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+      gap: 1.4rem;
+      padding: 0 1rem 4rem;
+    }
+    .product-card {
+      background: var(--bg-card);
+      border: 1px solid rgba(0,0,0,0.06);
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      transition: var(--transition-fast);
+      cursor: pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.05);
+      position: relative;
+    }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 16px 34px rgba(0,0,0,0.08); }
+    .product-card:focus-within { box-shadow: var(--ring); }
+
+    .img-container {
+      height: 360px;
+      overflow: hidden;
+      position: relative;
+      background: #f5f2ee;
+    }
+    .img-container img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 1s ease;
+      display: block;
+    }
+    .product-card:hover .img-container img { transform: scale(1.06); }
+
+    .quickview {
+      position: absolute;
+      left: 12px; top: 12px;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(0,0,0,0.08);
+      padding: 0.35rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      display: inline-flex;
+      gap: 0.45rem;
+      align-items: center;
+    }
+
+    .product-info {
+      padding: 1rem 1rem 1.15rem;
+      text-align: left;
+    }
+    .product-info h3 {
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+      font-size: 1.02rem;
+      letter-spacing: 0.2px;
+    }
+    .meta-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 0.55rem;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+    .tag {
+      color: var(--gold-accent);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      display: inline-flex;
+      gap: 0.4rem;
+      align-items: center;
+      white-space: nowrap;
+    }
+    .action-mini {
+      border: 1px solid rgba(0,0,0,0.12);
+      background: transparent;
+      border-radius: 999px;
+      padding: 0.55rem 0.85rem;
+      font-size: 0.75rem;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .action-mini:hover { border-color: var(--gold-accent); color: var(--gold-accent); }
+    .action-mini:focus-visible { outline: none; box-shadow: var(--ring); }
+
+    .empty-state {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 1.2rem 1rem 3rem;
+      text-align: center;
+      color: #666;
+      display: none;
+    }
+    .empty-state.active { display: block; }
+
+    .back-link {
+      background: none;
+      border: none;
+      border-bottom: 1px solid rgba(197,160,89,0.7);
+      cursor: pointer;
+      color: #888;
+      margin-top: 1rem;
+      padding-bottom: 0.15rem;
+      transition: var(--transition-fast);
+    }
+    .back-link:hover { color: var(--gold-accent); border-bottom-color: var(--gold-accent); }
+    .back-link:focus-visible { outline: none; box-shadow: var(--ring); border-radius: 8px; padding: 0.2rem 0.4rem; }
+
+    /* --- FOOTER & CONTACTO --- */
+    .contact-footer {
+      background: #fff;
+      padding: 4rem 5% 2rem;
+      border-top: 1px solid #eee;
+    }
+    .footer-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.5fr;
+      gap: 3rem;
+      max-width: var(--max);
+      margin: 0 auto;
+      align-items: start;
+    }
+    .contact-row {
+      display: flex;
+      margin-bottom: 1.2rem;
+      align-items: flex-start;
+      gap: 0.9rem;
+    }
+    .contact-row i {
+      color: var(--gold-accent);
+      width: 26px;
+      font-size: 1.1rem;
+      margin-top: 4px;
+    }
+    .social-links { display: flex; gap: 0.8rem; margin-top: 1.4rem; flex-wrap: wrap; }
+    .social-btn {
+      width: 45px; height: 45px;
+      border: 1px solid #ddd;
+      display: flex; align-items: center; justify-content: center;
+      border-radius: 50%;
+      color: var(--text-dark);
+      transition: var(--transition-fast);
+      background: white;
+    }
+    .social-btn:hover { background: var(--gold-accent); color: white; border-color: var(--gold-accent); transform: translateY(-2px); }
+    .social-btn:focus-visible { outline: none; box-shadow: var(--ring); }
+
+    /* --- BOTÓN FLOTANTE WHATSAPP --- */
+    .wa-float {
+      position: fixed;
+      right: 18px;
+      bottom: 18px;
+      z-index: 2200;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      background: #25D366;
+      color: white;
+      display: grid;
+      place-items: center;
+      box-shadow: 0 18px 38px rgba(0,0,0,0.18);
+      transition: var(--transition-fast);
+    }
+    .wa-float:hover { transform: translateY(-2px) scale(1.02); }
+    .wa-float:focus-visible { outline: none; box-shadow: 0 0 0 5px rgba(37,211,102,0.25); }
+    .wa-tooltip {
+      position: absolute;
+      right: 68px;
+      bottom: 50%;
+      transform: translateY(50%);
+      background: rgba(58,58,58,0.92);
+      color: white;
+      font-size: 0.78rem;
+      padding: 0.5rem 0.7rem;
+      border-radius: 10px;
+      white-space: nowrap;
+      opacity: 0;
+      pointer-events: none;
+      transition: var(--transition-fast);
+    }
+    .wa-float:hover .wa-tooltip { opacity: 1; }
+
+    /* --- MODAL QUICK VIEW --- */
+    .modal {
+      position: fixed; inset: 0;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 2500;
+      padding: 1rem;
+    }
+    .modal.active { display: flex; }
+    .modal-backdrop {
+      position: absolute; inset: 0;
+      background: rgba(0,0,0,0.45);
+      backdrop-filter: blur(4px);
+    }
+    .modal-card {
+      position: relative;
+      width: min(980px, 100%);
+      background: white;
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.25);
+      display: grid;
+      grid-template-columns: 1.05fr 0.95fr;
+      animation: pop 0.2s ease-out;
+    }
+    @keyframes pop {
+      from { transform: translateY(10px) scale(0.98); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+    .modal-img {
+      background: #f5f2ee;
+      min-height: 420px;
+    }
+    .modal-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+    .modal-body {
+      padding: 1.5rem 1.5rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+    }
+    .modal-body h3 {
+      font-family: 'Cinzel', serif;
+      font-size: 1.8rem;
+      letter-spacing: 1px;
+      line-height: 1.1;
+    }
+    .modal-pill {
+      display: inline-flex;
+      gap: 0.45rem;
+      align-items: center;
+      padding: 0.4rem 0.75rem;
+      border-radius: 999px;
+      background: rgba(197,160,89,0.12);
+      color: var(--gold-accent);
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      width: fit-content;
+    }
+    .modal-desc { color: #555; line-height: 1.6; }
+    .modal-actions {
+      display: flex;
+      gap: 0.7rem;
+      flex-wrap: wrap;
+      margin-top: 0.4rem;
+    }
+    .modal-close {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 44px;
+      height: 44px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255,255,255,0.92);
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      transition: var(--transition-fast);
+    }
+    .modal-close:hover { background: white; transform: translateY(-1px); }
+    .modal-close:focus-visible { outline: none; box-shadow: var(--ring); }
+
+    /* Responsivo */
+    @media (max-width: 980px) {
+      .modal-card { grid-template-columns: 1fr; }
+      .modal-img { min-height: 320px; }
+      .promo-inner { grid-template-columns: 1fr; }
+      .promo-actions { justify-content: flex-start; }
+      .tools-bar { grid-template-columns: 1fr; }
+      .filters { justify-content: flex-start; }
+    }
+    @media (max-width: 768px) {
+      nav { padding: 1rem 1.2rem; }
+      .hero-wrapper { margin: 0 0.8rem 1rem; }
+      .hero-content { padding: 2rem 1.2rem; }
+      .swiper-slide { height: 360px; }
+      .img-container { height: 310px; }
+      .footer-grid { grid-template-columns: 1fr; }
+      .test-grid { grid-template-columns: 1fr; }
+      .promo-bar { margin: 1rem 0.8rem; }
+      .contact-strip { margin: 0.5rem 0.8rem 2rem; }
+    }
+    @media (min-width: 769px) {
+      .test-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+    @media (max-width: 1100px) and (min-width: 769px) {
+      .test-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
 </head>
+
 <body>
+  <!-- MENÚ OVERLAY -->
+  <div class="overlay-menu" id="overlayMenu" role="menu" aria-hidden="true">
+    <ul>
+      <li><a role="menuitem" data-menu="inicio" href="#inicio" onclick="navigateTo('inicio')">Inicio</a></li>
+      <li><a role="menuitem" data-menu="nina" href="#nina" onclick="navigateTo('nina')">Colección Niña</a></li>
+      <li><a role="menuitem" data-menu="nino" href="#nino" onclick="navigateTo('nino')">Colección Niño</a></li>
+      <li><a role="menuitem" href="#contacto" onclick="toggleMenu(false, true)">Contacto y Ubicación</a></li>
+      <li>
+        <a
+          role="menuitem"
+          href="https://wa.me/528180932362"
+          target="_blank"
+          rel="noopener"
+          onclick="toggleMenu(false)"
+          style="color: var(--gold-accent); font-size: 1.4rem;"
+        >
+          <i class="fab fa-whatsapp"></i> Agendar Cita
+        </a>
+      </li>
+    </ul>
+  </div>
 
-    <div class="overlay-menu" id="overlayMenu">
-        <ul>
-            <li><a onclick="navigateTo('inicio')">Inicio</a></li>
-            <li><a onclick="navigateTo('nina')">Colección Niña</a></li>
-            <li><a onclick="navigateTo('nino')">Colección Niño</a></li>
-            <li><a href="#contacto" onclick="toggleMenu()">Contacto y Ubicación</a></li>
-            <li><a href="https://wa.me/528180932362" target="_blank" onclick="toggleMenu()" style="color: var(--gold-accent); font-size: 1.5rem;">
-                <i class="fab fa-whatsapp"></i> Agendar Cita
-            </a></li>
-        </ul>
-    </div>
+  <!-- NAV -->
+  <nav>
+    <div class="logo" onclick="navigateTo('inicio')">Mi Bello Ropón</div>
 
-    <nav>
-        <div class="logo" onclick="navigateTo('inicio')">Mi Bello Ropón</div>
-        <div class="burger-btn" onclick="toggleMenu()" id="burgerBtn">
-            <span class="burger-line"></span>
-            <span class="burger-line"></span>
-            <span class="burger-line"></span>
+    <button
+      id="burgerBtn"
+      class="burger-btn"
+      aria-label="Menú principal"
+      aria-expanded="false"
+      aria-controls="overlayMenu"
+      type="button"
+    >
+      <span class="sr-only">Abrir/cerrar menú</span>
+      <span class="burger-icon" aria-hidden="true">
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+        <span class="burger-line"></span>
+      </span>
+    </button>
+  </nav>
+
+  <main class="main-container">
+    <!-- VISTA INICIO -->
+    <section id="view-inicio" class="view-section active-view">
+      <header class="hero-wrapper">
+        <div class="hero-bg"></div>
+        <div class="hero-overlay"></div>
+
+        <div class="hero-content" data-aos="fade-up" data-aos-duration="800">
+          <p style="letter-spacing: 2px; text-transform: uppercase; font-size: 0.9rem;">Guadalupe, Nuevo León</p>
+          <h1>Momentos que<br/>Perduran</h1>
+          <p class="sub">Especialistas en Bautizo y Primera Comunión.</p>
+
+          <div class="cta-row">
+            <button onclick="navigateTo('nina')" class="btn-main btn-ghost"><i class="fa-solid fa-sparkles"></i> Ver Niña</button>
+            <button onclick="navigateTo('nino')" class="btn-main"><i class="fa-solid fa-child"></i> Ver Niño</button>
+          </div>
         </div>
-    </nav>
+      </header>
 
-    <main class="main-container">
-        
-        <div id="view-inicio" class="view-section active-view">
-            <header class="hero-wrapper">
-                <div class="hero-bg"></div>
-                <div class="hero-overlay"></div>
-                <div class="hero-content">
-                    <p style="letter-spacing: 2px; text-transform: uppercase; font-size: 0.9rem;">Guadalupe, Nuevo León</p>
-                    <h1>Momentos que<br>Perduran</h1>
-                    <p style="margin-bottom: 2rem; color: #555; font-style: italic;">
-                        Especialistas en Bautizo y Primera Comunión.
-                    </p>
-                    <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap;">
-                        <button onclick="navigateTo('nina')" class="btn-main" style="background: white; color: var(--text-dark);">Ver Niña</button>
-                        <button onclick="navigateTo('nino')" class="btn-main">Ver Niño</button>
-                    </div>
-                </div>
-            </header>
-            
-            <div class="contact-strip">
-                <h3>Atención Exclusiva</h3>
-                <p>Solo atendemos con previa cita para darte el mejor servicio.</p>
-                <a href="https://wa.me/528180932362" target="_blank" class="btn-main" style="background: transparent; border: 1px solid var(--text-dark); color: var(--text-dark); margin-top: 1rem;">
-                    <i class="fab fa-whatsapp"></i> 81 80 93 23 62
-                </a>
+      <!-- PROMOCIÓN / CTA -->
+      <div class="promo-bar" data-aos="fade-up" data-aos-duration="800" data-aos-delay="100">
+        <div class="promo-inner">
+          <div>
+            <div class="promo-title"><i class="fa-solid fa-crown" style="color: var(--gold-accent); margin-right: .45rem;"></i> Promos & Atención por Cita</div>
+            <div class="promo-sub">
+              Agenda tu visita por WhatsApp y recibe recomendaciones personalizadas de tallas, accesorios y sets completos para tu evento.
             </div>
+          </div>
+          <div class="promo-actions">
+            <a class="btn-main btn-ghost" href="#contacto" onclick="document.getElementById('contacto').scrollIntoView({behavior:'smooth'});">
+              <i class="fa-solid fa-location-dot"></i> Ver ubicación
+            </a>
+            <a class="btn-main" href="https://wa.me/528180932362" target="_blank" rel="noopener">
+              <i class="fab fa-whatsapp"></i> Agendar ahora
+            </a>
+          </div>
+        </div>
+      </div>
+
+      <!-- CARRUSEL DESTACADOS -->
+      <div class="section-title" data-aos="fade-up" data-aos-duration="800">
+        <p>Destacados</p>
+        <h2>Lo más buscado</h2>
+      </div>
+
+      <div class="swiper-wrap" data-aos="fade-up" data-aos-duration="800" data-aos-delay="80">
+        <div class="swiper" id="featuredSwiper" aria-label="Carrusel de destacados">
+          <div class="swiper-wrapper">
+            <div class="swiper-slide">
+              <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?q=80&w=1600&auto=format&fit=crop');"></div>
+              <div class="slide-card">
+                <span class="badge"><i class="fa-solid fa-church"></i> Bautizo</span>
+                <h3>Ropones Premium</h3>
+                <p>Detalles finos, telas suaves y acabados elegantes para un día inolvidable.</p>
+              </div>
+            </div>
+
+            <div class="swiper-slide">
+              <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1512413914633-b5043f4041ea?q=80&w=1600&auto=format&fit=crop');"></div>
+              <div class="slide-card">
+                <span class="badge"><i class="fa-solid fa-cross"></i> Comunión</span>
+                <h3>Vestidos y Trajes</h3>
+                <p>Clásicos atemporales, perfectos para ceremonia y sesión de fotos.</p>
+              </div>
+            </div>
+
+            <div class="swiper-slide">
+              <div class="slide-bg" style="background-image:url('https://images.unsplash.com/photo-1544265432-1c66289b7b9f?q=80&w=1600&auto=format&fit=crop');"></div>
+              <div class="slide-card">
+                <span class="badge"><i class="fa-solid fa-gem"></i> Accesorios</span>
+                <h3>Toques Finales</h3>
+                <p>Velas, tocados, calzado y joyería para complementar tu look.</p>
+              </div>
+            </div>
+          </div>
+
+          <div class="swiper-pagination"></div>
+          <div class="swiper-button-prev" aria-label="Anterior"></div>
+          <div class="swiper-button-next" aria-label="Siguiente"></div>
+        </div>
+      </div>
+
+      <!-- TESTIMONIOS -->
+      <div class="section-title" data-aos="fade-up" data-aos-duration="800">
+        <p>Opiniones</p>
+        <h2>Clientes felices</h2>
+      </div>
+
+      <section class="testimonials" aria-label="Testimonios de clientes">
+        <div class="test-grid">
+          <article class="quote-card" data-aos="fade-up" data-aos-delay="0">
+            <div class="quote-top">
+              <div class="avatar">A</div>
+              <div class="who">
+                <strong>Andrea</strong>
+                <span>Bautizo</span>
+              </div>
+            </div>
+            <p class="quote">“La atención fue súper personalizada. Nos ayudaron a armar el set completo y quedó precioso.”</p>
+            <div class="stars" aria-label="Calificación 5 de 5">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+          </article>
+
+          <article class="quote-card" data-aos="fade-up" data-aos-delay="80">
+            <div class="quote-top">
+              <div class="avatar">M</div>
+              <div class="who">
+                <strong>Mariana</strong>
+                <span>Primera Comunión</span>
+              </div>
+            </div>
+            <p class="quote">“Calidad excelente y diseños elegantes. Las fotos quedaron increíbles. 100% recomendado.”</p>
+            <div class="stars" aria-label="Calificación 5 de 5">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+          </article>
+
+          <article class="quote-card" data-aos="fade-up" data-aos-delay="160">
+            <div class="quote-top">
+              <div class="avatar">L</div>
+              <div class="who">
+                <strong>Luis</strong>
+                <span>Niño</span>
+              </div>
+            </div>
+            <p class="quote">“El traje y el calzado quedaron perfectos. Muy buen gusto y súper cómodo para el niño.”</p>
+            <div class="stars" aria-label="Calificación 5 de 5">
+              <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+          </article>
+        </div>
+      </section>
+
+      <!-- STRIP CONTACTO -->
+      <div class="contact-strip" data-aos="fade-up" data-aos-duration="800">
+        <h3>Atención Exclusiva</h3>
+        <p style="margin-top:.4rem;">Solo atendemos con previa cita para darte el mejor servicio.</p>
+        <a
+          href="https://wa.me/528180932362"
+          target="_blank"
+          rel="noopener"
+          class="btn-main btn-ghost"
+          style="margin-top: 1rem;"
+          aria-label="Contactar por WhatsApp al 81 80 93 23 62"
+        >
+          <i class="fab fa-whatsapp"></i> 81 80 93 23 62
+        </a>
+      </div>
+    </section>
+
+    <!-- VISTA NIÑA -->
+    <section id="view-nina" class="view-section" aria-label="Colección Niña">
+      <div class="category-header" data-aos="fade-up">
+        <p>Delicadeza y Gracia</p>
+        <h2>Mundo Niña</h2>
+        <button onclick="navigateTo('inicio')" class="back-link" type="button">← Volver al inicio</button>
+      </div>
+
+      <!-- Tools: búsqueda + filtros -->
+      <div class="tools-bar" data-aos="fade-up" data-aos-delay="60">
+        <div class="searchbox" role="search">
+          <i class="fa-solid fa-magnifying-glass" aria-hidden="true"></i>
+          <input
+            id="search-nina"
+            type="search"
+            placeholder="Buscar: vestido, ropón, tocado..."
+            aria-label="Buscar productos de niña"
+          />
         </div>
 
-        <div id="view-nina" class="view-section">
-            <div class="category-header">
-                <p>Delicadeza y Gracia</p>
-                <h2>Mundo Niña</h2>
-                <button onclick="navigateTo('inicio')" style="background:none; border:none; border-bottom:1px solid var(--gold-accent); cursor:pointer; color: #999; margin-top: 1rem;">← Volver al inicio</button>
-            </div>
-            
-            <div class="products-grid">
-                <div class="product-card">
-                    <div class="img-container"><img src="https://images.unsplash.com/photo-1512413914633-b5043f4041ea?q=80&w=800&auto=format&fit=crop" alt="Vestido"></div>
-                    <div class="product-info"><h3>Vestido Seda Real</h3><p>Comunión</p></div>
-                </div>
-                <div class="product-card">
-                    <div class="img-container"><img src="https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?q=80&w=800&auto=format&fit=crop" alt="Ropón"></div>
-                    <div class="product-info"><h3>Ropón Princesa</h3><p>Bautizo</p></div>
-                </div>
-                <div class="product-card">
-                    <div class="img-container"><img src="https://images.unsplash.com/photo-1544265432-1c66289b7b9f?q=80&w=800&auto=format&fit=crop" alt="Tocado"></div>
-                    <div class="product-info"><h3>Tocado Floral</h3><p>Accesorios</p></div>
-                </div>
-                <div class="product-card">
-                    <div class="img-container"><img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=800&auto=format&fit=crop" alt="Modelo Sofia"></div>
-                    <div class="product-info"><h3>Modelo 'Sofía'</h3><p>Alta Costura</p></div>
-                </div>
-                <div class="product-card">
-                    <div class="img-container"><img src="https://images.unsplash.com/photo-1618485232675-8f6df7103dfc?q=80&w=800&auto=format&fit=crop" alt="Zapatos"></div>
-                    <div class="product-info"><h3>Zapatitos Perla</h3><p>Calzado</p></div>
-                </div>
-                <div class="product-card">
-                    <div class="img-container"><img src="https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?q=80&w=800&auto=format&fit=crop" alt="Accesorios"></div>
-                    <div class="product-info"><h3>Set de Velas</h3><p>Ceremonia</p></div>
-                </div>
-            </div>
+        <div class="filters" aria-label="Filtros de categoría (Niña)">
+          <div class="chip active" data-view="nina" data-filter="all" tabindex="0" role="button" aria-pressed="true">Todo</div>
+          <div class="chip" data-view="nina" data-filter="comunion" tabindex="0" role="button" aria-pressed="false">Comunión</div>
+          <div class="chip" data-view="nina" data-filter="bautizo" tabindex="0" role="button" aria-pressed="false">Bautizo</div>
+          <div class="chip" data-view="nina" data-filter="accesorios" tabindex="0" role="button" aria-pressed="false">Accesorios</div>
+          <div class="chip" data-view="nina" data-filter="calzado" tabindex="0" role="button" aria-pressed="false">Calzado</div>
         </div>
+      </div>
 
-        <div id="view-nino" class="view-section">
-            <div class="category-header">
-                <p>Elegancia y Carácter</p>
-                <h2>Mundo Niño</h2>
-                <button onclick="navigateTo('inicio')" style="background:none; border:none; border-bottom:1px solid var(--gold-accent); cursor:pointer; color: #999; margin-top: 1rem;">← Volver al inicio</button>
+      <div class="empty-state" id="empty-nina">
+        <p><strong>No encontramos coincidencias.</strong></p>
+        <p style="margin-top:.35rem;">Prueba con otra palabra o selecciona “Todo”.</p>
+      </div>
+
+      <div class="products-grid" id="grid-nina">
+        <!-- data-cat: comunion/bautizo/accesorios/calzado/ceremonia/altacostura -->
+        <article
+          class="product-card"
+          tabindex="0"
+          data-view="nina"
+          data-cat="comunion"
+          data-name="Vestido Seda Real"
+          data-tag="Comunión"
+          data-img="https://images.unsplash.com/photo-1512413914633-b5043f4041ea?q=80&w=1200&auto=format&fit=crop"
+          data-desc="Vestido elegante con acabado delicado, ideal para Primera Comunión. Agenda tu cita para tallas y accesorios."
+          data-aos="fade-up"
+        >
+          <div class="img-container">
+            <span class="quickview"><i class="fa-regular fa-eye"></i> Ver</span>
+            <img
+              src="https://images.unsplash.com/photo-1512413914633-b5043f4041ea?q=80&w=800&auto=format&fit=crop"
+              alt="Vestido Seda Real para niña - Comunión"
+              loading="lazy"
+            />
+          </div>
+          <div class="product-info">
+            <h3>Vestido Seda Real</h3>
+            <div class="meta-row">
+              <span class="tag"><i class="fa-solid fa-cross"></i> Comunión</span>
+              <button class="action-mini" type="button" onclick="openQuickView(event, this)">Detalle</button>
             </div>
+          </div>
+        </article>
 
-            <div class="products-grid">
-                <div class="product-card">
-                    <div class="img-container"><img src="https://images.unsplash.com/photo-1519757656972-02484a958e94?q=80&w=800&auto=format&fit=crop" alt="Traje"></div>
-                    <div class="product-info"><h3>Traje Lino Italiano</h3><p>Comunión</p></div>
-                </div>
-                <div class="product-card">
-                    <div class="img-container"><img src="https://images.unsplash.com/photo-1621404134604-5831613589b9?q=80&w=800&auto=format&fit=crop" alt="Ropón"></div>
-                    <div class="product-info"><h3>Ropón Desmontable</h3><p>Bautizo</p></div>
-                </div>
-                <div class="product-card">
-                    <div class="img-container"><img src="https://images.unsplash.com/photo-1507593163158-b643a6d365f5?q=80&w=800&auto=format&fit=crop" alt="Guayabera"></div>
-                    <div class="product-info"><h3>Guayabera Fina</h3><p>Ceremonia</p></div>
-                </div>
-                <div class="product-card">
-                    <div class="img-container"><img src="https://plus.unsplash.com/premium_photo-1682089874618-9c5952d76378?q=80&w=800&auto=format&fit=crop" alt="Cruz"></div>
-                    <div class="product-info"><h3>Cadena y Cruz</h3><p>Joyería</p></div>
-                </div>
-                <div class="product-card">
-                    <div class="img-container"><img src="https://images.unsplash.com/photo-1514917951167-9c84964177b8?q=80&w=800&auto=format&fit=crop" alt="Mocasín"></div>
-                    <div class="product-info"><h3>Mocasín Ceremonia</h3><p>Calzado</p></div>
-                </div>
-                <div class="product-card">
-                    <div class="img-container"><img src="https://images.unsplash.com/photo-1605518216938-7f31b709d043?q=80&w=800&auto=format&fit=crop" alt="Set"></div>
-                    <div class="product-info"><h3>Kit Bautizo Completo</h3><p>Tradicional</p></div>
-                </div>
+        <article
+          class="product-card"
+          tabindex="0"
+          data-view="nina"
+          data-cat="bautizo"
+          data-name="Ropón Princesa"
+          data-tag="Bautizo"
+          data-img="https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?q=80&w=1200&auto=format&fit=crop"
+          data-desc="Ropón clásico con presencia premium. Ideal para ceremonia y fotos. Atención exclusiva por cita."
+          data-aos="fade-up"
+          data-aos-delay="60"
+        >
+          <div class="img-container">
+            <span class="quickview"><i class="fa-regular fa-eye"></i> Ver</span>
+            <img
+              src="https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?q=80&w=800&auto=format&fit=crop"
+              alt="Ropón Princesa para niña - Bautizo"
+              loading="lazy"
+            />
+          </div>
+          <div class="product-info">
+            <h3>Ropón Princesa</h3>
+            <div class="meta-row">
+              <span class="tag"><i class="fa-solid fa-church"></i> Bautizo</span>
+              <button class="action-mini" type="button" onclick="openQuickView(event, this)">Detalle</button>
             </div>
-        </div>
+          </div>
+        </article>
 
-    </main>
-
-    <footer id="contacto" class="contact-footer">
-        <div class="footer-grid">
-            <div class="footer-info">
-                <h3 style="margin-bottom: 2rem;">Contáctanos</h3>
-                
-                <div class="contact-row">
-                    <i class="fas fa-map-marker-alt"></i>
-                    <div>
-                        <strong>Ubicación</strong>
-                        <p style="color: #666;">Santa Genoveva #1202, Col. La Purísima,<br>Guadalupe, Nuevo León.</p>
-                    </div>
-                </div>
-                
-                <div class="contact-row">
-                    <i class="fas fa-clock"></i>
-                    <div>
-                        <strong>Horario</strong>
-                        <p style="color: #666;">Lun - Sáb: 9:00am - 8:00pm<br>Dom: 9:00am - 6:00pm</p>
-                    </div>
-                </div>
-                
-                <div class="contact-row">
-                    <i class="fab fa-whatsapp"></i>
-                    <div>
-                        <strong>Citas</strong>
-                        <p><a href="https://wa.me/528180932362" target="_blank" style="text-decoration: underline;">81 80 93 23 62</a></p>
-                    </div>
-                </div>
-
-                <div class="social-links">
-                    <a href="https://www.facebook.com/share/17Yk3e61g3/?mibextid=wwXIfr" target="_blank" class="social-btn"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/mibelloropon?igsh=MXFxbzNxNGYyaXk1ZQ==" target="_blank" class="social-btn"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.tiktok.com/@mibelloropon?_r=1&_t=ZT-938D5TWvMdL" target="_blank" class="social-btn"><i class="fab fa-tiktok"></i></a>
-                    <a href="https://wa.me/528180932362" target="_blank" class="social-btn" style="background: #25D366; color: white; border-color: #25D366;"><i class="fab fa-whatsapp"></i></a>
-                </div>
+        <article
+          class="product-card"
+          tabindex="0"
+          data-view="nina"
+          data-cat="accesorios"
+          data-name="Tocado Floral"
+          data-tag="Accesorios"
+          data-img="https://images.unsplash.com/photo-1544265432-1c66289b7b9f?q=80&w=1200&auto=format&fit=crop"
+          data-desc="Tocado delicado para completar el look. Combina perfecto con vestidos y ropones."
+          data-aos="fade-up"
+          data-aos-delay="120"
+        >
+          <div class="img-container">
+            <span class="quickview"><i class="fa-regular fa-eye"></i> Ver</span>
+            <img
+              src="https://images.unsplash.com/photo-1544265432-1c66289b7b9f?q=80&w=800&auto=format&fit=crop"
+              alt="Tocado Floral para niña - Accesorios"
+              loading="lazy"
+            />
+          </div>
+          <div class="product-info">
+            <h3>Tocado Floral</h3>
+            <div class="meta-row">
+              <span class="tag"><i class="fa-solid fa-gem"></i> Accesorios</span>
+              <button class="action-mini" type="button" onclick="openQuickView(event, this)">Detalle</button>
             </div>
+          </div>
+        </article>
 
-            <div style="border-radius: 20px; overflow: hidden; height: 350px; box-shadow: var(--shadow-card);">
-                <iframe 
-                    width="100%" 
-                    height="100%" 
-                    style="border:0" 
-                    loading="lazy" 
-                    allowfullscreen 
-                    src="https://www.google.com/maps?q=Santa+Genoveva+1202+Guadalupe+Nuevo+Leon&output=embed">
-                </iframe>
+        <article
+          class="product-card"
+          tabindex="0"
+          data-view="nina"
+          data-cat="accesorios"
+          data-name="Modelo 'Sofía'"
+          data-tag="Alta Costura"
+          data-img="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=1200&auto=format&fit=crop"
+          data-desc="Modelo de alta costura con detalles finos. Pregunta por opciones y accesorios."
+          data-aos="fade-up"
+          data-aos-delay="180"
+        >
+          <div class="img-container">
+            <span class="quickview"><i class="fa-regular fa-eye"></i> Ver</span>
+            <img
+              src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=800&auto=format&fit=crop"
+              alt="Modelo Sofía para niña - Alta costura"
+              loading="lazy"
+            />
+          </div>
+          <div class="product-info">
+            <h3>Modelo 'Sofía'</h3>
+            <div class="meta-row">
+              <span class="tag"><i class="fa-solid fa-crown"></i> Alta Costura</span>
+              <button class="action-mini" type="button" onclick="openQuickView(event, this)">Detalle</button>
             </div>
-        </div>
-        <div style="text-align: center; margin-top: 3rem; font-size: 0.8rem; color: #aaa;">
-            © 2024 Mi Bello Ropón. Todos los derechos reservados.
-        </div>
-    </footer>
+          </div>
+        </article>
 
-    <script>
-        // --- LÓGICA DE NAVEGACIÓN (SPA) ---
-        function navigateTo(viewName) {
-            // 1. Cerrar menú si está abierto
-            const menu = document.getElementById('overlayMenu');
-            const burger = document.getElementById('burgerBtn');
-            menu.classList.remove('active');
-            burger.classList.remove('open');
+        <article
+          class="product-card"
+          tabindex="0"
+          data-view="nina"
+          data-cat="calzado"
+          data-name="Zapatitos Perla"
+          data-tag="Calzado"
+          data-img="https://images.unsplash.com/photo-1618485232675-8f6df7103dfc?q=80&w=1200&auto=format&fit=crop"
+          data-desc="Calzado elegante y cómodo. Ideal para ceremonia y fotos."
+          data-aos="fade-up"
+          data-aos-delay="240"
+        >
+          <div class="img-container">
+            <span class="quickview"><i class="fa-regular fa-eye"></i> Ver</span>
+            <img
+              src="https://images.unsplash.com/photo-1618485232675-8f6df7103dfc?q=80&w=800&auto=format&fit=crop"
+              alt="Zapatitos Perla para niña - Calzado"
+              loading="lazy"
+            />
+          </div>
+          <div class="product-info">
+            <h3>Zapatitos Perla</h3>
+            <div class="meta-row">
+              <span class="tag"><i class="fa-solid fa-shoe-prints"></i> Calzado</span>
+              <button class="action-mini" type="button" onclick="openQuickView(event, this)">Detalle</button>
+            </div>
+          </div>
+        </article>
 
-            // 2. Ocultar todas las vistas
-            const views = document.querySelectorAll('.view-section');
-            views.forEach(v => v.classList.remove('active-view'));
-
-            // 3. Mostrar la vista seleccionada
-            const target = document.getElementById('view-' + viewName);
-            if(target) {
-                target.classList.add('active-view');
-                // Scroll suave al tope
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            }
-        }
-
-        // Toggle del Menú
-        function toggleMenu() {
-            const menu = document.getElementById('overlayMenu');
-            const burger = document.getElementById('burgerBtn');
-            menu.classList.toggle('active');
-            burger.classList.toggle('open');
-        }
-    </script>
-</body>
-</html>
+        <article
+          class="product-card"
+          tabindex="0"
+          data-view="nina"
+          data-cat="accesorios"
+          data-name="Set de Velas"
+          data-tag="Ceremonia"
+          data-img="https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?q=80&w=1200&auto=format&fit=crop"
+          data-desc="Set de ceremonia para completar el momento. Consulta disponibilidad."
+          data-aos="fade-up"
+          data-aos-delay="300"
+        >
+          <div class="img-container">
+            <span class="quickview"><i class="fa-regular fa-eye"></i> Ver</span>
+            <img
+              src="https://images.unsplash.com/photo-1532453288672-3a27e9be9efd?q=80&w=800&auto=format&fit=crop"
+              alt="Set de Velas para ceremonia - Accesorios"
