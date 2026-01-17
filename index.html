@@ -3,687 +3,535 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mi Bello Ropón | Elegancia para Bautizos y Primera Comunión</title>
+    <title>Mi Bello Ropón | Boutique Infantil</title>
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
-    
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
-        /* --- VARIABLES Y CONFIGURACIÓN BASE --- */
+        /* --- 1. PALETA DE COLORES "CREAMY BOUTIQUE" --- */
         :root {
-            --gold: #D4AF37;
-            --gold-light: #f3e5ab;
-            --cream: #fdfbf7;
-            --soft-pink: #fceef0;
-            --soft-blue: #f0f4fc;
-            --text-dark: #2c2c2c;
-            --text-light: #666;
-            --white: #ffffff;
-            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.08);
-            --shadow-hover: 0 20px 50px -10px rgba(212, 175, 55, 0.3);
-            --transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+            --bg-body: #fdfcf8;      /* Blanco hueso muy suave */
+            --bg-card: #ffffff;      /* Blanco puro */
+            --gold-accent: #c5a059;  /* Dorado mate elegante */
+            --gold-light: #e6dace;   /* Arena suave */
+            --text-dark: #3a3a3a;    /* Gris carbón suave (no negro puro) */
+            --text-light: #777777;
+            --overlay-bg: rgba(253, 252, 248, 0.98); /* Fondo del menú */
+            --shadow-card: 0 15px 35px rgba(197, 160, 89, 0.1);
+            --transition-slow: all 0.8s cubic-bezier(0.19, 1, 0.22, 1);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        html {
-            scroll-behavior: smooth;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
         body {
-            font-family: 'Montserrat', sans-serif;
-            background-color: var(--cream);
+            font-family: 'Lato', sans-serif;
+            background-color: var(--bg-body);
             color: var(--text-dark);
             overflow-x: hidden;
-            line-height: 1.6;
         }
 
-        h1, h2, h3, h4 {
-            font-family: 'Playfair Display', serif;
-            font-weight: 700;
-        }
+        h1, h2, h3 { font-family: 'Cinzel', serif; letter-spacing: 1px; }
 
-        a {
-            text-decoration: none;
-            color: inherit;
-            transition: var(--transition);
-        }
+        a { text-decoration: none; color: inherit; transition: 0.3s; }
 
-        ul {
-            list-style: none;
-        }
-
-        /* --- EFECTOS ESPECIALES --- */
-        /* Animación de entrada al hacer scroll */
-        .reveal {
-            opacity: 0;
-            transform: translateY(50px);
-            transition: all 1s ease-out;
-        }
-        .reveal.active {
-            opacity: 1;
-            transform: translateY(0);
-        }
-
-        /* Gradiente animado de fondo sutil */
-        .animated-bg {
-            background: linear-gradient(-45deg, #fdfbf7, #fff5e6, #fceef0, #fdfbf7);
-            background-size: 400% 400%;
-            animation: gradientBG 15s ease infinite;
-        }
-
-        @keyframes gradientBG {
-            0% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
-            100% { background-position: 0% 50%; }
-        }
-
-        /* --- NAVEGACIÓN (GLASSMORPHISM) --- */
+        /* --- 2. NAVEGACIÓN MINIMALISTA (SOLO HAMBURGUESA) --- */
         nav {
             position: fixed;
-            top: 0;
-            width: 100%;
-            padding: 1.5rem 5%;
+            top: 0; left: 0; width: 100%;
+            padding: 1.5rem 3rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
             z-index: 1000;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(12px);
-            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
-            transition: var(--transition);
+            background: transparent; /* Transparente al inicio */
+            transition: 0.4s ease;
+        }
+
+        nav.scrolled {
+            background: rgba(255,255,255,0.95);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.05);
+            padding: 1rem 3rem;
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: 700;
-            letter-spacing: 2px;
-            color: var(--gold);
-            text-transform: uppercase;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 3rem;
-        }
-
-        .nav-links a {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            position: relative;
-            color: var(--text-dark);
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            width: 0;
-            height: 2px;
-            bottom: -5px;
-            left: 0;
-            background-color: var(--gold);
-            transition: var(--transition);
-        }
-
-        .nav-links a:hover::after {
-            width: 100%;
-        }
-
-        /* Botón CTA en Nav */
-        .nav-cta {
-            padding: 0.5rem 1.5rem;
-            border: 1px solid var(--gold);
-            border-radius: 50px;
-            color: var(--gold) !important;
-        }
-        
-        .nav-cta:hover {
-            background: var(--gold);
-            color: var(--white) !important;
-        }
-
-        .menu-toggle {
-            display: none;
             font-size: 1.5rem;
-            cursor: pointer;
-        }
-
-        /* --- HERO SECTION --- */
-        header {
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            position: relative;
-            overflow: hidden;
-            padding: 0 1rem;
-        }
-
-        .hero-content {
-            z-index: 2;
-            max-width: 800px;
-        }
-
-        .hero-title {
-            font-size: 4.5rem;
-            line-height: 1.1;
-            margin-bottom: 1.5rem;
+            font-weight: 600;
             color: var(--text-dark);
-            animation: fadeInUp 1.2s ease-out;
-        }
-
-        .hero-subtitle {
-            font-size: 1.2rem;
-            color: var(--text-light);
-            margin-bottom: 3rem;
-            font-weight: 300;
-            letter-spacing: 1px;
-            animation: fadeInUp 1.4s ease-out;
-        }
-
-        .btn-hero {
-            display: inline-block;
-            padding: 1rem 3rem;
-            background: var(--gold);
-            color: var(--white);
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            border-radius: 2px; /* Minimalista */
-            position: relative;
-            overflow: hidden;
-            transition: var(--transition);
-            animation: fadeInUp 1.6s ease-out;
-            box-shadow: var(--shadow-soft);
-        }
-
-        .btn-hero:hover {
-            transform: translateY(-5px);
-            box-shadow: var(--shadow-hover);
-            background-color: #bfa035;
-        }
-
-        /* Elementos flotantes decorativos */
-        .floating-shape {
-            position: absolute;
-            border-radius: 50%;
-            background: linear-gradient(45deg, var(--soft-pink), var(--gold-light));
-            opacity: 0.3;
-            filter: blur(60px);
-            z-index: 1;
-            animation: float 8s ease-in-out infinite;
-        }
-
-        .shape-1 { width: 400px; height: 400px; top: -100px; left: -100px; }
-        .shape-2 { width: 300px; height: 300px; bottom: 10%; right: -50px; animation-delay: 2s; background: linear-gradient(45deg, var(--soft-blue), var(--cream)); }
-
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(40px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-20px); }
-            100% { transform: translateY(0px); }
-        }
-
-        /* --- SECCIONES NIÑO / NIÑA --- */
-        .category-section {
-            padding: 6rem 5%;
-            position: relative;
-        }
-
-        .section-header {
-            text-align: center;
-            margin-bottom: 4rem;
-        }
-
-        .section-header h2 {
-            font-size: 3rem;
-            color: var(--text-dark);
-            margin-bottom: 1rem;
-        }
-
-        .section-header p {
-            color: var(--gold);
             text-transform: uppercase;
             letter-spacing: 3px;
-            font-size: 0.9rem;
         }
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 3rem;
-        }
-
-        .card {
-            background: var(--white);
-            border-radius: 15px;
-            overflow: hidden;
-            box-shadow: var(--shadow-soft);
-            transition: var(--transition);
-            position: relative;
+        /* Botón Hamburguesa Estilizado */
+        .burger-btn {
             cursor: pointer;
+            width: 40px;
+            height: 30px;
+            position: relative;
+            z-index: 1001;
         }
 
-        .card:hover {
-            transform: translateY(-15px) scale(1.02);
-            box-shadow: var(--shadow-hover);
-        }
-
-        .card-image {
-            height: 400px;
+        .burger-line {
+            display: block;
             width: 100%;
-            object-fit: cover;
-            transition: var(--transition);
-        }
-        
-        /* Efecto Overlay en Hover */
-        .card::before {
-            content: '';
+            height: 2px;
+            background: var(--text-dark);
             position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
-            opacity: 0;
-            transition: var(--transition);
-            z-index: 1;
+            transition: var(--transition-slow);
         }
 
-        .card:hover::before {
-            opacity: 1;
-        }
+        .burger-line:nth-child(1) { top: 0; }
+        .burger-line:nth-child(2) { top: 14px; width: 70%; right: 0; }
+        .burger-line:nth-child(3) { top: 28px; }
 
-        .card-info {
-            padding: 2rem;
-            text-align: center;
-            background: var(--white);
-            position: relative;
-            z-index: 2;
-        }
+        /* Animación del botón al abrir */
+        .burger-btn.open .burger-line:nth-child(1) { transform: rotate(45deg); top: 14px; background: var(--gold-accent); }
+        .burger-btn.open .burger-line:nth-child(2) { opacity: 0; }
+        .burger-btn.open .burger-line:nth-child(3) { transform: rotate(-45deg); top: 14px; background: var(--gold-accent); }
 
-        .card h3 {
-            font-size: 1.5rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-dark);
-        }
-
-        .card p {
-            font-size: 0.9rem;
-            color: var(--text-light);
-        }
-
-        /* Específico Niña (Tonos Rosas sutiles en hover) */
-        #nina .card:hover { border-bottom: 3px solid #ffd1dc; }
-        /* Específico Niño (Tonos Azules sutiles en hover) */
-        #nino .card:hover { border-bottom: 3px solid #d1e3ff; }
-
-        /* --- CITA PREVIA BANNER --- */
-        .appointment-banner {
-            background-color: var(--text-dark);
-            color: var(--gold);
-            text-align: center;
-            padding: 4rem 1rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .appointment-content {
-            position: relative;
-            z-index: 2;
-            max-width: 700px;
-            margin: 0 auto;
-        }
-
-        .appointment-banner h2 {
-            font-size: 2.5rem;
-            margin-bottom: 1.5rem;
-            color: var(--white);
-        }
-
-        .appointment-banner .highlight {
-            color: var(--gold);
-            font-style: italic;
-            font-size: 3rem;
-            display: block;
-            margin: 1rem 0;
-        }
-
-        .appointment-banner p {
-            color: #ccc;
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
-        }
-
-        .phone-display {
-            font-size: 2rem;
-            font-family: 'Playfair Display', serif;
-            color: var(--white);
-            border: 1px solid var(--gold);
-            padding: 1rem 2rem;
-            display: inline-block;
-            margin-top: 1rem;
-        }
-
-        /* --- CONTACTO & FOOTER --- */
-        .contact-section {
-            padding: 6rem 5%;
-            background: var(--white);
-        }
-
-        .contact-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 4rem;
-            align-items: center;
-        }
-
-        .info-box h3 {
-            font-size: 2rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .info-item {
-            display: flex;
-            align-items: flex-start;
-            margin-bottom: 2rem;
-        }
-
-        .info-item i {
-            font-size: 1.5rem;
-            color: var(--gold);
-            margin-right: 1.5rem;
-            margin-top: 5px;
-        }
-
-        .info-text strong {
-            display: block;
-            font-size: 1.1rem;
-            margin-bottom: 0.3rem;
-            color: var(--text-dark);
-        }
-
-        .info-text p, .info-text a {
-            color: var(--text-light);
-            font-size: 1rem;
-        }
-
-        .social-media {
-            display: flex;
-            gap: 1.5rem;
-            margin-top: 2rem;
-        }
-
-        .social-icon {
-            width: 50px;
-            height: 50px;
-            border-radius: 50%;
-            background: var(--cream);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: var(--text-dark);
-            font-size: 1.2rem;
-            transition: var(--transition);
-            border: 1px solid transparent;
-        }
-
-        .social-icon:hover {
-            background: var(--gold);
-            color: var(--white);
-            transform: rotate(360deg);
-            border-color: var(--gold);
-        }
-
-        .map-container {
-            width: 100%;
-            height: 400px;
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: var(--shadow-soft);
-            background-color: #eee;
-            position: relative;
-        }
-        
-        .map-placeholder {
-            width: 100%;
-            height: 100%;
+        /* --- MENÚ OVERLAY (PANTALLA COMPLETA) --- */
+        .overlay-menu {
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100vh;
+            background: var(--overlay-bg);
+            z-index: 999;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            background: #f4f4f4;
-            color: #888;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.6s ease;
         }
 
-        footer {
-            background: #1a1a1a;
-            color: #666;
+        .overlay-menu.active {
+            opacity: 1;
+            pointer-events: all;
+        }
+
+        .overlay-menu ul { list-style: none; text-align: center; }
+        
+        .overlay-menu li { 
+            margin: 2rem 0; 
+            overflow: hidden; 
+        }
+
+        .overlay-menu a {
+            font-family: 'Cinzel', serif;
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            position: relative;
+            display: inline-block;
+            transform: translateY(100%); /* Oculto abajo */
+            transition: transform 0.8s cubic-bezier(0.19, 1, 0.22, 1);
+        }
+
+        .overlay-menu.active a { transform: translateY(0); } /* Sube al abrir */
+        
+        .overlay-menu a:hover { color: var(--gold-accent); }
+
+        /* --- 3. HERO SECTION (IMPACTO VISUAL) --- */
+        header {
+            height: 100vh;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             text-align: center;
-            padding: 2rem;
+            overflow: hidden;
+        }
+
+        /* Imagen de fondo Parallax */
+        .hero-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 120%; /* Más alto para parallax */
+            background-image: url('https://images.unsplash.com/photo-1519689680058-324335c77eba?q=80&w=2070&auto=format&fit=crop'); 
+            background-size: cover;
+            background-position: center;
+            z-index: -2;
+            filter: brightness(0.9);
+        }
+
+        /* Overlay crema para suavizar la imagen */
+        .hero-overlay {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(253, 252, 248, 0.3); /* Velo blanco suave */
+            z-index: -1;
+        }
+
+        .hero-content {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(10px);
+            padding: 4rem 3rem;
+            max-width: 700px;
+            border: 1px solid rgba(255,255,255,0.9);
+            box-shadow: 0 20px 60px rgba(0,0,0,0.05);
+            opacity: 0;
+            animation: fadeIn 1.5s ease forwards;
+            animation-delay: 0.5s;
+        }
+
+        .hero-content h1 {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            color: var(--text-dark);
+        }
+        
+        .hero-content p {
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+            color: var(--text-light);
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .btn-main {
+            padding: 1rem 3rem;
+            background: var(--text-dark);
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 2px;
             font-size: 0.8rem;
+            border: 1px solid var(--text-dark);
+        }
+
+        .btn-main:hover {
+            background: transparent;
+            color: var(--text-dark);
+        }
+
+        /* --- 4. SECCIONES DE PRODUCTOS (6 ITEMS) --- */
+        .collection-section {
+            padding: 8rem 5%;
+        }
+
+        .section-title {
+            text-align: center;
+            margin-bottom: 5rem;
+        }
+
+        .section-title span {
+            display: block;
+            font-size: 0.9rem;
+            color: var(--gold-accent);
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-bottom: 1rem;
+        }
+
+        .section-title h2 {
+            font-size: 3rem;
+            color: var(--text-dark);
+        }
+
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 2.5rem;
+        }
+
+        .product-card {
+            background: var(--bg-card);
+            border: 1px solid #f0f0f0;
+            transition: var(--transition-slow);
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            border-color: var(--gold-light);
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-card);
+        }
+
+        .img-container {
+            height: 380px;
+            overflow: hidden;
+            position: relative;
+            background-color: #f4f4f4;
+        }
+
+        .img-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 1s ease;
+        }
+
+        .product-card:hover .img-container img {
+            transform: scale(1.05);
+        }
+
+        .product-info {
+            padding: 1.5rem;
+            text-align: center;
+        }
+
+        .product-info h3 {
+            font-family: 'Lato', sans-serif;
+            font-size: 1rem;
+            font-weight: 400;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+        }
+
+        .product-info p {
+            font-size: 0.85rem;
+            color: var(--gold-accent);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* --- 5. BANNER CITA & CONTACTO --- */
+        .appointment-strip {
+            background-color: var(--gold-light);
+            padding: 5rem 1rem;
+            text-align: center;
+            position: relative;
+        }
+        
+        .appointment-strip h2 {
+            font-size: 2.5rem;
+            color: var(--text-dark);
+            margin-bottom: 1rem;
+        }
+
+        .appointment-strip p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            color: #555;
+        }
+
+        .contact-footer {
+            background-color: #fff;
+            padding: 6rem 5% 3rem;
+            border-top: 1px solid #eee;
+        }
+
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+        }
+
+        .footer-info h3 { font-size: 1.5rem; margin-bottom: 2rem; }
+        
+        .contact-row {
+            display: flex;
+            margin-bottom: 1.5rem;
+            align-items: center;
+        }
+
+        .contact-row i {
+            color: var(--gold-accent);
+            width: 30px;
+            font-size: 1.2rem;
+        }
+
+        .social-links {
+            margin-top: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+
+        .social-btn {
+            width: 45px; height: 45px;
+            border: 1px solid var(--gold-light);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            color: var(--text-dark);
+        }
+
+        .social-btn:hover {
+            background: var(--gold-accent);
+            color: white;
+            border-color: var(--gold-accent);
         }
 
         /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
-            .hero-title { font-size: 3rem; }
-            .nav-links { 
-                position: fixed;
-                right: -100%;
-                top: 0;
-                height: 100vh;
-                background: var(--white);
-                flex-direction: column;
-                padding: 4rem 2rem;
-                width: 70%;
-                box-shadow: -5px 0 15px rgba(0,0,0,0.1);
-            }
-            .nav-links.active { right: 0; }
-            .menu-toggle { display: block; }
-            .contact-grid { grid-template-columns: 1fr; }
-            .shape-1, .shape-2 { display: none; } /* Mejor rendimiento en móvil */
+            .hero-content { padding: 2rem; width: 90%; }
+            .hero-content h1 { font-size: 2.2rem; }
+            .products-grid { grid-template-columns: 1fr 1fr; gap: 1rem; }
+            .img-container { height: 250px; }
+            .footer-grid { grid-template-columns: 1fr; }
+            .overlay-menu a { font-size: 2rem; }
         }
+
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     </style>
 </head>
-<body class="animated-bg">
+<body>
 
-    <nav>
-        <div class="logo">Mi Bello Ropón</div>
-        <div class="menu-toggle" id="mobile-menu">
-            <i class="fas fa-bars"></i>
-        </div>
-        <ul class="nav-links" id="nav-links">
-            <li><a href="#inicio">Inicio</a></li>
-            <li><a href="#nina">Niña</a></li>
-            <li><a href="#nino">Niño</a></li>
-            <li><a href="#contacto">Contacto</a></li>
-            <li><a href="tel:+528180932362" class="nav-cta">Cita: 81 80 93 23 62</a></li>
+    <div class="overlay-menu" id="overlayMenu">
+        <ul>
+            <li><a href="#inicio" onclick="toggleMenu()">Inicio</a></li>
+            <li><a href="#nina" onclick="toggleMenu()">Niña</a></li>
+            <li><a href="#nino" onclick="toggleMenu()">Niño</a></li>
+            <li><a href="#contacto" onclick="toggleMenu()">Contacto</a></li>
+            <li><a href="tel:+528180932362" onclick="toggleMenu()" style="font-size: 1.5rem; color: var(--gold-accent);">Agendar Cita</a></li>
         </ul>
+    </div>
+
+    <nav id="navbar">
+        <div class="logo">Mi Bello Ropón</div>
+        <div class="burger-btn" onclick="toggleMenu()" id="burgerBtn">
+            <span class="burger-line"></span>
+            <span class="burger-line"></span>
+            <span class="burger-line"></span>
+        </div>
     </nav>
 
     <header id="inicio">
-        <div class="floating-shape shape-1"></div>
-        <div class="floating-shape shape-2"></div>
+        <div class="hero-bg" id="parallaxBg"></div>
+        <div class="hero-overlay"></div>
         
         <div class="hero-content">
-            <h1 class="hero-title">Momentos sagrados,<br>vestidos inolvidables</h1>
-            <p class="hero-subtitle">Alta costura para Bautizos y Primera Comunión en Guadalupe, N.L.</p>
-            <a href="#contacto" class="btn-hero">Agendar Cita Exclusiva</a>
+            <p>Guadalupe, Nuevo León</p>
+            <h1>Ceremonias <br>Inolvidables</h1>
+            <p style="text-transform: none; font-style: italic; font-size: 1rem; margin-bottom: 2rem; color: #555;">
+                Creamos la atmósfera perfecta para el día más especial de tu bebé.
+            </p>
+            <a href="#contacto" class="btn-main">Reservar Visita</a>
         </div>
     </header>
 
-    <section id="nina" class="category-section">
-        <div class="section-header reveal">
-            <p>Delicadeza y Gracia</p>
-            <h2>Colección Niña</h2>
-            <div style="width: 50px; height: 3px; background: var(--gold); margin: 0 auto;"></div>
+    <section id="nina" class="collection-section">
+        <div class="section-title">
+            <span>Colección Exclusiva</span>
+            <h2>Para Ellas</h2>
         </div>
-        
-        <div class="grid-container reveal">
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1512413914633-b5043f4041ea?auto=format&fit=crop&q=80&w=800" alt="Vestido Comunión" class="card-image">
-                <div class="card-info">
-                    <h3>Primera Comunión</h3>
-                    <p>Encajes finos y cortes de princesa.</p>
-                </div>
+
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1512413914633-b5043f4041ea?q=80&w=800&auto=format&fit=crop" alt="Vestido"></div>
+                <div class="product-info"><h3>Vestido Seda Real</h3><p>Primera Comunión</p></div>
             </div>
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?auto=format&fit=crop&q=80&w=800" alt="Ropón Bautizo Niña" class="card-image">
-                <div class="card-info">
-                    <h3>Ropones de Bautizo</h3>
-                    <p>Tradición y bordados a mano.</p>
-                </div>
+            <div class="product-card">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1603612803360-1e828464972c?q=80&w=800&auto=format&fit=crop" alt="Ropón"></div>
+                <div class="product-info"><h3>Ropón Princesa</h3><p>Bautizo</p></div>
             </div>
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1544265432-1c66289b7b9f?auto=format&fit=crop&q=80&w=800" alt="Accesorios Niña" class="card-image">
-                <div class="card-info">
-                    <h3>Accesorios</h3>
-                    <p>Tocados, velas y zapatos a juego.</p>
-                </div>
+            <div class="product-card">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1473445361085-b5a6340187e1?q=80&w=800&auto=format&fit=crop" alt="Accesorio"></div>
+                <div class="product-info"><h3>Set de Velas</h3><p>Accesorios</p></div>
+            </div>
+            <div class="product-card">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1544265432-1c66289b7b9f?q=80&w=800&auto=format&fit=crop" alt="Vestido"></div>
+                <div class="product-info"><h3>Tocado Floral</h3><p>Accesorios</p></div>
+            </div>
+            <div class="product-card">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1469334031218-e382a71b716b?q=80&w=800&auto=format&fit=crop" alt="Vestido"></div>
+                <div class="product-info"><h3>Modelo 'Sofía'</h3><p>Alta Costura</p></div>
+            </div>
+            <div class="product-card">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1618485232675-8f6df7103dfc?q=80&w=800&auto=format&fit=crop" alt="Zapatos"></div>
+                <div class="product-info"><h3>Zapatitos Perla</h3><p>Calzado</p></div>
             </div>
         </div>
     </section>
 
-    <section id="nino" class="category-section" style="background-color: var(--white);">
-        <div class="section-header reveal">
-            <p>Elegancia y Carácter</p>
-            <h2>Colección Niño</h2>
-            <div style="width: 50px; height: 3px; background: var(--gold); margin: 0 auto;"></div>
+    <section id="nino" class="collection-section" style="background-color: #faf9f6;">
+        <div class="section-title">
+            <span>Elegancia Clásica</span>
+            <h2>Para Ellos</h2>
         </div>
 
-        <div class="grid-container reveal">
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1519757656972-02484a958e94?auto=format&fit=crop&q=80&w=800" alt="Traje Comunión Niño" class="card-image">
-                <div class="card-info">
-                    <h3>Trajes de Comunión</h3>
-                    <p>Linos frescos y cortes modernos.</p>
-                </div>
+        <div class="products-grid">
+            <div class="product-card">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1519757656972-02484a958e94?q=80&w=800&auto=format&fit=crop" alt="Traje"></div>
+                <div class="product-info"><h3>Traje de Lino</h3><p>Comunión</p></div>
             </div>
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1621404134604-5831613589b9?auto=format&fit=crop&q=80&w=800" alt="Ropón Niño" class="card-image">
-                <div class="card-info">
-                    <h3>Ropones Clásicos</h3>
-                    <p>Detalles desmontables y telas suaves.</p>
-                </div>
+            <div class="product-card">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?q=80&w=800&auto=format&fit=crop" alt="Ropón"></div>
+                <div class="product-info"><h3>Ropón Desmontable</h3><p>Bautizo</p></div>
             </div>
-            <div class="card">
-                <img src="https://images.unsplash.com/photo-1515488042361-ee00651e67d7?auto=format&fit=crop&q=80&w=800" alt="Guayaberas Niño" class="card-image">
-                <div class="card-info">
-                    <h3>Guayaberas y Sets</h3>
-                    <p>Comodidad sin perder la etiqueta.</p>
-                </div>
+            <div class="product-card">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1507593163158-b643a6d365f5?q=80&w=800&auto=format&fit=crop" alt="Guayabera"></div>
+                <div class="product-info"><h3>Guayabera Fina</h3><p>Ceremonia</p></div>
             </div>
-        </div>
-    </section>
-
-    <section class="appointment-banner reveal">
-        <div class="appointment-content">
-            <h2>Atención Personalizada</h2>
-            <span class="highlight">Solo con Previa Cita</span>
-            <p>Queremos dedicarte el tiempo y la atención que tu evento merece. Por favor, agenda tu visita antes de acudir.</p>
-            <div class="phone-display">
-                <i class="fas fa-phone-alt"></i> 81 80 93 23 62
+            <div class="product-card">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1621404134604-5831613589b9?q=80&w=800&auto=format&fit=crop" alt="Set"></div>
+                <div class="product-info"><h3>Set Bautizo Completo</h3><p>Tradicional</p></div>
+            </div>
+            <div class="product-card">
+                <div class="img-container"><img src="https://plus.unsplash.com/premium_photo-1682089874618-9c5952d76378?q=80&w=800&auto=format&fit=crop" alt="Cruz"></div>
+                <div class="product-info"><h3>Cadena y Cruz</h3><p>Accesorios</p></div>
+            </div>
+            <div class="product-card">
+                <div class="img-container"><img src="https://images.unsplash.com/photo-1514917951167-9c84964177b8?q=80&w=800&auto=format&fit=crop" alt="Zapatos"></div>
+                <div class="product-info"><h3>Mocasín Ceremonia</h3><p>Calzado</p></div>
             </div>
         </div>
     </section>
 
-    <section id="contacto" class="contact-section">
-        <div class="contact-grid reveal">
-            <div class="info-box">
-                <h3>Visítanos</h3>
-                
-                <div class="info-item">
+    <section class="appointment-strip">
+        <h2>Atención con Previa Cita</h2>
+        <p>Para brindarte la experiencia que mereces, agendamos tu visita.</p>
+        <a href="tel:+528180932362" class="btn-main" style="background: transparent; color: var(--text-dark); border: 1px solid var(--text-dark);">
+            <i class="fas fa-phone"></i> 81 80 93 23 62
+        </a>
+    </section>
+
+    <footer id="contacto" class="contact-footer">
+        <div class="footer-grid">
+            <div class="footer-info">
+                <h3>Mi Bello Ropón</h3>
+                <div class="contact-row">
                     <i class="fas fa-map-marker-alt"></i>
-                    <div class="info-text">
-                        <strong>Dirección</strong>
-                        <p>Santa Genoveva #1202,<br>Colonia La Purísima,<br>Guadalupe, Nuevo León.</p>
-                    </div>
+                    <span>Santa Genoveva #1202, Col. La Purísima,<br>Guadalupe, NL.</span>
                 </div>
-
-                <div class="info-item">
+                <div class="contact-row">
                     <i class="fas fa-clock"></i>
-                    <div class="info-text">
-                        <strong>Horario de Atención</strong>
-                        <p>Lunes a Sábado: 9:00 am - 8:00 pm</p>
-                        <p>Domingo: 9:00 am - 6:00 pm</p>
-                    </div>
+                    <span>Lun - Sáb: 9:00am - 8:00pm<br>Dom: 9:00am - 6:00pm</span>
                 </div>
-
-                <div class="info-item">
-                    <i class="fas fa-calendar-check"></i>
-                    <div class="info-text">
-                        <strong>Importante</strong>
-                        <p>Recuerda agendar tu cita por teléfono.</p>
-                    </div>
-                </div>
-
-                <div class="social-media">
-                    <a href="https://www.facebook.com/share/17Yk3e61g3/?mibextid=wwXIfr" target="_blank" class="social-icon" title="Facebook"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/mibelloropon?igsh=MXFxbzNxNGYyaXk1ZQ==" target="_blank" class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
-                    <a href="https://www.tiktok.com/@mibelloropon?_r=1&_t=ZT-938D5TWvMdL" target="_blank" class="social-icon" title="TikTok"><i class="fab fa-tiktok"></i></a>
-                    <a href="https://wa.me/528180932362" target="_blank" class="social-icon" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/17Yk3e61g3/?mibextid=wwXIfr" class="social-btn"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/mibelloropon?igsh=MXFxbzNxNGYyaXk1ZQ==" class="social-btn"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@mibelloropon?_r=1&_t=ZT-938D5TWvMdL" class="social-btn"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://wa.me/528180932362" class="social-btn"><i class="fab fa-whatsapp"></i></a>
                 </div>
             </div>
 
-            <div class="map-container">
-               <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3595.6698650392656!2d-100.222384!3d25.682186!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDQwJzU1LjkiTiAxMDDCsDEzJzIwLjYiVw!5e0!3m2!1ses!2smx!4v1600000000000!5m2!1ses!2smx" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <div style="border-radius: 10px; overflow: hidden; height: 300px;">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3595.6980489246547!2d-100.2245!3d25.6866!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDQxJzExLjgiTiAxMDDCsDEzJzI4LjIiVw!5e0!3m2!1ses-419!2smx!4v1600000000000!5m2!1ses-419!2smx" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
             </div>
         </div>
-    </section>
-
-    <footer>
-        <p>&copy; 2024 Mi Bello Ropón. Todos los derechos reservados.</p>
-        <p>Diseñado con elegancia para momentos especiales.</p>
+        <div style="text-align: center; margin-top: 3rem; font-size: 0.8rem; color: #999;">
+            © 2024 Mi Bello Ropón. Boutique High-End.
+        </div>
     </footer>
 
     <script>
-        // Menú Móvil
-        const menuToggle = document.getElementById('mobile-menu');
-        const navLinks = document.getElementById('nav-links');
-        const links = document.querySelectorAll('.nav-links li a');
-
-        menuToggle.addEventListener('click', () => {
-            navLinks.classList.toggle('active');
-        });
-
-        // Cerrar menú al hacer click en un enlace
-        links.forEach(link => {
-            link.addEventListener('click', () => {
-                navLinks.classList.remove('active');
-            });
-        });
-
-        // Efecto Reveal al hacer scroll
-        window.addEventListener('scroll', reveal);
-
-        function reveal() {
-            var reveals = document.querySelectorAll('.reveal');
-
-            for (var i = 0; i < reveals.length; i++) {
-                var windowHeight = window.innerHeight;
-                var revealTop = reveals[i].getBoundingClientRect().top;
-                var revealPoint = 150;
-
-                if (revealTop < windowHeight - revealPoint) {
-                    reveals[i].classList.add('active');
-                } else {
-                    reveals[i].classList.remove('active');
-                }
-            }
+        // Lógica del Menú Hamburguesa
+        function toggleMenu() {
+            const menu = document.getElementById('overlayMenu');
+            const burger = document.getElementById('burgerBtn');
+            menu.classList.toggle('active');
+            burger.classList.toggle('open');
         }
-        
-        // Disparar reveal al cargar por si hay elementos visibles
-        reveal();
+
+        // Efecto Nav al hacer Scroll
+        window.addEventListener('scroll', () => {
+            const nav = document.getElementById('navbar');
+            if (window.scrollY > 50) {
+                nav.classList.add('scrolled');
+            } else {
+                nav.classList.remove('scrolled');
+            }
+        });
+
+        // Efecto Parallax Simple
+        window.addEventListener('scroll', () => {
+            const parallax = document.getElementById('parallaxBg');
+            let scrollPosition = window.pageYOffset;
+            parallax.style.transform = 'translateY(' + scrollPosition * 0.5 + 'px)';
+        });
     </script>
 </body>
 </html>
