@@ -3,21 +3,28 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PAGINA WEB  | Renta de Vestidos Exclusivos</title>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Lato:wght@300;400&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Mi Bello Ropón | Elegancia para Bautizos y Primera Comunión</title>
     
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <style>
+        /* --- VARIABLES Y CONFIGURACIÓN BASE --- */
         :root {
-            --gold: #d4af37;
+            --gold: #D4AF37;
             --gold-light: #f3e5ab;
-            --gold-dark: #aa8c2c;
+            --cream: #fdfbf7;
+            --soft-pink: #fceef0;
+            --soft-blue: #f0f4fc;
+            --text-dark: #2c2c2c;
+            --text-light: #666;
             --white: #ffffff;
-            --off-white: #fafaf8;
-            --text-dark: #1a1a1a;
-            --text-grey: #666;
-            --transition-slow: all 0.8s cubic-bezier(0.25, 1, 0.5, 1);
-            --transition-fast: all 0.3s ease;
+            --shadow-soft: 0 10px 40px -10px rgba(0,0,0,0.08);
+            --shadow-hover: 0 20px 50px -10px rgba(212, 175, 55, 0.3);
+            --transition: all 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
         }
 
         * {
@@ -26,145 +33,214 @@
             box-sizing: border-box;
         }
 
+        html {
+            scroll-behavior: smooth;
+        }
+
         body {
-            font-family: 'Lato', sans-serif;
-            background-color: var(--off-white);
+            font-family: 'Montserrat', sans-serif;
+            background-color: var(--cream);
             color: var(--text-dark);
             overflow-x: hidden;
+            line-height: 1.6;
         }
 
-        h1, h2, h3, .brand {
+        h1, h2, h3, h4 {
             font-family: 'Playfair Display', serif;
+            font-weight: 700;
         }
 
-        /* --- Animaciones Generales --- */
-        @keyframes fadeUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        a {
+            text-decoration: none;
+            color: inherit;
+            transition: var(--transition);
         }
 
-        @keyframes goldShine {
-            0% { background-position: -200%; }
-            100% { background-position: 200%; }
+        ul {
+            list-style: none;
         }
 
-        @keyframes float {
-            0% { transform: translateY(0px); }
-            50% { transform: translateY(-10px); }
-            100% { transform: translateY(0px); }
+        /* --- EFECTOS ESPECIALES --- */
+        /* Animación de entrada al hacer scroll */
+        .reveal {
+            opacity: 0;
+            transform: translateY(50px);
+            transition: all 1s ease-out;
+        }
+        .reveal.active {
+            opacity: 1;
+            transform: translateY(0);
         }
 
-        /* --- Navbar --- */
+        /* Gradiente animado de fondo sutil */
+        .animated-bg {
+            background: linear-gradient(-45deg, #fdfbf7, #fff5e6, #fceef0, #fdfbf7);
+            background-size: 400% 400%;
+            animation: gradientBG 15s ease infinite;
+        }
+
+        @keyframes gradientBG {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+
+        /* --- NAVEGACIÓN (GLASSMORPHISM) --- */
         nav {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            padding: 1.5rem 5%;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 2rem 5%;
-            position: absolute;
-            width: 100%;
-            z-index: 10;
-            background: linear-gradient(to bottom, rgba(255,255,255,0.9), transparent);
+            z-index: 1000;
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+            transition: var(--transition);
         }
 
-        .brand {
-            font-size: 2rem;
-            color: var(--text-dark);
-            letter-spacing: 2px;
+        .logo {
+            font-size: 1.8rem;
             font-weight: 700;
+            letter-spacing: 2px;
+            color: var(--gold);
+            text-transform: uppercase;
         }
-        
-        .brand span { color: var(--gold); }
+
+        .nav-links {
+            display: flex;
+            gap: 3rem;
+        }
 
         .nav-links a {
-            text-decoration: none;
-            color: var(--text-dark);
-            margin-left: 2rem;
+            font-size: 0.9rem;
             text-transform: uppercase;
-            font-size: 0.8rem;
             letter-spacing: 1px;
             position: relative;
+            color: var(--text-dark);
         }
 
         .nav-links a::after {
             content: '';
             position: absolute;
             width: 0;
-            height: 1px;
+            height: 2px;
             bottom: -5px;
             left: 0;
             background-color: var(--gold);
-            transition: var(--transition-fast);
+            transition: var(--transition);
         }
 
-        .nav-links a:hover::after { width: 100%; }
+        .nav-links a:hover::after {
+            width: 100%;
+        }
 
-        /* --- Hero Section --- */
-        .hero {
+        /* Botón CTA en Nav */
+        .nav-cta {
+            padding: 0.5rem 1.5rem;
+            border: 1px solid var(--gold);
+            border-radius: 50px;
+            color: var(--gold) !important;
+        }
+        
+        .nav-cta:hover {
+            background: var(--gold);
+            color: var(--white) !important;
+        }
+
+        .menu-toggle {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        /* --- HERO SECTION --- */
+        header {
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             text-align: center;
             position: relative;
-            background: radial-gradient(circle at center, #ffffff 0%, #f0f0f0 100%);
             overflow: hidden;
-        }
-
-        /* Partículas doradas de fondo */
-        .gold-particle {
-            position: absolute;
-            background: var(--gold);
-            border-radius: 50%;
-            opacity: 0.3;
-            animation: float 6s infinite ease-in-out;
+            padding: 0 1rem;
         }
 
         .hero-content {
             z-index: 2;
-            opacity: 0;
-            animation: fadeUp 1.5s ease forwards;
-            animation-delay: 0.5s;
+            max-width: 800px;
         }
 
-        .hero h1 {
-            font-size: 5rem;
+        .hero-title {
+            font-size: 4.5rem;
             line-height: 1.1;
-            margin-bottom: 1rem;
-            background: linear-gradient(45deg, var(--text-dark) 0%, var(--gold-dark) 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            margin-bottom: 1.5rem;
+            color: var(--text-dark);
+            animation: fadeInUp 1.2s ease-out;
         }
 
-        .hero p {
+        .hero-subtitle {
             font-size: 1.2rem;
-            color: var(--text-grey);
+            color: var(--text-light);
             margin-bottom: 3rem;
+            font-weight: 300;
             letter-spacing: 1px;
+            animation: fadeInUp 1.4s ease-out;
         }
 
-        .btn-gold {
+        .btn-hero {
+            display: inline-block;
             padding: 1rem 3rem;
-            border: 1px solid var(--gold);
-            background: transparent;
-            color: var(--gold-dark);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            cursor: pointer;
-            transition: var(--transition-fast);
-            position: relative;
-            overflow: hidden;
-            font-family: 'Lato', sans-serif;
-        }
-
-        .btn-gold:hover {
             background: var(--gold);
             color: var(--white);
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.4);
+            font-family: 'Playfair Display', serif;
+            font-size: 1.1rem;
+            letter-spacing: 2px;
+            border-radius: 2px; /* Minimalista */
+            position: relative;
+            overflow: hidden;
+            transition: var(--transition);
+            animation: fadeInUp 1.6s ease-out;
+            box-shadow: var(--shadow-soft);
         }
 
-        /* --- Catálogo --- */
-        .catalog-section {
-            padding: 5rem 10%;
+        .btn-hero:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            background-color: #bfa035;
+        }
+
+        /* Elementos flotantes decorativos */
+        .floating-shape {
+            position: absolute;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--soft-pink), var(--gold-light));
+            opacity: 0.3;
+            filter: blur(60px);
+            z-index: 1;
+            animation: float 8s ease-in-out infinite;
+        }
+
+        .shape-1 { width: 400px; height: 400px; top: -100px; left: -100px; }
+        .shape-2 { width: 300px; height: 300px; bottom: 10%; right: -50px; animation-delay: 2s; background: linear-gradient(45deg, var(--soft-blue), var(--cream)); }
+
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-20px); }
+            100% { transform: translateY(0px); }
+        }
+
+        /* --- SECCIONES NIÑO / NIÑA --- */
+        .category-section {
+            padding: 6rem 5%;
+            position: relative;
         }
 
         .section-header {
@@ -174,418 +250,440 @@
 
         .section-header h2 {
             font-size: 3rem;
-            margin-bottom: 1rem;
             color: var(--text-dark);
+            margin-bottom: 1rem;
         }
 
-        .section-header .divider {
-            width: 80px;
-            height: 2px;
-            background: var(--gold);
-            margin: 0 auto;
+        .section-header p {
+            color: var(--gold);
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            font-size: 0.9rem;
         }
 
-        .filters {
-            display: flex;
-            justify-content: center;
-            gap: 2rem;
-            margin-bottom: 3rem;
-        }
-
-        .filter-btn {
-            background: none;
-            border: none;
-            font-family: 'Playfair Display', serif;
-            font-size: 1.1rem;
-            cursor: pointer;
-            color: var(--text-grey);
-            transition: var(--transition-fast);
-        }
-
-        .filter-btn.active, .filter-btn:hover {
-            color: var(--gold-dark);
-            font-style: italic;
-        }
-
-        .dress-grid {
+        .grid-container {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 3rem;
         }
 
-        .dress-card {
+        .card {
             background: var(--white);
-            position: relative;
+            border-radius: 15px;
             overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            transition: var(--transition);
+            position: relative;
             cursor: pointer;
-            transition: var(--transition-slow);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.05);
         }
 
-        .dress-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(212, 175, 55, 0.15);
+        .card:hover {
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: var(--shadow-hover);
         }
 
-        .img-container {
-            height: 450px;
+        .card-image {
+            height: 400px;
             width: 100%;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .img-container img {
-            width: 100%;
-            height: 100%;
             object-fit: cover;
-            transition: transform 1.2s ease;
+            transition: var(--transition);
         }
-
-        .dress-card:hover .img-container img {
-            transform: scale(1.1);
-        }
-
-        /* Efecto de brillo al pasar el mouse */
-        .dress-card::after {
+        
+        /* Efecto Overlay en Hover */
+        .card::before {
             content: '';
             position: absolute;
-            top: 0;
-            left: -100%;
-            width: 50%;
-            height: 100%;
-            background: linear-gradient(to right, rgba(255,255,255,0) 0%, rgba(255,255,255,0.3) 100%);
-            transform: skewX(-25deg);
-            transition: 0.5s;
-        }
-
-        .dress-card:hover::after {
-            left: 200%;
-            transition: 0.7s;
-        }
-
-        .dress-info {
-            padding: 1.5rem;
-            text-align: center;
-        }
-
-        .dress-info h3 {
-            font-size: 1.4rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .dress-info p {
-            color: var(--gold-dark);
-            font-weight: bold;
-        }
-
-        /* --- EL GRAN EFECTO (MODAL) --- */
-        .modal {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(26, 26, 26, 0.9);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(to top, rgba(0,0,0,0.4), transparent);
             opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.5s ease;
+            transition: var(--transition);
+            z-index: 1;
         }
 
-        .modal.active {
+        .card:hover::before {
             opacity: 1;
-            pointer-events: all;
         }
 
-        .modal-content {
-            display: flex;
-            width: 80%;
-            max-width: 1000px;
+        .card-info {
+            padding: 2rem;
+            text-align: center;
             background: var(--white);
-            box-shadow: 0 0 50px rgba(212, 175, 55, 0.5);
-            transform: scale(0.8);
-            opacity: 0;
-            transition: all 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efecto rebote elegante */
+            position: relative;
+            z-index: 2;
+        }
+
+        .card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-dark);
+        }
+
+        .card p {
+            font-size: 0.9rem;
+            color: var(--text-light);
+        }
+
+        /* Específico Niña (Tonos Rosas sutiles en hover) */
+        #nina .card:hover { border-bottom: 3px solid #ffd1dc; }
+        /* Específico Niño (Tonos Azules sutiles en hover) */
+        #nino .card:hover { border-bottom: 3px solid #d1e3ff; }
+
+        /* --- CITA PREVIA BANNER --- */
+        .appointment-banner {
+            background-color: var(--text-dark);
+            color: var(--gold);
+            text-align: center;
+            padding: 4rem 1rem;
+            position: relative;
             overflow: hidden;
         }
 
-        .modal.active .modal-content {
-            transform: scale(1);
-            opacity: 1;
+        .appointment-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+            margin: 0 auto;
         }
 
-        .modal-img {
-            width: 50%;
-            height: 600px;
+        .appointment-banner h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1.5rem;
+            color: var(--white);
         }
 
-        .modal-img img {
+        .appointment-banner .highlight {
+            color: var(--gold);
+            font-style: italic;
+            font-size: 3rem;
+            display: block;
+            margin: 1rem 0;
+        }
+
+        .appointment-banner p {
+            color: #ccc;
+            font-size: 1.1rem;
+            margin-bottom: 2rem;
+        }
+
+        .phone-display {
+            font-size: 2rem;
+            font-family: 'Playfair Display', serif;
+            color: var(--white);
+            border: 1px solid var(--gold);
+            padding: 1rem 2rem;
+            display: inline-block;
+            margin-top: 1rem;
+        }
+
+        /* --- CONTACTO & FOOTER --- */
+        .contact-section {
+            padding: 6rem 5%;
+            background: var(--white);
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 4rem;
+            align-items: center;
+        }
+
+        .info-box h3 {
+            font-size: 2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .info-item i {
+            font-size: 1.5rem;
+            color: var(--gold);
+            margin-right: 1.5rem;
+            margin-top: 5px;
+        }
+
+        .info-text strong {
+            display: block;
+            font-size: 1.1rem;
+            margin-bottom: 0.3rem;
+            color: var(--text-dark);
+        }
+
+        .info-text p, .info-text a {
+            color: var(--text-light);
+            font-size: 1rem;
+        }
+
+        .social-media {
+            display: flex;
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+
+        .social-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--cream);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-dark);
+            font-size: 1.2rem;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .social-icon:hover {
+            background: var(--gold);
+            color: var(--white);
+            transform: rotate(360deg);
+            border-color: var(--gold);
+        }
+
+        .map-container {
+            width: 100%;
+            height: 400px;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: var(--shadow-soft);
+            background-color: #eee;
+            position: relative;
+        }
+        
+        .map-placeholder {
             width: 100%;
             height: 100%;
-            object-fit: cover;
-        }
-
-        .modal-details {
-            width: 50%;
-            padding: 4rem;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            position: relative;
+            align-items: center;
+            background: #f4f4f4;
+            color: #888;
         }
 
-        /* Partículas dentro del modal */
-        .sparkle {
-            position: absolute;
-            width: 4px;
-            height: 4px;
-            background: var(--gold);
-            border-radius: 50%;
-            animation: pulse 2s infinite;
+        footer {
+            background: #1a1a1a;
+            color: #666;
+            text-align: center;
+            padding: 2rem;
+            font-size: 0.8rem;
         }
 
-        @keyframes pulse {
-            0% { transform: scale(1); opacity: 1; }
-            100% { transform: scale(3); opacity: 0; }
-        }
-
-        .modal-title {
-            font-size: 2.5rem;
-            color: var(--text-dark);
-            margin-bottom: 1rem;
-        }
-
-        .modal-price {
-            font-size: 1.5rem;
-            color: var(--gold);
-            margin-bottom: 2rem;
-            font-family: 'Playfair Display', serif;
-        }
-
-        .close-btn {
-            position: absolute;
-            top: 20px;
-            right: 20px;
-            font-size: 2rem;
-            color: var(--text-dark);
-            cursor: pointer;
-            transition: 0.3s;
-            z-index: 5;
-        }
-
-        .close-btn:hover { color: var(--gold); transform: rotate(90deg); }
-
-        .btn-reserve {
-            background: var(--text-dark);
-            color: var(--white);
-            padding: 1rem 2rem;
-            border: none;
-            text-transform: uppercase;
-            cursor: pointer;
-            margin-top: 2rem;
-            transition: 0.3s;
-        }
-
-        .btn-reserve:hover {
-            background: var(--gold);
-        }
-
-        /* Responsive */
+        /* --- RESPONSIVE --- */
         @media (max-width: 768px) {
-            .hero h1 { font-size: 3rem; }
-            .modal-content { flex-direction: column; width: 95%; height: 90vh; overflow-y: auto; }
-            .modal-img, .modal-details { width: 100%; height: auto; }
-            .modal-img { height: 300px; }
-            .modal-details { padding: 2rem; }
+            .hero-title { font-size: 3rem; }
+            .nav-links { 
+                position: fixed;
+                right: -100%;
+                top: 0;
+                height: 100vh;
+                background: var(--white);
+                flex-direction: column;
+                padding: 4rem 2rem;
+                width: 70%;
+                box-shadow: -5px 0 15px rgba(0,0,0,0.1);
+            }
+            .nav-links.active { right: 0; }
+            .menu-toggle { display: block; }
+            .contact-grid { grid-template-columns: 1fr; }
+            .shape-1, .shape-2 { display: none; } /* Mejor rendimiento en móvil */
         }
-
     </style>
 </head>
-<body>
+<body class="animated-bg">
 
     <nav>
-        <div class="brand">Vestidos<span>&</span>Teaser</div>
-        <div class="nav-links">
-            <a href="#">Colecciones</a>
-            <a href="#">Nosotros</a>
-            <a href="#">Citas</a>
+        <div class="logo">Mi Bello Ropón</div>
+        <div class="menu-toggle" id="mobile-menu">
+            <i class="fas fa-bars"></i>
         </div>
+        <ul class="nav-links" id="nav-links">
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#nina">Niña</a></li>
+            <li><a href="#nino">Niño</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+            <li><a href="tel:+528180932362" class="nav-cta">Cita: 81 80 93 23 62</a></li>
+        </ul>
     </nav>
 
-    <section class="hero">
-        <div id="particles-container"></div>
+    <header id="inicio">
+        <div class="floating-shape shape-1"></div>
+        <div class="floating-shape shape-2"></div>
         
         <div class="hero-content">
-            <h1>LO MEJOR  <br> PARA VESTIR</h1>
-            <p>Descubre el vestido que cuenta tu historia, que va contigo.</p>
-            <button class="btn-gold" onclick="document.getElementById('catalogo').scrollIntoView({behavior: 'smooth'})">Ver Colección</button>
+            <h1 class="hero-title">Momentos sagrados,<br>vestidos inolvidables</h1>
+            <p class="hero-subtitle">Alta costura para Bautizos y Primera Comunión en Guadalupe, N.L.</p>
+            <a href="#contacto" class="btn-hero">Agendar Cita Exclusiva</a>
         </div>
-    </section>
+    </header>
 
-    <section id="catalogo" class="catalog-section">
-        <div class="section-header">
-            <h2>Nuestra Selección Exclusiva</h2>
-            <div class="divider"></div>
+    <section id="nina" class="category-section">
+        <div class="section-header reveal">
+            <p>Delicadeza y Gracia</p>
+            <h2>Colección Niña</h2>
+            <div style="width: 50px; height: 3px; background: var(--gold); margin: 0 auto;"></div>
         </div>
-
-        <div class="filters">
-            <button class="filter-btn active" onclick="filterSelection('all')">Todo</button>
-            <button class="filter-btn" onclick="filterSelection('gala')">Gala de Noche</button>
-            <button class="filter-btn" onclick="filterSelection('novia')">Novia Moderna</button>
-            <button class="filter-btn" onclick="filterSelection('coctel')">Cóctel Brunch</button>
-        </div>
-
-        <div class="dress-grid">
-            <div class="dress-card gala" onclick="openModal('Vestido Elegante ', '$4,500 MXN', 'https://images.unsplash.com/photo-1566174053879-31528523f8ae?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
-                <div class="img-container">
-                    <img src="vestido2.webp" alt="Vestido Relajado">
-                </div>
-                <div class="dress-info">
-                    <h3>Imperial Gold</h3>
-                    <p>Ver Detalles</p>
+        
+        <div class="grid-container reveal">
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1512413914633-b5043f4041ea?auto=format&fit=crop&q=80&w=800" alt="Vestido Comunión" class="card-image">
+                <div class="card-info">
+                    <h3>Primera Comunión</h3>
+                    <p>Encajes finos y cortes de princesa.</p>
                 </div>
             </div>
-
-            <div class="dress-card novia" onclick="openModal('Novia Elegante', '$6,200 MXN', 'https://images.unsplash.com/photo-1595777457583-95e059d581b8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
-                <div class="img-container">
-                    <img src="vestidobosa.jpg" alt="Vestido Blanco">
-                </div>
-                <div class="dress-info">
-                    <h3>White Swan</h3>
-                    <p>Ver Detalles</p>
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1596870230751-ebdfce98ec42?auto=format&fit=crop&q=80&w=800" alt="Ropón Bautizo Niña" class="card-image">
+                <div class="card-info">
+                    <h3>Ropones de Bautizo</h3>
+                    <p>Tradición y bordados a mano.</p>
                 </div>
             </div>
-
-            <div class="dress-card coctel" onclick="openModal('Cóctel Vestido', '$3,100 MXN', 'https://images.unsplash.com/photo-1515372039744-b8f02a3ae446?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
-                <div class="img-container">
-                    <img src="vestido negro.jpg" alt="Vestido Coctel">
-                </div>
-                <div class="dress-info">
-                    <h3>Champagne Glow</h3>
-                    <p>Ver Detalles</p>
-                </div>
-            </div>
-             <div class="dress-card gala" onclick="openModal('Noche Estrellada, Cena romantica', '$5,000 MXN', 'https://images.unsplash.com/photo-1572804013309-59a88b7e92f1?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80')">
-                <div class="img-container">
-                    <img src="vestido5.webp" alt="Vestido Elegante">
-                </div>
-                <div class="dress-info">
-                    <h3>Starlight Silk</h3>
-                    <p>Ver Detalles</p>
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1544265432-1c66289b7b9f?auto=format&fit=crop&q=80&w=800" alt="Accesorios Niña" class="card-image">
+                <div class="card-info">
+                    <h3>Accesorios</h3>
+                    <p>Tocados, velas y zapatos a juego.</p>
                 </div>
             </div>
         </div>
     </section>
 
-    <div id="dressModal" class="modal">
-        <div class="modal-content">
-            <span class="close-btn" onclick="closeModal()">&times;</span>
-            <div class="modal-img">
-                <img id="modalImage" src="" alt="">
+    <section id="nino" class="category-section" style="background-color: var(--white);">
+        <div class="section-header reveal">
+            <p>Elegancia y Carácter</p>
+            <h2>Colección Niño</h2>
+            <div style="width: 50px; height: 3px; background: var(--gold); margin: 0 auto;"></div>
+        </div>
+
+        <div class="grid-container reveal">
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1519757656972-02484a958e94?auto=format&fit=crop&q=80&w=800" alt="Traje Comunión Niño" class="card-image">
+                <div class="card-info">
+                    <h3>Trajes de Comunión</h3>
+                    <p>Linos frescos y cortes modernos.</p>
+                </div>
             </div>
-            <div class="modal-details">
-                <div id="sparkles-container"></div> <h2 class="modal-title" id="modalTitle">Titulo</h2>
-                <p class="modal-price" id="modalPrice">Precio</p>
-                <p style="line-height: 1.6; color: #555;">Este diseño exclusivo encapsula la esencia de la elegancia. Confeccionado con seda importada y detalles bordados a mano en hilo de oro. Perfecto para iluminar la habitación en cuanto entres.</p>
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1621404134604-5831613589b9?auto=format&fit=crop&q=80&w=800" alt="Ropón Niño" class="card-image">
+                <div class="card-info">
+                    <h3>Ropones Clásicos</h3>
+                    <p>Detalles desmontables y telas suaves.</p>
+                </div>
+            </div>
+            <div class="card">
+                <img src="https://images.unsplash.com/photo-1515488042361-ee00651e67d7?auto=format&fit=crop&q=80&w=800" alt="Guayaberas Niño" class="card-image">
+                <div class="card-info">
+                    <h3>Guayaberas y Sets</h3>
+                    <p>Comodidad sin perder la etiqueta.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="appointment-banner reveal">
+        <div class="appointment-content">
+            <h2>Atención Personalizada</h2>
+            <span class="highlight">Solo con Previa Cita</span>
+            <p>Queremos dedicarte el tiempo y la atención que tu evento merece. Por favor, agenda tu visita antes de acudir.</p>
+            <div class="phone-display">
+                <i class="fas fa-phone-alt"></i> 81 80 93 23 62
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto" class="contact-section">
+        <div class="contact-grid reveal">
+            <div class="info-box">
+                <h3>Visítanos</h3>
                 
-                <div style="margin-top: 20px;">
-                    <i class="fas fa-ruler-combined" style="color: var(--gold); margin-right: 10px;"></i> Tallas: XS, S, M, L<br><br>
-                    <i class="fas fa-stopwatch" style="color: var(--gold); margin-right: 10px;"></i> Renta por 4 días
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div class="info-text">
+                        <strong>Dirección</strong>
+                        <p>Santa Genoveva #1202,<br>Colonia La Purísima,<br>Guadalupe, Nuevo León.</p>
+                    </div>
                 </div>
 
-                <button class="btn-reserve">Agendar Cita de Prueba</button>
+                <div class="info-item">
+                    <i class="fas fa-clock"></i>
+                    <div class="info-text">
+                        <strong>Horario de Atención</strong>
+                        <p>Lunes a Sábado: 9:00 am - 8:00 pm</p>
+                        <p>Domingo: 9:00 am - 6:00 pm</p>
+                    </div>
+                </div>
+
+                <div class="info-item">
+                    <i class="fas fa-calendar-check"></i>
+                    <div class="info-text">
+                        <strong>Importante</strong>
+                        <p>Recuerda agendar tu cita por teléfono.</p>
+                    </div>
+                </div>
+
+                <div class="social-media">
+                    <a href="https://www.facebook.com/share/17Yk3e61g3/?mibextid=wwXIfr" target="_blank" class="social-icon" title="Facebook"><i class="fab fa-facebook-f"></i></a>
+                    <a href="https://www.instagram.com/mibelloropon?igsh=MXFxbzNxNGYyaXk1ZQ==" target="_blank" class="social-icon" title="Instagram"><i class="fab fa-instagram"></i></a>
+                    <a href="https://www.tiktok.com/@mibelloropon?_r=1&_t=ZT-938D5TWvMdL" target="_blank" class="social-icon" title="TikTok"><i class="fab fa-tiktok"></i></a>
+                    <a href="https://wa.me/528180932362" target="_blank" class="social-icon" title="WhatsApp"><i class="fab fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <div class="map-container">
+               <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3595.6698650392656!2d-100.222384!3d25.682186!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjXCsDQwJzU1LjkiTiAxMDDCsDEzJzIwLjYiVw!5e0!3m2!1ses!2smx!4v1600000000000!5m2!1ses!2smx" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
         </div>
-    </div>
+    </section>
+
+    <footer>
+        <p>&copy; 2024 Mi Bello Ropón. Todos los derechos reservados.</p>
+        <p>Diseñado con elegancia para momentos especiales.</p>
+    </footer>
 
     <script>
-        // 1. Generar Partículas Doradas en el Hero
-        const hero = document.querySelector('.hero');
-        for(let i=0; i<15; i++){
-            let div = document.createElement('div');
-            div.classList.add('gold-particle');
-            div.style.left = Math.random() * 100 + '%';
-            div.style.top = Math.random() * 100 + '%';
-            div.style.width = (Math.random() * 10 + 5) + 'px';
-            div.style.height = div.style.width;
-            div.style.animationDelay = (Math.random() * 5) + 's';
-            div.style.animationDuration = (Math.random() * 5 + 5) + 's';
-            hero.appendChild(div);
-        }
+        // Menú Móvil
+        const menuToggle = document.getElementById('mobile-menu');
+        const navLinks = document.getElementById('nav-links');
+        const links = document.querySelectorAll('.nav-links li a');
 
-        // 2. Lógica del Filtro
-        function filterSelection(category) {
-            let elements = document.getElementsByClassName("dress-card");
-            let buttons = document.getElementsByClassName("filter-btn");
-            
-            // Manejar clase activa en botones
-            for (let btn of buttons) {
-                btn.classList.remove("active");
-                if (event.target === btn) btn.classList.add("active");
-            }
+        menuToggle.addEventListener('click', () => {
+            navLinks.classList.toggle('active');
+        });
 
-            // Filtrar elementos con animación
-            for (let i = 0; i < elements.length; i++) {
-                elements[i].style.display = "none";
-                elements[i].style.opacity = "0";
-                elements[i].style.transform = "translateY(20px)";
-                
-                if (category == "all" || elements[i].classList.contains(category)) {
-                    setTimeout(() => {
-                        elements[i].style.display = "block";
-                        // Pequeño timeout para permitir que el display:block se renderice antes de la opacidad
-                        setTimeout(() => {
-                            elements[i].style.opacity = "1";
-                            elements[i].style.transform = "translateY(0)";
-                        }, 50);
-                    }, i * 100); // Efecto cascada
+        // Cerrar menú al hacer click en un enlace
+        links.forEach(link => {
+            link.addEventListener('click', () => {
+                navLinks.classList.remove('active');
+            });
+        });
+
+        // Efecto Reveal al hacer scroll
+        window.addEventListener('scroll', reveal);
+
+        function reveal() {
+            var reveals = document.querySelectorAll('.reveal');
+
+            for (var i = 0; i < reveals.length; i++) {
+                var windowHeight = window.innerHeight;
+                var revealTop = reveals[i].getBoundingClientRect().top;
+                var revealPoint = 150;
+
+                if (revealTop < windowHeight - revealPoint) {
+                    reveals[i].classList.add('active');
+                } else {
+                    reveals[i].classList.remove('active');
                 }
             }
         }
-
-        // 3. Lógica del Modal (El Gran Efecto)
-        const modal = document.getElementById("dressModal");
-        const modalImg = document.getElementById("modalImage");
-        const modalTitle = document.getElementById("modalTitle");
-        const modalPrice = document.getElementById("modalPrice");
-        const sparklesContainer = document.getElementById("sparkles-container");
-
-        function openModal(title, price, imgSrc) {
-            modalImg.src = imgSrc;
-            modalTitle.innerText = title;
-            modalPrice.innerText = "Renta: " + price;
-            
-            modal.classList.add("active");
-            
-            // Crear efectos de brillo dinámicos
-            sparklesContainer.innerHTML = '';
-            for(let i=0; i<5; i++) {
-                let sparkle = document.createElement('div');
-                sparkle.classList.add('sparkle');
-                sparkle.style.top = Math.random() * 80 + '%';
-                sparkle.style.left = Math.random() * 80 + '%';
-                sparkle.style.animationDelay = Math.random() + 's';
-                sparklesContainer.appendChild(sparkle);
-            }
-        }
-
-        function closeModal() {
-            modal.classList.remove("active");
-        }
-
-        // Cerrar modal al hacer clic fuera del contenido
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                closeModal();
-            }
-        }
+        
+        // Disparar reveal al cargar por si hay elementos visibles
+        reveal();
     </script>
 </body>
 </html>
-
-
-
