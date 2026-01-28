@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tienda de Vestidos</title>
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 20px; background-color: #f9f9f9; }
+        body { font-family: 'Segoe UI', sans-serif; padding: 20px; background-color: #f9f9f9; }
         h1 { text-align: center; color: #333; margin-bottom: 30px; }
         
         .catalogo { 
@@ -23,112 +23,67 @@
             box-shadow: 0 4px 6px rgba(0,0,0,0.1); 
             text-align: center; 
             padding-bottom: 15px;
-            transition: transform 0.2s;
         }
-        
-        .producto:hover { transform: translateY(-5px); }
         
         .producto img { 
             width: 100%; 
             height: 350px; 
             object-fit: cover; 
             border-bottom: 1px solid #eee;
+            background-color: #eaeaea; /* Fondo gris mientras carga */
         }
         
         .info { padding: 0 15px; }
         .precio { color: #27ae60; font-weight: bold; font-size: 1.4em; margin: 10px 0; }
-        .desc { color: #666; font-size: 0.9em; min-height: 40px;}
-        
-        .etiqueta {
-            display: inline-block;
-            padding: 5px 10px;
-            border-radius: 15px;
-            font-size: 0.8em;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
+        .etiqueta { padding: 5px 10px; border-radius: 15px; font-size: 0.8em; font-weight: bold; display: inline-block; margin-bottom:10px;}
         .disp-ok { background-color: #e8f8f5; color: #27ae60; }
-        .disp-low { background-color: #fef9e7; color: #f1c40f; }
         .disp-no { background-color: #fdedec; color: #e74c3c; }
-
-        /* Estilo para mensajes de error */
-        #error-box { display:none; background:#xffdd; border:1px solid red; padding:20px; color:red; margin: 20px; }
+        .disp-low { background-color: #fef9e7; color: #f1c40f; }
     </style>
 </head>
 <body>
 
-    <div id="error-box"></div>
-
     <h1>Nuestros Vestidos</h1>
-    
     <div id="contenedor-productos" class="catalogo">
-        <p style="text-align:center; width:100%; font-size:1.2em; color:#666;">
-            ⏳ Cargando catálogo desde Google Sheets...
-        </p>
+        <p style="text-align:center; width:100%">Cargando...</p>
     </div>
 
     <script>
-        // --- RED DE SEGURIDAD: Captura errores globales ---
-        window.onerror = function(message, source, lineno, colno, error) {
-            const box = document.getElementById('error-box');
-            box.style.display = 'block';
-            box.innerHTML += `<p><strong>Error Detectado:</strong> ${message} <br><small>Línea: ${lineno}</small></p>`;
-        };
-    </script>
-
-    <script>
-        // --- CONFIGURACIÓN ---
         const sheetID = '1oXMJw-h2OwsK37dSOf8vAg7NW6zkEp8yJ6GFkihExD8'; 
-        const tabName = 'Sheet1'; // Configurado como 'Sheet1' según tu indicación
-
-        // Usamos una API alternativa (sheetdb o opensheet) si la primera falla, 
-        // pero seguiremos con opensheet que es la más rápida.
+        const tabName = 'Sheet1'; 
         const endpoint = `https://opensheet.elk.sh/${sheetID}/${tabName}`;
 
         async function init() {
             const contenedor = document.getElementById('contenedor-productos');
-            
             try {
-                // 1. Petición a los datos
                 const respuesta = await fetch(endpoint);
-                
-                if (!respuesta.ok) {
-                    throw new Error(`No se pudo conectar (Status: ${respuesta.status}). Revisa los permisos de la hoja.`);
-                }
-
                 const datos = await respuesta.json();
-
-                // 2. Verificación si hay error en el JSON devuelto
-                if (datos.error) throw new Error(datos.error);
                 
-                // 3. Limpiamos el cargando
-                contenedor.innerHTML = '';
-
-                // 4. Renderizamos los productos
-                let productosEncontrados = 0;
+                contenedor.innerHTML = ''; // Limpiar cargando
 
                 datos.forEach(item => {
-                    // FILTRO: Si no tiene nombre, ignoramos la fila (para evitar las filas vacías que vimos)
-                    if (!item['NOMBRE']) return;
+                    if (!item['NOMBRE']) return; // Saltar filas vacías
 
-                    productosEncontrados++;
+                    // --- LIMPIEZA DE DATOS ---
+                    // 1. Quitamos espacios extra al nombre de la imagen con .trim()
+                    // 2. Si la celda está vacía, ponemos un nombre falso para que no rompa
+                    const rawImg = item['NOMBRE IMG'] || '';
+                    const nombreImagen = rawImg.trim(); 
 
-                    // Lógica de disponibilidad (colores y textos)
+                    // Lógica de disponibilidad
                     let dispText = item['DISPONIBILIDAD'] || 'Consultar';
                     let dispClass = 'disp-ok';
-                    
-                    const dispUpper = dispText.toUpperCase();
-                    if (dispUpper.includes('AGOTADO')) dispClass = 'disp-no';
-                    else if (dispUpper.includes('ULTIMAS') || dispUpper.includes('PIEZAS')) dispClass = 'disp-low';
+                    if (dispText.toUpperCase().includes('AGOTADO')) dispClass = 'disp-no';
+                    else if (dispText.toUpperCase().includes('ULTIMAS')) dispClass = 'disp-low';
 
-                    // Tarjeta HTML
                     const tarjeta = `
                         <div class="producto">
-                            <img src="${item['NOMBRE IMG']}" alt="${item['NOMBRE']}" 
-                                 onerror="this.onerror=null;this.src='https://via.placeholder.com/300x350?text=Imagen+No+Cargada';">
+                            <img src="${nombreImagen}" 
+                                 alt="${item['NOMBRE']}"
+                                 onerror="this.onerror=null;this.src='https://via.placeholder.com/300?text=Error+Imagen'; console.log('Falló al cargar: ${nombreImagen}')">
                             <div class="info">
                                 <h3>${item['NOMBRE']}</h3>
-                                <p class="desc">${item['DESCRIPCION'] || ''}</p>
+                                <p>${item['DESCRIPCION'] || ''}</p>
                                 <p class="precio">$${item['PRECIO']}</p>
                                 <span class="etiqueta ${dispClass}">${dispText}</span>
                             </div>
@@ -136,28 +91,12 @@
                     `;
                     contenedor.innerHTML += tarjeta;
                 });
-
-                if (productosEncontrados === 0) {
-                    contenedor.innerHTML = '<p style="text-align:center">No se encontraron productos en la hoja.</p>';
-                }
-
             } catch (err) {
                 console.error(err);
-                // Mostramos el error en pantalla amigablemente
-                const box = document.getElementById('error-box');
-                box.style.display = 'block';
-                box.innerHTML = `
-                    <h3>⚠️ Ocurrió un problema</h3>
-                    <p>Detalle: ${err.message}</p>
-                    <p>Sugerencia: Verifica que el archivo de Google Sheets tenga acceso "Público" o "Cualquiera con el enlace".</p>
-                `;
-                contenedor.innerHTML = '';
+                contenedor.innerHTML = '<p>Error cargando datos. Revisa la consola.</p>';
             }
         }
-
-        // Ejecutar cuando cargue la página
         window.addEventListener('DOMContentLoaded', init);
     </script>
 </body>
 </html>
-
