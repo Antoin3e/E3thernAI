@@ -2,720 +2,91 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Ethernai | Arquitectura Digital</title>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100;300;400;500;700;900&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda de Vestidos</title>
     <style>
-        /* --- 1. VARIABLES Y CONFIGURACIÓN BASE (Clean Tech Theme) --- */
-        :root {
-            --bg-pure: #ffffff;
-            --bg-off: #f8fafc;
-            --text-main: #0f172a;
-            --text-light: #64748b;
-            
-            /* Gradientes Azules Futuristas */
-            --accent-primary: #0ea5e9; /* Sky Blue */
-            --accent-secondary: #3b82f6; /* Royal Blue */
-            --accent-gradient: linear-gradient(135deg, #0ea5e9 0%, #2563eb 100%);
-            
-            /* Efectos de Vidrio */
-            --glass-surface: rgba(255, 255, 255, 0.7);
-            --glass-border: rgba(255, 255, 255, 0.9);
-            --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-            
-            /* Espaciado */
-            --container-padding: 8vw;
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            -webkit-font-smoothing: antialiased; /* Renderizado de fuente nítido */
-        }
-
-        body {
-            background-color: var(--bg-pure);
-            color: var(--text-main);
-            font-family: 'Outfit', sans-serif;
-            overflow-x: hidden;
-            width: 100%;
-        }
-
-        /* Scrollbar invisible pero funcional para limpieza visual */
-        ::-webkit-scrollbar {
-            width: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(14, 165, 233, 0.3);
-            border-radius: 10px;
-        }
-
-        /* --- 2. MOTOR GRÁFICO DE FONDO (CANVAS) --- */
-        #fluid-canvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            /* Degradado sutil de fondo base */
-            background: radial-gradient(circle at 50% 50%, #f0f9ff 0%, #ffffff 80%);
-        }
-
-        /* --- 3. UI COMPONENTS & TYPOGRAPHY --- */
-        h1, h2, h3 {
-            font-weight: 800;
-            line-height: 1.1;
-            letter-spacing: -0.03em;
-        }
-
-        p {
-            font-weight: 300;
-            color: var(--text-light);
-            line-height: 1.8;
-            font-size: 1.1rem;
-        }
-
-        .gradient-text {
-            background: var(--accent-gradient);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* Botón "High Tech" */
-        .tech-btn {
-            display: inline-flex;
-            align-items: center;
-            padding: 18px 40px;
-            background: white;
-            color: var(--accent-secondary);
-            font-weight: 600;
-            border-radius: 50px;
-            text-decoration: none;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            box-shadow: 0 10px 25px rgba(59, 130, 246, 0.15);
-            border: 1px solid rgba(59, 130, 246, 0.1);
-            position: relative;
-            overflow: hidden;
-            z-index: 1;
-        }
-
-        .tech-btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: var(--accent-gradient);
-            z-index: -1;
-            transition: transform 0.5s ease;
-            transform: scaleX(0);
-            transform-origin: right;
-        }
-
-        .tech-btn:hover {
-            color: white;
-            box-shadow: 0 20px 40px rgba(59, 130, 246, 0.3);
-            transform: translateY(-3px);
-            border-color: transparent;
-        }
-
-        .tech-btn:hover::before {
-            transform: scaleX(1);
-            transform-origin: left;
-        }
-
-        /* --- 4. NAVIGATION (Glassmorphism) --- */
-        nav {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            width: 90%;
+        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f4; }
+        h1 { text-align: center; color: #333; }
+        .catalogo { 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
+            gap: 20px; 
             max-width: 1200px;
-            padding: 15px 30px;
-            background: rgba(255, 255, 255, 0.85);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
-            border-radius: 20px;
-            border: 1px solid rgba(255, 255, 255, 0.5);
-            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            z-index: 1000;
-            transition: all 0.3s ease;
+            margin: 0 auto;
         }
-
-        .logo {
-            font-weight: 900;
-            font-size: 1.5rem;
-            color: var(--text-main);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .producto { 
+            background: white; 
+            padding: 15px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
+            text-align: center; 
+            transition: transform 0.2s;
         }
-
-        .logo-dot {
-            width: 12px;
-            height: 12px;
-            background: var(--accent-gradient);
-            border-radius: 50%;
-            display: block;
+        .producto:hover { transform: translateY(-5px); }
+        .producto img { 
+            max-width: 100%; 
+            height: 300px; /* Altura fija para uniformidad */
+            object-fit: cover; /* Recorta la imagen para que no se deforme */
+            border-radius: 4px; 
         }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-            list-style: none;
-        }
-
-        .nav-links a {
-            text-decoration: none;
-            color: var(--text-main);
-            font-weight: 500;
-            font-size: 0.95rem;
-            position: relative;
-            transition: color 0.3s;
-        }
-
-        .nav-links a::after {
-            content: '';
-            position: absolute;
-            bottom: -5px;
-            left: 50%;
-            transform: translateX(-50%) scaleX(0);
-            width: 20px;
-            height: 2px;
-            background: var(--accent-secondary);
-            transition: transform 0.3s ease;
-        }
-
-        .nav-links a:hover::after {
-            transform: translateX(-50%) scaleX(1);
-        }
-
-        /* --- 5. HERO SECTION --- */
-        header.hero {
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            text-align: center;
-            padding: 0 var(--container-padding);
-            position: relative;
-        }
-
-        .hero-content {
-            max-width: 1000px;
-            z-index: 2;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 8px 16px;
-            background: rgba(14, 165, 233, 0.1);
-            color: var(--accent-secondary);
-            border-radius: 30px;
-            font-size: 0.85rem;
-            font-weight: 600;
-            margin-bottom: 25px;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            border: 1px solid rgba(14, 165, 233, 0.2);
-        }
-
-        .hero h1 {
-            font-size: clamp(3rem, 8vw, 6rem); /* Responsive Font Size */
-            margin-bottom: 25px;
-            background: linear-gradient(180deg, #1e293b 0%, #475569 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-
-        /* --- 6. CARDS SECTION (Glass & Hover Physics) --- */
-        .section-padding {
-            padding: 120px var(--container-padding);
-        }
-
-        .cards-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 40px;
-            margin-top: 60px;
-        }
-
-        .clean-card {
-            background: var(--glass-surface);
-            backdrop-filter: blur(20px);
-            border: 1px solid white;
-            border-radius: 24px;
-            padding: 40px;
-            box-shadow: 0 10px 40px -10px rgba(0,0,0,0.05);
-            transition: all 0.5s cubic-bezier(0.2, 0.8, 0.2, 1);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .clean-card:hover {
-            transform: translateY(-15px);
-            box-shadow: 0 30px 60px -12px rgba(59, 130, 246, 0.15);
-            border-color: rgba(59, 130, 246, 0.3);
-        }
-
-        .card-number {
-            font-size: 5rem;
-            font-weight: 900;
-            color: rgba(0,0,0,0.03);
-            position: absolute;
-            top: -10px;
-            right: 20px;
-            transition: all 0.5s;
-        }
-
-        .clean-card:hover .card-number {
-            color: rgba(14, 165, 233, 0.1);
-            transform: scale(1.1);
-        }
-
-        .card-icon {
-            width: 60px;
-            height: 60px;
-            background: linear-gradient(135deg, #eff6ff, #dbeafe);
-            border-radius: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            margin-bottom: 30px;
-            color: var(--accent-secondary);
-            font-size: 1.5rem;
-        }
-
-        /* --- 7. DATA VIZ (Clean Lines) --- */
-        .data-section {
-            background: white;
-            position: relative;
-        }
-        
-        /* Contenedor curvado para separar secciones */
-        .data-section::before {
-            content: '';
-            position: absolute;
-            top: -100px;
-            left: 0;
-            width: 100%;
-            height: 100px;
-            background: white;
-            border-radius: 50% 50% 0 0 / 100% 100% 0 0;
-            transform: scaleX(1.5);
-        }
-
-        .stats-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: space-around;
-            gap: 40px;
-            margin-top: 60px;
-        }
-
-        .stat-circle {
-            width: 200px;
-            height: 200px;
-            position: relative;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-direction: column;
-        }
-
-        svg.circle-chart {
-            transform: rotate(-90deg);
-            width: 100%;
-            height: 100%;
-        }
-
-        .circle-bg {
-            fill: none;
-            stroke: #f1f5f9;
-            stroke-width: 2;
-        }
-
-        .circle-progress {
-            fill: none;
-            stroke-width: 2.5;
-            stroke-linecap: round;
-            stroke: var(--accent-secondary);
-            stroke-dasharray: 0, 100;
-            transition: stroke-dasharray 2s ease;
-        }
-
-        .stat-value {
-            position: absolute;
-            font-size: 3rem;
-            font-weight: 700;
-            color: var(--text-main);
-        }
-
-        .stat-label {
-            margin-top: 20px;
-            font-weight: 600;
-            color: var(--text-light);
-            text-align: center;
-        }
-
-        /* --- 8. CONTACT --- */
-        .contact-wrapper {
-            background: #f8fafc;
-            border-radius: 30px;
-            padding: 60px;
-            margin: 0 var(--container-padding) 100px;
-            text-align: center;
-            border: 1px solid #e2e8f0;
-        }
-
-        .big-phone {
-            font-size: clamp(2rem, 5vw, 4rem);
-            font-weight: 900;
-            color: var(--text-main);
-            text-decoration: none;
-            margin: 30px 0;
-            display: block;
-            transition: color 0.3s;
-        }
-
-        .big-phone:hover {
-            color: var(--accent-primary);
-        }
-
-        footer {
-            text-align: center;
-            padding: 40px;
-            color: var(--text-light);
-            font-size: 0.9rem;
-            border-top: 1px solid #f1f5f9;
-        }
-
-        /* --- MOBILE OPTIMIZATIONS --- */
-        @media (max-width: 768px) {
-            nav {
-                width: 95%;
-                padding: 15px;
-            }
-            .nav-links {
-                display: none; /* Simplificado para demo, idealmente un burger menu */
-            }
-            .section-padding {
-                padding: 80px 20px;
-            }
-            .cards-grid {
-                grid-template-columns: 1fr;
-            }
-            .clean-card:hover {
-                transform: translateY(-5px);
-            }
-        }
+        .precio { color: #27ae60; font-weight: bold; font-size: 1.2em; }
+        .agotado { color: red; font-weight: bold; }
+        .disponible { color: #2980b9; font-size: 0.9em; }
     </style>
 </head>
 <body>
 
-    <canvas id="fluid-canvas"></canvas>
-
-    <nav>
-        <div class="logo">
-            <span class="logo-dot"></span> ETHERNAI
-        </div>
-        <ul class="nav-links">
-            <li><a href="#proceso">Metodología</a></li>
-            <li><a href="#data">Inteligencia</a></li>
-            <li><a href="#contacto">Contacto</a></li>
-        </ul>
-        <a href="#contacto" class="tech-btn" style="padding: 10px 20px; font-size: 0.9rem;">Empezar</a>
-    </nav>
-
-    <header class="hero">
-        <div class="hero-content">
-            <span class="badge">Evolución Digital v3.0</span>
-            <h1>Arquitectura de Negocios <br><span class="gradient-text">Sin Límites Físicos</span></h1>
-            <p>Fusionamos la pureza de los datos con la automatización orgánica. No somos una agencia, somos tu nuevo sistema operativo comercial.</p>
-            <br><br>
-            <div style="display: flex; gap: 20px; justify-content: center; flex-wrap: wrap;">
-                <a href="#proceso" class="tech-btn">Ver Ecosistema</a>
-                <a href="#data" style="padding: 18px 40px; color: var(--text-light); text-decoration: none; font-weight: 500;">Leer Data ></a>
-            </div>
-        </div>
-    </header>
-
-    <section id="proceso" class="section-padding">
-        <div style="text-align: center; max-width: 800px; margin: 0 auto 60px;">
-            <h2 style="font-size: 2.5rem; margin-bottom: 20px;">Ciclo <span class="gradient-text">Evolutivo</span></h2>
-            <p>Estudiamos tu etapa tecnológica y aplicamos la ingeniería necesaria.</p>
-        </div>
-
-        <div class="cards-grid">
-            <div class="clean-card">
-                <span class="card-number">01</span>
-                <div class="card-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="2" y1="12" x2="22" y2="12"></line><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"></path></svg>
-                </div>
-                <h3>GÉNESIS DIGITAL</h3>
-                <p style="margin-top: 15px; font-size: 0.95rem;">
-                    Infraestructura base. Si no existes, te creamos con código limpio.
-                    <br><br>
-                    <strong>• Web High-End</strong><br>
-                    <strong>• Geolocalización</strong><br>
-                    <strong>• Identidad Corporativa</strong>
-                </p>
-            </div>
-
-            <div class="clean-card">
-                <span class="card-number">02</span>
-                <div class="card-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"></polyline><polyline points="17 6 23 6 23 12"></polyline></svg>
-                </div>
-                <h3>EXPANSIÓN & DATA</h3>
-                <p style="margin-top: 15px; font-size: 0.95rem;">
-                    Publicidad matemática. Convertimos clics en ingresos medibles.
-                    <br><br>
-                    <strong>• Google / Meta Ads</strong><br>
-                    <strong>• Analítica Predictiva</strong><br>
-                    <strong>• Optimización de ROI</strong>
-                </p>
-            </div>
-
-            <div class="clean-card">
-                <span class="card-number">03</span>
-                <div class="card-icon">
-                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect><line x1="8" y1="21" x2="16" y2="21"></line><line x1="12" y1="17" x2="12" y2="21"></line></svg>
-                </div>
-                <h3>SINGULARIDAD (IA)</h3>
-                <p style="margin-top: 15px; font-size: 0.95rem;">
-                    Automatización total. Tu negocio opera mientras duermes.
-                    <br><br>
-                    <strong>• Bots de Atención 24/7</strong><br>
-                    <strong>• Agendamiento Auto</strong><br>
-                    <strong>• Reactivación de Leads</strong>
-                </p>
-            </div>
-        </div>
-    </section>
-
-    <section id="data" class="data-section section-padding">
-        <div style="text-align: center; max-width: 800px; margin: 0 auto;">
-            <span class="badge" style="background: rgba(59, 130, 246, 0.1); color: #2563eb;">Market Intelligence</span>
-            <h2 style="font-size: 2.5rem; margin-bottom: 20px;">La Realidad de <span class="gradient-text">Nuevo León</span></h2>
-            <p>La invisibilidad es tu mayor costo. En Monterrey y San Pedro, el mercado es 99% digital.</p>
-        </div>
-
-        <div class="stats-container">
-            <div class="stat-item">
-                <div class="stat-circle">
-                    <svg viewBox="0 0 36 36" class="circle-chart">
-                        <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                        <path class="circle-progress" stroke-dasharray="98, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                    </svg>
-                    <span class="stat-value">98%</span>
-                </div>
-                <div class="stat-label">Acceso Móvil (MTY/SPGG)</div>
-            </div>
-
-            <div class="stat-item">
-                <div class="stat-circle">
-                    <svg viewBox="0 0 36 36" class="circle-chart">
-                        <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                        <path class="circle-progress" stroke-dasharray="93, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                    </svg>
-                    <span class="stat-value">93%</span>
-                </div>
-                <div class="stat-label">Inicio de compra en Google</div>
-            </div>
-
-             <div class="stat-item">
-                <div class="stat-circle">
-                    <svg viewBox="0 0 36 36" class="circle-chart">
-                        <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
-                        <path class="circle-progress" stroke-dasharray="100, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" style="stroke: #ef4444;" />
-                    </svg>
-                    <span class="stat-value" style="color:#ef4444;">100%</span>
-                </div>
-                <div class="stat-label">Riesgo de Fuga</div>
-            </div>
-        </div>
-    </section>
-
-    <section id="contacto" style="padding-top: 50px;">
-        <div class="contact-wrapper">
-            <h2>CONECTA CON EL <span class="gradient-text">FUTURO</span></h2>
-            <p>¿Listo para dejar de competir y empezar a dominar?</p>
-            
-            <a href="tel:8123836266" class="big-phone">81 2383 6266</a>
-            
-            <div style="display: flex; gap: 20px; justify-content: center; margin-top: 30px;">
-                <span class="badge" style="background: white; border: 1px solid #cbd5e1;">Monterrey, NL</span>
-                <span class="badge" style="background: white; border: 1px solid #cbd5e1;">Soporte 24/7</span>
-            </div>
-        </div>
-    </section>
-
-    <footer>
-        <p>© 2026 ETHERNAI SYSTEMS. Ingeniería de Marketing y Automatización.</p>
-    </footer>
+    <h1>Nuestros Vestidos</h1>
+    <div id="contenedor-productos" class="catalogo">
+        Cargando catálogo...
+    </div>
 
     <script>
-        // --- 1. CONFIGURACIÓN DEL FONDO FLUIDO (ESTILO ORGÁNICO) ---
-        const canvas = document.getElementById('fluid-canvas');
-        const ctx = canvas.getContext('2d');
+        // --- CONFIGURACIÓN ACTUALIZADA ---
+        const sheetID = '1oXMJw-h2OwsK37dSOf8vAg7NW6zkEp8yJ6GFkihExD8'; 
         
-        let width, height;
-        let particles = [];
-        
-        // Ajuste perfecto a pantalla
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-            initParticles();
-        }
-        
-        // Configuración de Partículas "Clean Tech"
-        const config = {
-            particleCount: window.innerWidth < 768 ? 40 : 80, // Menos en móvil para rendimiento
-            connectionDistance: 150,
-            mouseDistance: 200,
-            baseSpeed: 0.3
-        };
+        // IMPORTANTE: Asegúrate de que la pestaña en tu Excel se llame 'Hoja1'. 
+        // Si tiene otro nombre (ej. 'Sheet1' o 'Inventario'), cámbialo aquí abajo:
+        const tabName = 'Hoja1'; 
 
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * config.baseSpeed;
-                this.vy = (Math.random() - 0.5) * config.baseSpeed;
-                this.size = Math.random() * 2 + 1;
-                // Color azul sutil
-                this.color = `rgba(14, 165, 233, ${Math.random() * 0.5})`; 
-            }
+        const endpoint = `https://opensheet.elk.sh/${sheetID}/${tabName}`;
 
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
+        async function cargarTienda() {
+            try {
+                const respuesta = await fetch(endpoint);
+                if (!respuesta.ok) throw new Error('Error al conectar con Google Sheets');
+                
+                const productos = await respuesta.json();
+                const contenedor = document.getElementById('contenedor-productos');
+                
+                contenedor.innerHTML = ''; 
 
-                // Rebote suave
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
-
-                // Interacción Mouse (Repulsión suave tipo agua)
-                const dx = mouse.x - this.x;
-                const dy = mouse.y - this.y;
-                const dist = Math.sqrt(dx*dx + dy*dy);
-
-                if (dist < config.mouseDistance) {
-                    const forceDirectionX = dx / dist;
-                    const forceDirectionY = dy / dist;
-                    const force = (config.mouseDistance - dist) / config.mouseDistance;
-                    const directionX = forceDirectionX * force * 2; // Fuerza
-                    const directionY = forceDirectionY * force * 2;
-
-                    this.x -= directionX;
-                    this.y -= directionY;
-                }
-            }
-
-            draw() {
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fillStyle = this.color;
-                ctx.fill();
-            }
-        }
-
-        function initParticles() {
-            particles = [];
-            for(let i=0; i<config.particleCount; i++){
-                particles.push(new Particle());
-            }
-        }
-
-        const mouse = { x: null, y: null };
-        window.addEventListener('mousemove', (e) => {
-            mouse.x = e.x;
-            mouse.y = e.y;
-        });
-
-        window.addEventListener('resize', resize);
-
-        function animate() {
-            ctx.clearRect(0, 0, width, height);
-            
-            // Dibujar Conexiones (Estilo Constelación)
-            for (let a = 0; a < particles.length; a++) {
-                for (let b = a; b < particles.length; b++) {
-                    const dx = particles[a].x - particles[b].x;
-                    const dy = particles[a].y - particles[b].y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-
-                    if (distance < config.connectionDistance) {
-                        // Opacidad basada en distancia (Efecto desvanecimiento)
-                        const opacity = 1 - (distance / config.connectionDistance);
-                        ctx.strokeStyle = `rgba(14, 165, 233, ${opacity * 0.2})`; // Línea azul muy sutil
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(particles[a].x, particles[a].y);
-                        ctx.lineTo(particles[b].x, particles[b].y);
-                        ctx.stroke();
+                productos.forEach(producto => {
+                    // Validar disponibilidad visual
+                    let estadoHTML = `<p class="disponible">${producto.DISPONIBILIDAD}</p>`;
+                    if(producto.DISPONIBILIDAD && producto.DISPONIBILIDAD.toUpperCase() === 'AGOTADO') {
+                        estadoHTML = `<p class="agotado">AGOTADO</p>`;
                     }
-                }
-                particles[a].update();
-                particles[a].draw();
+
+                    // Se eliminó la carpeta "img/" de la ruta. Ahora busca la imagen directamente.
+                    const tarjeta = `
+                        <div class="producto">
+                            <img src="${producto['NOMBRE IMG']}" alt="${producto.NOMBRE}" onerror="this.src='https://via.placeholder.com/250?text=Sin+Foto'">
+                            <h3>${producto.NOMBRE}</h3>
+                            <p>${producto.DESCRIPCION}</p>
+                            <p class="precio">$${producto.PRECIO}</p>
+                            ${estadoHTML}
+                        </div>
+                    `;
+                    contenedor.innerHTML += tarjeta;
+                });
+            } catch (error) {
+                console.error(error);
+                document.getElementById('contenedor-productos').innerHTML = '<p style="color:red; text-align:center;">Hubo un error cargando los productos. Revisa que el nombre de la pestaña del Excel sea correcto.</p>';
             }
-            requestAnimationFrame(animate);
         }
 
-        resize();
-        animate();
-
-        // --- 2. ANIMACIÓN DE ENTRADA AL SCROLL (INTERSECTION OBSERVER) ---
-        const observerOptions = {
-            threshold: 0.1
-        };
-
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('visible');
-                    // Si es gráfico circular, reiniciar animación
-                    if(entry.target.classList.contains('stat-circle')) {
-                        // Forzar redibujado
-                    }
-                }
-            });
-        }, observerOptions);
-
-        // Añadir clases para animar
-        document.querySelectorAll('.clean-card, .hero-content, .contact-wrapper').forEach((el) => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(30px)';
-            el.style.transition = 'all 0.8s ease-out';
-            observer.observe(el);
-        });
-
-        // Modificar observer para inyectar estilos al ver
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach(entry => {
-                if(entry.isIntersecting){
-                    entry.target.style.opacity = '1';
-                    entry.target.style.transform = 'translateY(0)';
-                }
-            });
-        });
-
-        document.querySelectorAll('.clean-card, .hero-content, .contact-wrapper').forEach(el => revealObserver.observe(el));
-
+        cargarTienda();
     </script>
 </body>
 </html>
