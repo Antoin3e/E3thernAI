@@ -1,92 +1,70 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tienda de Vestidos</title>
-    <style>
-        body { font-family: sans-serif; padding: 20px; background-color: #f4f4f4; }
-        h1 { text-align: center; color: #333; }
-        .catalogo { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); 
-            gap: 20px; 
-            max-width: 1200px;
-            margin: 0 auto;
-        }
-        .producto { 
-            background: white; 
-            padding: 15px; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1); 
-            text-align: center; 
-            transition: transform 0.2s;
-        }
-        .producto:hover { transform: translateY(-5px); }
-        .producto img { 
-            max-width: 100%; 
-            height: 300px; /* Altura fija para uniformidad */
-            object-fit: cover; /* Recorta la imagen para que no se deforme */
-            border-radius: 4px; 
-        }
-        .precio { color: #27ae60; font-weight: bold; font-size: 1.2em; }
-        .agotado { color: red; font-weight: bold; }
-        .disponible { color: #2980b9; font-size: 0.9em; }
-    </style>
-</head>
-<body>
-
-    <h1>Nuestros Vestidos</h1>
-    <div id="contenedor-productos" class="catalogo">
-        Cargando catálogo...
-    </div>
-
-    <script>
-        // --- CONFIGURACIÓN ACTUALIZADA ---
+<script>
         const sheetID = '1oXMJw-h2OwsK37dSOf8vAg7NW6zkEp8yJ6GFkihExD8'; 
         
-        // IMPORTANTE: Asegúrate de que la pestaña en tu Excel se llame 'Hoja1'. 
-        // Si tiene otro nombre (ej. 'Sheet1' o 'Inventario'), cámbialo aquí abajo:
-        const tabName = 'Hoja1'; 
+        // --- CAMBIA ESTO SI TU PESTAÑA SE LLAMA 'Sheet1' ---
+        const tabName = 'Sheet1'; 
+        // ---------------------------------------------------
 
         const endpoint = `https://opensheet.elk.sh/${sheetID}/${tabName}`;
 
         async function cargarTienda() {
+            const contenedor = document.getElementById('contenedor-productos');
+            
             try {
                 const respuesta = await fetch(endpoint);
-                if (!respuesta.ok) throw new Error('Error al conectar con Google Sheets');
+                
+                // Si la respuesta no es OK, lanzamos error para ver qué pasó
+                if (!respuesta.ok) {
+                    const errorMsg = await respuesta.text();
+                    throw new Error(`Error del servidor: ${respuesta.status} - ${errorMsg}`);
+                }
                 
                 const productos = await respuesta.json();
-                const contenedor = document.getElementById('contenedor-productos');
-                
+
+                // Validación extra: Si devuelve un error tipo JSON
+                if (productos.error) {
+                    throw new Error(`Error de la API: ${productos.error}`);
+                }
+
                 contenedor.innerHTML = ''; 
 
                 productos.forEach(producto => {
-                    // Validar disponibilidad visual
-                    let estadoHTML = `<p class="disponible">${producto.DISPONIBILIDAD}</p>`;
+                    // Evitar filas vacías (como las que vi en tu captura con solo .jpg)
+                    if(!producto.NOMBRE) return;
+
+                    let estadoHTML = `<p class="disponible">${producto.DISPONIBILIDAD || ''}</p>`;
                     if(producto.DISPONIBILIDAD && producto.DISPONIBILIDAD.toUpperCase() === 'AGOTADO') {
                         estadoHTML = `<p class="agotado">AGOTADO</p>`;
                     }
 
-                    // Se eliminó la carpeta "img/" de la ruta. Ahora busca la imagen directamente.
                     const tarjeta = `
                         <div class="producto">
                             <img src="${producto['NOMBRE IMG']}" alt="${producto.NOMBRE}" onerror="this.src='https://via.placeholder.com/250?text=Sin+Foto'">
                             <h3>${producto.NOMBRE}</h3>
-                            <p>${producto.DESCRIPCION}</p>
+                            <p>${producto.DESCRIPCION || ''}</p>
                             <p class="precio">$${producto.PRECIO}</p>
                             ${estadoHTML}
                         </div>
                     `;
                     contenedor.innerHTML += tarjeta;
                 });
+                
             } catch (error) {
                 console.error(error);
-                document.getElementById('contenedor-productos').innerHTML = '<p style="color:red; text-align:center;">Hubo un error cargando los productos. Revisa que el nombre de la pestaña del Excel sea correcto.</p>';
+                // Esto mostrará el error técnico en la página para que sepamos qué arreglar
+                contenedor.innerHTML = `
+                    <div style="color:red; text-align:center; padding:20px; border:2px dashed red;">
+                        <h3>⚠️ Ocurrió un error</h3>
+                        <p>Asegurate de que:</p>
+                        <ul style="text-align:left; display:inline-block;">
+                            <li>El archivo en Google Sheets está compartido como "Cualquier persona con el enlace".</li>
+                            <li>El nombre de la pestaña en el código ('${tabName}') es IDÉNTICO al de abajo a la izquierda en tu Excel.</li>
+                        </ul>
+                        <p><strong>Detalle técnico:</strong> ${error.message}</p>
+                    </div>`;
             }
         }
 
         cargarTienda();
     </script>
-</body>
-</html>
+
