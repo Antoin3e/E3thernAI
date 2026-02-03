@@ -3,508 +3,573 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ethernaí | Crecimiento Digital Medible</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <title>Ethernaí | Inteligencia de Datos</title>
     
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Manrope:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+
     <style>
         :root {
-            /* Paleta de Colores */
-            --bg-color: #F9FAF8; /* Crema suave */
-            --text-main: #333333; /* Gris Carbón */
-            --accent-green: #58A4B0; /* Eucalipto (base de la sombra solicitada) */
-            --accent-green-dark: #468691;
-            --accent-blue: #0C1B33; /* Azul Profundo */
-            --bg-sage: #E8F3E8; /* Verde Salvia Claro */
-            --white: #FFFFFF;
+            --col-bg: #F5F7F5; /* Crema orgánico */
+            --col-dark: #0A1420; /* Azul casi negro */
+            --col-green: #58A4B0; /* Eucalipto */
+            --col-green-soft: rgba(88, 164, 176, 0.1);
+            --col-text: #2C3539;
+            --glass: rgba(255, 255, 255, 0.65);
+            --glass-border: rgba(255, 255, 255, 0.8);
+            --shadow-soft: 0 20px 40px -10px rgba(88, 164, 176, 0.15);
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
+        /* --- BASE & TEXTURAS --- */
         body {
-            font-family: 'Inter', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            line-height: 1.6;
+            margin: 0;
+            background-color: var(--col-bg);
+            color: var(--col-text);
+            font-family: 'Manrope', sans-serif;
             overflow-x: hidden;
         }
 
-        /* 1. SECCIÓN HERO */
+        /* Ruido visual para textura de papel */
+        .texture-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            pointer-events: none;
+            z-index: 9999;
+            opacity: 0.04;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        }
+
+        h1, h2, h3 {
+            font-family: 'Cormorant Garamond', serif;
+            font-weight: 600;
+            color: var(--col-dark);
+        }
+
+        /* --- HERO SECTION --- */
         .hero {
-            height: 90vh;
+            position: relative;
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            text-align: center;
-            padding: 2rem;
+            overflow: hidden;
+        }
+
+        #hero-canvas {
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            z-index: 0;
+        }
+
+        .hero-card {
             position: relative;
-            background: linear-gradient(rgba(255,255,255,0.8), rgba(249,250,248,1)), 
-                        url('https://images.unsplash.com/photo-1441974231531-c6227db76b6e?ixlib=rb-1.2.1&auto=format&fit=crop&w=1951&q=80'); /* Imagen placeholder orgánica */
-            background-size: cover;
-            background-position: center;
-        }
-
-        .hero-content {
+            z-index: 2;
+            background: var(--glass);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 4rem;
+            border-radius: 2px; /* Esquinas casi rectas para seriedad técnica */
+            border: 1px solid var(--glass-border);
             max-width: 800px;
-            animation: fadeInUp 1.2s ease-out;
+            text-align: center;
+            box-shadow: var(--shadow-soft);
+            transform: translateY(30px);
+            opacity: 0; /* JS maneja la entrada */
         }
 
-        h1 {
-            font-size: 3.5rem;
-            color: var(--accent-blue);
+        .hero-title {
+            font-size: 4rem;
+            line-height: 1;
             margin-bottom: 1.5rem;
-            font-weight: 700;
-            letter-spacing: -1px;
+            background: linear-gradient(45deg, var(--col-dark), var(--col-green));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero-subtitle {
-            font-size: 1.25rem;
-            color: var(--text-main);
-            margin-bottom: 2.5rem;
-            font-weight: 300;
-        }
-
-        .btn-main {
-            display: inline-block;
-            background-color: var(--accent-green);
-            color: white;
-            padding: 15px 35px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(88, 164, 176, 0.3);
-        }
-
-        .btn-main:hover {
-            background-color: var(--accent-green-dark);
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(88, 164, 176, 0.4);
-        }
-
-        /* 2. CARRUSEL DE TECNOLOGÍAS (INFINITE SCROLL) */
-        .tech-carousel {
-            padding: 4rem 0;
-            background-color: white;
-            overflow: hidden;
-        }
-
-        .section-title {
-            text-align: center;
-            font-size: 1.1rem;
-            color: #888;
-            margin-bottom: 2rem;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .slider {
-            background: white;
-            height: 100px;
-            margin: auto;
-            overflow: hidden;
-            position: relative;
-            width: 100%;
-        }
-
-        .slide-track {
-            animation: scroll 40s linear infinite;
-            display: flex;
-            width: calc(250px * 18); /* Ancho estimado x número de logos duplicados */
-            align-items: center;
-        }
-
-        .slide {
-            height: 100px;
-            width: 250px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 0 20px;
-        }
-
-        /* Estilos de logos (simulados con texto para el demo) */
-        .logo-placeholder {
             font-size: 1.2rem;
-            font-weight: 700;
-            color: #333;
-            opacity: 0.6;
-            filter: grayscale(100%);
-            transition: all 0.3s ease;
-            cursor: default;
+            font-weight: 300;
+            margin-bottom: 2.5rem;
+            color: #555;
+        }
+
+        .btn-glow {
+            display: inline-block;
+            padding: 18px 40px;
+            background: var(--col-dark);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 500;
+            letter-spacing: 1px;
+            transition: all 0.4s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn-glow::after {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+            transition: 0.5s;
+        }
+
+        .btn-glow:hover::after {
+            left: 100%;
+        }
+
+        .btn-glow:hover {
+            background: var(--col-green);
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(88, 164, 176, 0.4);
+        }
+
+        /* --- TECH CAROUSEL --- */
+        .carousel-section {
+            padding: 4rem 0;
+            background: white;
+            position: relative;
+        }
+        
+        /* Máscaras de desvanecimiento laterales */
+        .carousel-section::before, .carousel-section::after {
+            content: "";
+            position: absolute;
+            top: 0; width: 150px; height: 100%;
+            z-index: 2;
+            pointer-events: none;
+        }
+        .carousel-section::before { left: 0; background: linear-gradient(to right, white, transparent); }
+        .carousel-section::after { right: 0; background: linear-gradient(to left, white, transparent); }
+
+        .slider-track {
+            display: flex;
+            width: fit-content;
+            gap: 4rem;
+            animation: infiniteScroll 40s linear infinite;
+        }
+
+        .tech-item {
             display: flex;
             align-items: center;
             gap: 10px;
+            font-weight: 700;
+            color: #ccc;
+            font-size: 1.5rem;
+            transition: 0.3s;
+            filter: grayscale(100%);
+        }
+
+        .tech-item:hover {
+            color: var(--col-dark);
+            filter: grayscale(0%);
+            transform: scale(1.1);
+        }
+
+        @keyframes infiniteScroll {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+
+        /* --- METODOLOGÍA --- */
+        .methodology {
+            padding: 8rem 2rem;
         }
         
-        .slide:hover .logo-placeholder {
-            opacity: 1;
-            filter: grayscale(0%);
-            color: var(--accent-blue); /* Simula "color original" */
-        }
-
-        @keyframes scroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(calc(-250px * 9)); }
-        }
-
-        /* 3. METODOLOGÍA */
-        .methodology {
-            padding: 6rem 2rem;
+        .section-header {
             text-align: center;
+            margin-bottom: 5rem;
         }
 
-        .grid-4 {
+        .grid-steps {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            grid-template-columns: repeat(4, 1fr);
             gap: 2rem;
-            margin-top: 3rem;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .step-card {
-            padding: 2rem;
-        }
-
-        .step-icon {
-            font-size: 2.5rem;
-            color: var(--accent-green);
-            margin-bottom: 1.5rem;
-        }
-
-        .step-title {
-            font-size: 1.2rem;
-            color: var(--accent-blue);
-            margin-bottom: 1rem;
-        }
-
-        /* 4. SERVICIOS INTERACTIVOS (ACORDEÓN) */
-        .services {
-            padding: 6rem 2rem;
-            background-color: #fff;
-            max-width: 1000px;
+            max-width: 1300px;
             margin: 0 auto;
         }
 
-        .service-card {
-            background: var(--bg-color);
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            overflow: hidden;
-            transition: box-shadow 0.4s ease;
-            cursor: pointer;
+        .step-box {
+            background: white;
+            padding: 3rem 2rem;
+            border-top: 3px solid transparent;
+            transition: all 0.4s ease;
+            cursor: default;
         }
 
-        .service-header {
+        .step-box:hover {
+            border-top: 3px solid var(--col-green);
+            transform: translateY(-10px);
+            box-shadow: var(--shadow-soft);
+        }
+
+        .step-num {
+            font-size: 4rem;
+            font-family: 'Cormorant Garamond', serif;
+            color: #eee;
+            line-height: 0.5;
+            margin-bottom: 1.5rem;
+        }
+
+        /* --- SERVICIOS (ACORDEÓN MODERNO) --- */
+        .services-section {
+            padding: 8rem 2rem;
+            background: linear-gradient(to bottom, #fff, var(--col-bg));
+        }
+
+        .accordion-container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .acc-item {
+            margin-bottom: 1.5rem;
+            background: white;
+            border-radius: 12px;
+            overflow: hidden;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+            transition: all 0.4s ease;
+            border: 1px solid rgba(0,0,0,0.05);
+        }
+
+        .acc-header {
             padding: 2rem;
+            cursor: pointer;
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
 
-        .service-title h3 {
-            color: var(--accent-blue);
-            margin-bottom: 0.5rem;
+        .acc-title {
+            font-size: 1.4rem;
+            font-weight: 500;
         }
 
-        .toggle-icon {
-            color: var(--accent-green);
-            font-size: 1.5rem;
-            transition: transform 0.4s ease;
+        .acc-icon {
+            width: 30px; height: 30px;
+            border-radius: 50%;
+            background: var(--col-bg);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8rem;
+            transition: transform 0.3s ease;
         }
 
-        .service-content {
+        .acc-body {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.6s ease-in-out, opacity 0.6s ease-in-out;
-            opacity: 0;
-            background-color: white;
+            transition: max-height 0.6s cubic-bezier(0.25, 1, 0.5, 1);
         }
 
-        .service-content-inner {
+        .acc-content {
             padding: 0 2rem 2rem 2rem;
-            color: #555;
-            font-size: 0.95rem;
-        }
-
-        .service-content-inner ul {
-            list-style: none;
-            margin-top: 1rem;
-        }
-        .service-content-inner li {
-            margin-bottom: 0.5rem;
-            padding-left: 1rem;
-            border-left: 3px solid var(--accent-green);
-        }
-
-        /* Estado Activo del Servicio */
-        .service-card.active {
-            /* Nota del desarrollador: Sombra verdosa sutil */
-            box-shadow: 0 15px 30px -5px rgba(88, 164, 176, 0.2); 
-        }
-
-        .service-card.active .toggle-icon {
-            transform: rotate(45deg);
-        }
-
-        .service-card.active .service-content {
-            max-height: 500px; /* Altura suficiente */
-            opacity: 1;
-        }
-
-        /* 5. DIFERENCIADOR */
-        .differentiator {
-            background-color: var(--bg-sage);
-            padding: 6rem 2rem;
-            text-align: center;
-        }
-
-        .diff-box {
-            max-width: 800px;
-            margin: 0 auto;
-        }
-
-        /* 6. FOOTER */
-        footer {
-            background-color: white;
-            padding: 4rem 2rem;
-            border-top: 1px solid #eee;
-            text-align: center;
-            color: var(--text-main);
-        }
-
-        .footer-brand {
-            font-weight: 700;
-            font-size: 1.5rem;
-            color: var(--accent-blue);
-            margin-bottom: 1rem;
-            display: block;
-        }
-
-        .contact-btn {
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            background-color: #25D366; /* WhatsApp Green */
-            color: white;
-            padding: 10px 25px;
-            border-radius: 50px;
-            text-decoration: none;
-            margin: 1.5rem 0;
-            font-weight: 600;
-        }
-
-        .languages {
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
             color: #666;
+            font-size: 1rem;
+            line-height: 1.7;
+            border-top: 1px solid #f0f0f0;
+            margin-top: 0.5rem;
+            padding-top: 1.5rem;
         }
 
-        .copyright {
-            font-size: 0.8rem;
-            color: #999;
+        .acc-item.active {
+            box-shadow: var(--shadow-soft);
+            border-color: var(--col-green);
+        }
+        
+        .acc-item.active .acc-icon {
+            background: var(--col-green);
+            color: white;
+            transform: rotate(180deg);
         }
 
-        /* Animations */
-        @keyframes fadeInUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
+        /* --- DIFERENCIADOR --- */
+        .diff-section {
+            position: relative;
+            padding: 8rem 2rem;
+            background: var(--col-dark);
+            color: white;
+            text-align: center;
+            overflow: hidden;
+        }
+
+        .diff-section h2 { color: white; }
+
+        .blob {
+            position: absolute;
+            background: var(--col-green);
+            filter: blur(80px);
+            opacity: 0.3;
+            border-radius: 50%;
+            z-index: 0;
+        }
+        
+        .diff-content {
+            position: relative;
+            z-index: 1;
+            max-width: 700px;
+            margin: auto;
+        }
+
+        /* --- FOOTER --- */
+        footer {
+            background: white;
+            padding: 4rem 2rem;
+            text-align: center;
+            border-top: 1px solid #eee;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
-            h1 { font-size: 2.5rem; }
-            .hero { height: auto; padding: 6rem 2rem; }
-            .grid-4 { grid-template-columns: 1fr; }
+            .hero-title { font-size: 2.5rem; }
+            .grid-steps { grid-template-columns: 1fr; }
+            .hero-card { padding: 2rem; margin: 1rem; }
         }
     </style>
 </head>
 <body>
 
-    <header class="hero">
-        <div class="hero-content">
-            <h1>Crecimiento Digital, Medible y Humano.</h1>
-            <p class="hero-subtitle">En Ethernaí unimos la precisión de la ingeniería de datos con estrategias de ventas orgánicas. Digitalización, analítica y automatización para dar rumbo y sentido a tu inversión.</p>
-            <a href="#metodologia" class="btn-main">Ver Metodología</a>
-        </div>
-    </header>
+    <div class="texture-overlay"></div>
 
-    <section class="tech-carousel">
-        <h3 class="section-title">Potenciado por las mejores herramientas de análisis</h3>
-        <div class="slider">
-            <div class="slide-track">
-                <div class="slide"><div class="logo-placeholder"><i class="fab fa-google"></i> Google</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fas fa-chart-bar"></i> GA4</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fas fa-tag"></i> GTM</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fas fa-chart-pie"></i> Looker</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fas fa-mouse-pointer"></i> Clicky</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fab fa-python"></i> Jupyter</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fab fa-python"></i> Python</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fab fa-meta"></i> Meta Ads</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fas fa-robot"></i> OpenAI</div></div>
-                
-                <div class="slide"><div class="logo-placeholder"><i class="fab fa-google"></i> Google</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fas fa-chart-bar"></i> GA4</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fas fa-tag"></i> GTM</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fas fa-chart-pie"></i> Looker</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fas fa-mouse-pointer"></i> Clicky</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fab fa-python"></i> Jupyter</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fab fa-python"></i> Python</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fab fa-meta"></i> Meta Ads</div></div>
-                <div class="slide"><div class="logo-placeholder"><i class="fas fa-robot"></i> OpenAI</div></div>
-            </div>
+    <section class="hero">
+        <canvas id="hero-canvas"></canvas>
+        <div class="hero-card">
+            <h1 class="hero-title">Datos que cuentan<br>historias humanas.</h1>
+            <p class="hero-subtitle">Ingeniería de datos precisa + Estrategia orgánica. <br>El equilibrio perfecto para tu inversión digital.</p>
+            <a href="#metodologia" class="btn-glow">VER METODOLOGÍA</a>
         </div>
+    </section>
+
+    <section class="carousel-section">
+        <div class="slider-track" id="techTrack">
+            </div>
     </section>
 
     <section class="methodology" id="metodologia">
-        <h2 style="color: var(--accent-blue); font-size: 2rem;">Ingeniería aplicada a tus Ventas</h2>
-        <div class="grid-4">
-            <div class="step-card">
-                <div class="step-icon"><i class="fas fa-stethoscope"></i></div>
-                <h4 class="step-title">Diagnóstico</h4>
-                <p>Organizamos tu ecosistema digital desde la raíz.</p>
-            </div>
-            <div class="step-card">
-                <div class="step-icon"><i class="fas fa-fingerprint"></i></div>
-                <h4 class="step-title">Captura</h4>
-                <p>Implementamos sensores digitales para no perder datos.</p>
-            </div>
-            <div class="step-card">
-                <div class="step-icon"><i class="fas fa-microscope"></i></div>
-                <h4 class="step-title">Análisis</h4>
-                <p>Transformamos números en patrones de conducta humana.</p>
-            </div>
-            <div class="step-card">
-                <div class="step-icon"><i class="fas fa-rocket"></i></div>
-                <h4 class="step-title">Evolución</h4>
-                <p>Automatizamos con IA para escalar tus resultados.</p>
-            </div>
+        <div class="section-header">
+            <h3>EL PROCESO</h3>
+            <h2>Ingeniería aplicada a tus Ventas</h2>
         </div>
+        <div class="grid-steps" id="stepsGrid">
+            </div>
     </section>
 
-    <section class="services">
-        <div class="service-card" onclick="toggleService(this)">
-            <div class="service-header">
-                <div class="service-title">
-                    <h3>Infraestructura de Medición</h3>
-                    <p>La base de todo. Configuramos tu negocio para escuchar al mercado.</p>
-                </div>
-                <div class="toggle-icon">+</div>
-            </div>
-            <div class="service-content">
-                <div class="service-content-inner">
-                    <ul>
-                        <li><strong>Auditoría Digital:</strong> Revisión técnica de sitios web y funnels.</li>
-                        <li><strong>Google Tag Manager:</strong> Configuración avanzada de eventos.</li>
-                        <li><strong>Google Analytics 4:</strong> Implementación de métricas personalizadas.</li>
-                        <li><strong>Limpieza de Datos:</strong> Eliminación de tráfico bot.</li>
-                    </ul>
-                </div>
-            </div>
+    <section class="services-section">
+        <div class="section-header">
+            <h3>CAPACIDADES</h3>
+            <h2>Soluciones Escalables</h2>
         </div>
+        <div class="accordion-container" id="servicesContainer">
+            </div>
+    </section>
 
-        <div class="service-card" onclick="toggleService(this)">
-            <div class="service-header">
-                <div class="service-title">
-                    <h3>Análisis de Datos y ROI</h3>
-                    <p>Deja de gastar a ciegas. Usamos estadística para mejorar márgenes.</p>
-                </div>
-                <div class="toggle-icon">+</div>
-            </div>
-            <div class="service-content">
-                <div class="service-content-inner">
-                    <ul>
-                        <li><strong>Dashboards en Tiempo Real:</strong> Looker Studio / PowerBI.</li>
-                        <li><strong>Ciencia de Datos (Jupyter):</strong> Análisis de tendencias.</li>
-                        <li><strong>Seguimiento de Conversiones:</strong> Rastreo exacto del ROI.</li>
-                        <li><strong>Consultoría de Mejora:</strong> Ajuste de rumbo estratégico.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="service-card" onclick="toggleService(this)">
-            <div class="service-header">
-                <div class="service-title">
-                    <h3>Automatización e IA</h3>
-                    <p>Tu negocio atendiendo 24/7. Asistentes inteligentes.</p>
-                </div>
-                <div class="toggle-icon">+</div>
-            </div>
-            <div class="service-content">
-                <div class="service-content-inner">
-                    <ul>
-                        <li><strong>Chatbots Avanzados:</strong> IA entrenada para ventas.</li>
-                        <li><strong>Automatización:</strong> Ejecución autónoma de tareas.</li>
-                        <li><strong>Integración CRM:</strong> Conexión fluida leads-ventas.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
+    <section class="diff-section">
+        <div class="blob" style="width: 300px; height: 300px; top: -50px; left: -50px;"></div>
+        <div class="blob" style="width: 400px; height: 400px; bottom: -100px; right: -100px; background: #468691;"></div>
         
-        <div class="service-card" onclick="toggleService(this)">
-            <div class="service-header">
-                <div class="service-title">
-                    <h3>Consultoría Global</h3>
-                    <p>Estrategia sin fronteras. Soporte trilingüe.</p>
-                </div>
-                <div class="toggle-icon">+</div>
-            </div>
-            <div class="service-content">
-                <div class="service-content-inner">
-                    <ul>
-                        <li><strong>Soporte Nativo:</strong> Español, Inglés, Portugués.</li>
-                        <li><strong>Mercados Internacionales:</strong> Adaptación cultural.</li>
-                        <li><strong>Reportes Unificados:</strong> Estandarización global.</li>
-                    </ul>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section class="differentiator">
-        <div class="diff-box">
-            <h2 style="color: var(--accent-blue); margin-bottom: 1.5rem;">Tecnología de Punta, Trato Humano</h2>
-            <p style="font-size: 1.1rem; color: #555;">
-                "En Ethernaí, no eres un ticket de soporte. Tienes un ingeniero asignado a tu proyecto.
-                Empezamos analizando tus datos manualmente y terminamos construyendo sistemas que trabajan solos. 
-                A diferencia de las agencias masivas, nosotros nos especializamos en el análisis estadístico para darle un rumbo claro a tu inversión digital."
+        <div class="diff-content">
+            <h2>Tecnología de Punta, Trato Humano</h2>
+            <p style="font-size: 1.2rem; margin-top: 2rem; font-weight: 300; line-height: 1.8;">
+                "En Ethernaí, eliminamos la barrera entre el analista y el cliente. 
+                Empezamos con auditoría manual y terminamos con sistemas autónomos. 
+                Sin cajas negras, solo resultados claros."
             </p>
         </div>
     </section>
 
     <footer>
-        <span class="footer-brand">Ethernaí</span>
-        <p>Digitalización & Inteligencia de Negocios</p>
-        
-        <a href="https://wa.me/528123836266" class="contact-btn">
-            <i class="fab fa-whatsapp"></i> 81 2383 6266
-        </a>
-
-        <div class="languages">
-            🇲🇽 Español | 🇺🇸 English | 🇧🇷 Português
+        <h3 style="font-size: 1.5rem;">Ethernaí</h3>
+        <div style="margin: 2rem 0;">
+            <a href="#" style="color: var(--col-dark); font-weight: 600; text-decoration: none;">
+                <i class="fab fa-whatsapp"></i> 81 2383 6266
+            </a>
         </div>
-
-        <p class="copyright">© 2026 Ethernaí. Impulsando datos, generando ventas.</p>
+        <small style="color: #999;">© 2026 Ethernaí | Intelligence & Growth</small>
     </footer>
 
     <script>
-        function toggleService(card) {
-            // Cierra otros abiertos si se desea comportamiento de acordeón estricto
-            // const allCards = document.querySelectorAll('.service-card');
-            // allCards.forEach(c => {
-            //     if(c !== card) c.classList.remove('active');
-            // });
+        // --- 1. DATA (JSON) ---
+        const data = {
+            techStack: [
+                { name: "Google", icon: "fab fa-google" },
+                { name: "GA4", icon: "fas fa-chart-bar" },
+                { name: "Python", icon: "fab fa-python" },
+                { name: "Looker", icon: "fas fa-chart-pie" },
+                { name: "OpenAI", icon: "fas fa-brain" },
+                { name: "Meta", icon: "fab fa-meta" },
+                { name: "Jupyter", icon: "fas fa-laptop-code" },
+            ],
+            steps: [
+                { id: "01", title: "Diagnóstico", desc: "Auditoría profunda del ecosistema digital actual." },
+                { id: "02", title: "Captura", desc: "Implementación de sensores (Tags/Pixels) de alta precisión." },
+                { id: "03", title: "Análisis", desc: "Modelado estadístico para encontrar patrones de compra." },
+                { id: "04", title: "Evolución", desc: "Automatización con IA para escalar sin aumentar personal." }
+            ],
+            services: [
+                {
+                    title: "Infraestructura de Medición",
+                    details: "Configuramos GTM Server-side, GA4 avanzado y limpieza de datos para eliminar el tráfico bot de tus reportes."
+                },
+                {
+                    title: "Ciencia de Datos & ROI",
+                    details: "Dashboards predictivos en Looker Studio. Dejamos de ver 'qué pasó' para predecir 'qué pasará'."
+                },
+                {
+                    title: "Automatización e IA",
+                    details: "Chatbots entrenados con tu propia data. Integración CRM automática entre Marketing y Ventas."
+                },
+                {
+                    title: "Consultoría Global",
+                    details: "Soporte nativo en Español, Inglés y Portugués para equipos distribuidos."
+                }
+            ]
+        };
 
-            // Alternar clase active
-            card.classList.toggle('active');
+        // --- 2. RENDERING FUNCTIONS ---
+        
+        // Render Tech Carousel (Duplicado para efecto infinito)
+        const track = document.getElementById('techTrack');
+        const itemsHTML = data.techStack.map(t => 
+            `<div class="tech-item"><i class="${t.icon}"></i> ${t.name}</div>`
+        ).join('');
+        // Inyectar 3 veces para asegurar loop fluido en pantallas grandes
+        track.innerHTML = itemsHTML + itemsHTML + itemsHTML + itemsHTML;
+
+        // Render Steps
+        const stepsContainer = document.getElementById('stepsGrid');
+        stepsContainer.innerHTML = data.steps.map(s => `
+            <div class="step-box">
+                <div class="step-num">${s.id}</div>
+                <h4>${s.title}</h4>
+                <p style="font-size: 0.9rem; color: #666;">${s.desc}</p>
+            </div>
+        `).join('');
+
+        // Render Services (Accordion)
+        const servicesContainer = document.getElementById('servicesContainer');
+        servicesContainer.innerHTML = data.services.map((s, index) => `
+            <div class="acc-item" onclick="toggleAcc(this)">
+                <div class="acc-header">
+                    <span class="acc-title">${s.title}</span>
+                    <div class="acc-icon"><i class="fas fa-plus"></i></div>
+                </div>
+                <div class="acc-body">
+                    <div class="acc-content">${s.details}</div>
+                </div>
+            </div>
+        `).join('');
+
+        // --- 3. INTERACTION LOGIC ---
+        function toggleAcc(el) {
+            const isActive = el.classList.contains('active');
+            
+            // Cerrar todos
+            document.querySelectorAll('.acc-item').forEach(item => {
+                item.classList.remove('active');
+                item.querySelector('.acc-body').style.maxHeight = null;
+            });
+
+            // Abrir clickeado si no estaba activo
+            if (!isActive) {
+                el.classList.add('active');
+                el.querySelector('.acc-body').style.maxHeight = el.querySelector('.acc-content').scrollHeight + "px";
+            }
         }
+
+        // --- 4. GSAP ANIMATIONS ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Hero Intro
+        gsap.to(".hero-card", {
+            opacity: 1,
+            y: 0,
+            duration: 1.5,
+            ease: "power3.out",
+            delay: 0.2
+        });
+
+        // Steps Stagger
+        gsap.from(".step-box", {
+            scrollTrigger: {
+                trigger: ".grid-steps",
+                start: "top 80%"
+            },
+            y: 50,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.2
+        });
+
+        // --- 5. CANVAS BACKGROUND (ORGANIC NODES) ---
+        const canvas = document.getElementById('hero-canvas');
+        const ctx = canvas.getContext('2d');
+        let width, height;
+        let particles = [];
+
+        function resize() {
+            width = canvas.width = window.innerWidth;
+            height = canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resize);
+        resize();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * width;
+                this.y = Math.random() * height;
+                this.vx = (Math.random() - 0.5) * 0.5;
+                this.vy = (Math.random() - 0.5) * 0.5;
+                this.size = Math.random() * 2;
+            }
+            update() {
+                this.x += this.vx;
+                this.y += this.vy;
+                if (this.x < 0 || this.x > width) this.vx *= -1;
+                if (this.y < 0 || this.y > height) this.vy *= -1;
+            }
+            draw() {
+                ctx.fillStyle = '#58A4B0'; // Green color
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        for (let i = 0; i < 60; i++) particles.push(new Particle());
+
+        function animate() {
+            ctx.clearRect(0, 0, width, height);
+            
+            // Draw connections
+            particles.forEach((p, index) => {
+                p.update();
+                p.draw();
+                
+                for (let j = index; j < particles.length; j++) {
+                    const dx = p.x - particles[j].x;
+                    const dy = p.y - particles[j].y;
+                    const dist = Math.sqrt(dx*dx + dy*dy);
+                    
+                    if (dist < 150) {
+                        ctx.strokeStyle = `rgba(88, 164, 176, ${0.1 - dist/1500})`;
+                        ctx.lineWidth = 1;
+                        ctx.beginPath();
+                        ctx.moveTo(p.x, p.y);
+                        ctx.lineTo(particles[j].x, particles[j].y);
+                        ctx.stroke();
+                    }
+                }
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
     </script>
 </body>
 </html>
