@@ -3,573 +3,481 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ethernaí | Inteligencia de Datos</title>
+    <title>Ethernaí | Ecosistema de Datos</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Manrope:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
+    <script src="https://unpkg.com/split-type"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         :root {
-            --col-bg: #F5F7F5; /* Crema orgánico */
-            --col-dark: #0A1420; /* Azul casi negro */
-            --col-green: #58A4B0; /* Eucalipto */
-            --col-green-soft: rgba(88, 164, 176, 0.1);
-            --col-text: #2C3539;
-            --glass: rgba(255, 255, 255, 0.65);
-            --glass-border: rgba(255, 255, 255, 0.8);
-            --shadow-soft: 0 20px 40px -10px rgba(88, 164, 176, 0.15);
+            --neon-green: #00FF9D;
+            --deep-forest: #021210;
+            --glass-border: rgba(255, 255, 255, 0.1);
         }
 
-        /* --- BASE & TEXTURAS --- */
         body {
+            background-color: var(--deep-forest);
+            color: #ffffff;
+            font-family: 'Space Grotesk', sans-serif;
             margin: 0;
-            background-color: var(--col-bg);
-            color: var(--col-text);
-            font-family: 'Manrope', sans-serif;
             overflow-x: hidden;
+            cursor: none; /* Ocultamos cursor nativo */
         }
 
-        /* Ruido visual para textura de papel */
-        .texture-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            pointer-events: none;
+        /* --- UI & TEXTURAS --- */
+        .scanline {
+            width: 100%;
+            height: 100px;
             z-index: 9999;
-            opacity: 0.04;
-            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
-        }
-
-        h1, h2, h3 {
-            font-family: 'Cormorant Garamond', serif;
-            font-weight: 600;
-            color: var(--col-dark);
-        }
-
-        /* --- HERO SECTION --- */
-        .hero {
-            position: relative;
-            height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-
-        #hero-canvas {
+            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0, 255, 157, 0.04) 50%, rgba(0,0,0,0) 100%);
+            opacity: 0.1;
             position: absolute;
+            bottom: 100%;
+            pointer-events: none;
+            animation: scanline 10s linear infinite;
+        }
+
+        @keyframes scanline {
+            0% { bottom: 100%; }
+            100% { bottom: -100%; }
+        }
+
+        .noise-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background: url('https://grainy-gradients.vercel.app/noise.svg');
+            opacity: 0.05;
+            z-index: 50;
+            pointer-events: none;
+        }
+
+        /* --- CURSOR PERSONALIZADO --- */
+        .cursor-dot, .cursor-circle {
+            position: fixed;
+            top: 0; left: 0;
+            transform: translate(-50%, -50%);
+            border-radius: 50%;
+            z-index: 9999;
+            pointer-events: none;
+        }
+        .cursor-dot {
+            width: 8px; height: 8px;
+            background: var(--neon-green);
+        }
+        .cursor-circle {
+            width: 40px; height: 40px;
+            border: 1px solid rgba(0, 255, 157, 0.5);
+            transition: width 0.3s, height 0.3s, background-color 0.3s;
+        }
+
+        /* --- TIPOGRAFÍA Y EFECTOS --- */
+        h1, h2, .tech-font {
+            font-family: 'Syncopate', sans-serif;
+            text-transform: uppercase;
+        }
+
+        .glass-panel {
+            background: rgba(2, 18, 16, 0.4);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+
+        .text-glow {
+            text-shadow: 0 0 20px rgba(0, 255, 157, 0.5);
+        }
+
+        /* Glitch Effect simple */
+        .glitch-wrapper:hover {
+            animation: glitch-anim 0.3s infinite;
+        }
+        @keyframes glitch-anim {
+            0% { transform: translate(0) }
+            20% { transform: translate(-2px, 2px) }
+            40% { transform: translate(-2px, -2px) }
+            60% { transform: translate(2px, 2px) }
+            80% { transform: translate(2px, -2px) }
+            100% { transform: translate(0) }
+        }
+
+        /* --- CANVAS --- */
+        #webgl-canvas {
+            position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
-            z-index: 0;
+            z-index: -1;
         }
 
-        .hero-card {
-            position: relative;
-            z-index: 2;
-            background: var(--glass);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 4rem;
-            border-radius: 2px; /* Esquinas casi rectas para seriedad técnica */
-            border: 1px solid var(--glass-border);
-            max-width: 800px;
-            text-align: center;
-            box-shadow: var(--shadow-soft);
-            transform: translateY(30px);
-            opacity: 0; /* JS maneja la entrada */
-        }
-
-        .hero-title {
-            font-size: 4rem;
-            line-height: 1;
-            margin-bottom: 1.5rem;
-            background: linear-gradient(45deg, var(--col-dark), var(--col-green));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero-subtitle {
-            font-size: 1.2rem;
-            font-weight: 300;
-            margin-bottom: 2.5rem;
-            color: #555;
-        }
-
-        .btn-glow {
-            display: inline-block;
-            padding: 18px 40px;
-            background: var(--col-dark);
-            color: white;
-            text-decoration: none;
-            border-radius: 50px;
-            font-weight: 500;
-            letter-spacing: 1px;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn-glow::after {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
-            transition: 0.5s;
-        }
-
-        .btn-glow:hover::after {
-            left: 100%;
-        }
-
-        .btn-glow:hover {
-            background: var(--col-green);
-            transform: translateY(-3px);
-            box-shadow: 0 10px 20px rgba(88, 164, 176, 0.4);
-        }
-
-        /* --- TECH CAROUSEL --- */
-        .carousel-section {
-            padding: 4rem 0;
-            background: white;
-            position: relative;
-        }
-        
-        /* Máscaras de desvanecimiento laterales */
-        .carousel-section::before, .carousel-section::after {
-            content: "";
-            position: absolute;
-            top: 0; width: 150px; height: 100%;
-            z-index: 2;
-            pointer-events: none;
-        }
-        .carousel-section::before { left: 0; background: linear-gradient(to right, white, transparent); }
-        .carousel-section::after { right: 0; background: linear-gradient(to left, white, transparent); }
-
-        .slider-track {
-            display: flex;
-            width: fit-content;
-            gap: 4rem;
-            animation: infiniteScroll 40s linear infinite;
-        }
-
-        .tech-item {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-weight: 700;
-            color: #ccc;
-            font-size: 1.5rem;
-            transition: 0.3s;
-            filter: grayscale(100%);
-        }
-
-        .tech-item:hover {
-            color: var(--col-dark);
-            filter: grayscale(0%);
-            transform: scale(1.1);
-        }
-
-        @keyframes infiniteScroll {
-            0% { transform: translateX(0); }
-            100% { transform: translateX(-50%); }
-        }
-
-        /* --- METODOLOGÍA --- */
-        .methodology {
-            padding: 8rem 2rem;
-        }
-        
-        .section-header {
-            text-align: center;
-            margin-bottom: 5rem;
-        }
-
-        .grid-steps {
-            display: grid;
-            grid-template-columns: repeat(4, 1fr);
-            gap: 2rem;
-            max-width: 1300px;
-            margin: 0 auto;
-        }
-
-        .step-box {
-            background: white;
-            padding: 3rem 2rem;
-            border-top: 3px solid transparent;
-            transition: all 0.4s ease;
-            cursor: default;
-        }
-
-        .step-box:hover {
-            border-top: 3px solid var(--col-green);
-            transform: translateY(-10px);
-            box-shadow: var(--shadow-soft);
-        }
-
-        .step-num {
-            font-size: 4rem;
-            font-family: 'Cormorant Garamond', serif;
-            color: #eee;
-            line-height: 0.5;
-            margin-bottom: 1.5rem;
-        }
-
-        /* --- SERVICIOS (ACORDEÓN MODERNO) --- */
-        .services-section {
-            padding: 8rem 2rem;
-            background: linear-gradient(to bottom, #fff, var(--col-bg));
-        }
-
-        .accordion-container {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-
-        .acc-item {
-            margin-bottom: 1.5rem;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.03);
-            transition: all 0.4s ease;
-            border: 1px solid rgba(0,0,0,0.05);
-        }
-
-        .acc-header {
-            padding: 2rem;
-            cursor: pointer;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .acc-title {
-            font-size: 1.4rem;
-            font-weight: 500;
-        }
-
-        .acc-icon {
-            width: 30px; height: 30px;
-            border-radius: 50%;
-            background: var(--col-bg);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 0.8rem;
-            transition: transform 0.3s ease;
-        }
-
-        .acc-body {
-            max-height: 0;
-            overflow: hidden;
-            transition: max-height 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-        }
-
-        .acc-content {
-            padding: 0 2rem 2rem 2rem;
-            color: #666;
-            font-size: 1rem;
-            line-height: 1.7;
-            border-top: 1px solid #f0f0f0;
-            margin-top: 0.5rem;
-            padding-top: 1.5rem;
-        }
-
-        .acc-item.active {
-            box-shadow: var(--shadow-soft);
-            border-color: var(--col-green);
-        }
-        
-        .acc-item.active .acc-icon {
-            background: var(--col-green);
-            color: white;
-            transform: rotate(180deg);
-        }
-
-        /* --- DIFERENCIADOR --- */
-        .diff-section {
-            position: relative;
-            padding: 8rem 2rem;
-            background: var(--col-dark);
-            color: white;
-            text-align: center;
-            overflow: hidden;
-        }
-
-        .diff-section h2 { color: white; }
-
-        .blob {
-            position: absolute;
-            background: var(--col-green);
-            filter: blur(80px);
-            opacity: 0.3;
-            border-radius: 50%;
-            z-index: 0;
-        }
-        
-        .diff-content {
-            position: relative;
-            z-index: 1;
-            max-width: 700px;
-            margin: auto;
-        }
-
-        /* --- FOOTER --- */
-        footer {
-            background: white;
-            padding: 4rem 2rem;
-            text-align: center;
-            border-top: 1px solid #eee;
-        }
-
-        /* Responsive */
-        @media (max-width: 768px) {
-            .hero-title { font-size: 2.5rem; }
-            .grid-steps { grid-template-columns: 1fr; }
-            .hero-card { padding: 2rem; margin: 1rem; }
-        }
+        /* --- Scrollbar --- */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #021210; }
+        ::-webkit-scrollbar-thumb { background: #00FF9D; border-radius: 3px; }
     </style>
 </head>
-<body>
+<body class="antialiased selection:bg-teal-500 selection:text-black">
 
-    <div class="texture-overlay"></div>
+    <div class="noise-overlay"></div>
+    <div class="cursor-dot"></div>
+    <div class="cursor-circle"></div>
+    
+    <canvas id="webgl-canvas"></canvas>
 
-    <section class="hero">
-        <canvas id="hero-canvas"></canvas>
-        <div class="hero-card">
-            <h1 class="hero-title">Datos que cuentan<br>historias humanas.</h1>
-            <p class="hero-subtitle">Ingeniería de datos precisa + Estrategia orgánica. <br>El equilibrio perfecto para tu inversión digital.</p>
-            <a href="#metodologia" class="btn-glow">VER METODOLOGÍA</a>
+    <nav class="fixed top-0 w-full z-40 px-6 py-6 flex justify-between items-center mix-blend-difference text-white">
+        <div class="text-2xl font-bold tracking-tighter glitch-wrapper">ETHERNAÍ</div>
+        <div class="hidden md:flex gap-8 text-sm tracking-widest">
+            <a href="#proceso" class="hover:text-[#00FF9D] transition-colors">PROCESO</a>
+            <a href="#servicios" class="hover:text-[#00FF9D] transition-colors">CAPACIDADES</a>
+            <a href="#contacto" class="hover:text-[#00FF9D] transition-colors">NEXUS</a>
         </div>
-    </section>
+        <div class="md:hidden text-2xl"><i class="fas fa-bars"></i></div>
+    </nav>
 
-    <section class="carousel-section">
-        <div class="slider-track" id="techTrack">
+    <main>
+        <section class="h-screen w-full flex items-center justify-center relative overflow-hidden">
+            <div class="scanline"></div>
+            <div class="container mx-auto px-4 z-10 text-center relative">
+                <div class="inline-block mb-4 px-4 py-1 rounded-full border border-[#00FF9D]/30 bg-[#00FF9D]/10 text-[#00FF9D] text-xs tracking-[0.3em]">
+                    SISTEMA ACTIVO v2.6
+                </div>
+                <h1 class="hero-title text-5xl md:text-8xl font-bold leading-tight mb-6 mix-blend-overlay opacity-0 translate-y-10">
+                    Datos <br>
+                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-[#00FF9D] text-glow">Orgánicos</span>
+                </h1>
+                <p class="hero-subtitle text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 opacity-0 font-light">
+                    Transformamos el caos digital en ecosistemas de crecimiento predecible. Ingeniería biológica aplicada a tus ventas.
+                </p>
+                <div class="hero-cta opacity-0">
+                    <button class="group relative px-8 py-4 bg-transparent overflow-hidden rounded-none border border-[#00FF9D] text-white hover:text-black transition-all duration-300">
+                        <div class="absolute inset-0 w-0 bg-[#00FF9D] transition-all duration-[250ms] ease-out group-hover:w-full"></div>
+                        <span class="relative uppercase tracking-widest text-sm font-bold flex items-center gap-2">
+                            Iniciar Diagnóstico <i class="fas fa-arrow-right text-xs"></i>
+                        </span>
+                    </button>
+                </div>
             </div>
-    </section>
-
-    <section class="methodology" id="metodologia">
-        <div class="section-header">
-            <h3>EL PROCESO</h3>
-            <h2>Ingeniería aplicada a tus Ventas</h2>
-        </div>
-        <div class="grid-steps" id="stepsGrid">
+            
+            <div class="absolute bottom-10 left-10 font-mono text-xs text-[#00FF9D]/50 hidden md:block">
+                COORDS: 25.6866° N, 100.3161° W<br>
+                STATUS: OPTIMAL<br>
+                NODES: CONNECTED
             </div>
-    </section>
+        </section>
 
-    <section class="services-section">
-        <div class="section-header">
-            <h3>CAPACIDADES</h3>
-            <h2>Soluciones Escalables</h2>
-        </div>
-        <div class="accordion-container" id="servicesContainer">
+        <div class="w-full bg-[#00FF9D] text-black py-4 overflow-hidden transform -rotate-1 origin-left border-y-4 border-black z-20 relative">
+            <div class="flex whitespace-nowrap animate-marquee font-bold text-2xl font-mono">
+                <span class="mx-8">PYTHON /// AI MODELS</span>
+                <span class="mx-8">GOOGLE CLOUD /// BIG DATA</span>
+                <span class="mx-8">LOOKER /// PREDICTIVE</span>
+                <span class="mx-8">META API /// CONVERSIONS</span>
+                <span class="mx-8">OPENAI /// AUTOMATION</span>
+                <span class="mx-8">PYTHON /// AI MODELS</span>
+                <span class="mx-8">GOOGLE CLOUD /// BIG DATA</span>
             </div>
-    </section>
-
-    <section class="diff-section">
-        <div class="blob" style="width: 300px; height: 300px; top: -50px; left: -50px;"></div>
-        <div class="blob" style="width: 400px; height: 400px; bottom: -100px; right: -100px; background: #468691;"></div>
-        
-        <div class="diff-content">
-            <h2>Tecnología de Punta, Trato Humano</h2>
-            <p style="font-size: 1.2rem; margin-top: 2rem; font-weight: 300; line-height: 1.8;">
-                "En Ethernaí, eliminamos la barrera entre el analista y el cliente. 
-                Empezamos con auditoría manual y terminamos con sistemas autónomos. 
-                Sin cajas negras, solo resultados claros."
-            </p>
         </div>
-    </section>
 
-    <footer>
-        <h3 style="font-size: 1.5rem;">Ethernaí</h3>
-        <div style="margin: 2rem 0;">
-            <a href="#" style="color: var(--col-dark); font-weight: 600; text-decoration: none;">
-                <i class="fab fa-whatsapp"></i> 81 2383 6266
-            </a>
-        </div>
-        <small style="color: #999;">© 2026 Ethernaí | Intelligence & Growth</small>
-    </footer>
+        <section id="proceso" class="py-32 relative">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-col md:flex-row justify-between items-end mb-20 border-b border-gray-800 pb-10">
+                    <h2 class="text-4xl md:text-6xl text-white">El Algoritmo</h2>
+                    <p class="text-gray-400 max-w-md text-right mt-4 md:mt-0">Nuestro código fuente para escalar tu negocio.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="glass-panel p-8 rounded-xl relative group hover:-translate-y-2 transition-transform duration-500">
+                        <div class="text-[#00FF9D] text-5xl font-mono mb-4 opacity-30 group-hover:opacity-100 transition-opacity">01</div>
+                        <h3 class="text-xl font-bold mb-3">Escaneo</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Auditoría profunda del ecosistema. Encontramos las fugas de datos que te cuestan dinero.</p>
+                        <div class="absolute top-4 right-4 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
+                    </div>
+
+                    <div class="glass-panel p-8 rounded-xl relative group hover:-translate-y-2 transition-transform duration-500 delay-100">
+                        <div class="text-[#00FF9D] text-5xl font-mono mb-4 opacity-30 group-hover:opacity-100 transition-opacity">02</div>
+                        <h3 class="text-xl font-bold mb-3">Inyección</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Implementación de sensores (Server-side tracking) para capturar la realidad del usuario.</p>
+                    </div>
+
+                    <div class="glass-panel p-8 rounded-xl relative group hover:-translate-y-2 transition-transform duration-500 delay-200">
+                        <div class="text-[#00FF9D] text-5xl font-mono mb-4 opacity-30 group-hover:opacity-100 transition-opacity">03</div>
+                        <h3 class="text-xl font-bold mb-3">Síntesis</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Dashboards que no solo reportan, sino que predicen. Convertimos datos en decisiones.</p>
+                    </div>
+
+                    <div class="glass-panel p-8 rounded-xl relative group hover:-translate-y-2 transition-transform duration-500 delay-300">
+                        <div class="text-[#00FF9D] text-5xl font-mono mb-4 opacity-30 group-hover:opacity-100 transition-opacity">04</div>
+                        <h3 class="text-xl font-bold mb-3">Evolución</h3>
+                        <p class="text-gray-400 text-sm leading-relaxed">Automatización con IA. Tu negocio aprende y se optimiza solo mientras duermes.</p>
+                        <div class="absolute top-4 right-4 w-2 h-2 bg-[#00FF9D] rounded-full animate-ping"></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="servicios" class="py-32 relative overflow-hidden">
+            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-teal-900 to-black rounded-full blur-[120px] opacity-40 -z-10"></div>
+
+            <div class="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-5">
+                    <h2 class="text-5xl md:text-7xl mb-8 leading-none">Módulos <br><span class="text-stroke text-transparent" style="-webkit-text-stroke: 1px #fff;">Activos</span></h2>
+                    <p class="text-gray-400 mb-8 text-lg">
+                        Desplegamos infraestructura de nivel militar para marketing comercial. Sin cajas negras.
+                    </p>
+                    <a href="#" class="inline-flex items-center gap-3 text-[#00FF9D] hover:gap-6 transition-all duration-300 uppercase tracking-widest text-sm border-b border-[#00FF9D] pb-1">
+                        Ver especificaciones completas <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+                
+                <div class="lg:col-span-7 space-y-4">
+                    <div class="service-row group border-b border-gray-800 pb-6 hover:border-[#00FF9D] transition-colors cursor-pointer">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-2xl md:text-3xl group-hover:translate-x-4 transition-transform duration-300">Infraestructura GTM</h4>
+                            <i class="fas fa-microchip text-gray-600 group-hover:text-[#00FF9D] group-hover:rotate-90 transition-all"></i>
+                        </div>
+                        <div class="h-0 overflow-hidden group-hover:h-auto group-hover:mt-4 transition-all">
+                            <p class="text-gray-400">Limpieza de tráfico bot, configuración Server-side y API de conversiones.</p>
+                        </div>
+                    </div>
+
+                    <div class="service-row group border-b border-gray-800 pb-6 hover:border-[#00FF9D] transition-colors cursor-pointer">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-2xl md:text-3xl group-hover:translate-x-4 transition-transform duration-300">Inteligencia Artificial</h4>
+                            <i class="fas fa-brain text-gray-600 group-hover:text-[#00FF9D] group-hover:rotate-90 transition-all"></i>
+                        </div>
+                         <div class="h-0 overflow-hidden group-hover:h-auto group-hover:mt-4 transition-all">
+                            <p class="text-gray-400">Chatbots entrenados con tu data, automatización de CRM y análisis predictivo.</p>
+                        </div>
+                    </div>
+
+                    <div class="service-row group border-b border-gray-800 pb-6 hover:border-[#00FF9D] transition-colors cursor-pointer">
+                        <div class="flex justify-between items-center">
+                            <h4 class="text-2xl md:text-3xl group-hover:translate-x-4 transition-transform duration-300">Data Visualization</h4>
+                            <i class="fas fa-eye text-gray-600 group-hover:text-[#00FF9D] group-hover:rotate-90 transition-all"></i>
+                        </div>
+                         <div class="h-0 overflow-hidden group-hover:h-auto group-hover:mt-4 transition-all">
+                            <p class="text-gray-400">Dashboards interactivos en Looker Studio. Entiende tu ROI en tiempo real.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer id="contacto" class="relative pt-32 pb-10 bg-black overflow-hidden">
+            <div class="absolute inset-0 z-0 opacity-20">
+                <img src="https://media.giphy.com/media/26tn33ai0AvD4fEnS/giphy.gif" class="w-full h-full object-cover grayscale" alt="data flow">
+            </div>
+            
+            <div class="container mx-auto px-6 relative z-10 text-center">
+                <h2 class="text-4xl md:text-8xl mb-12 mix-blend-difference">¿Listo para la<br>Singularidad?</h2>
+                
+                <div class="flex justify-center gap-6 mb-16">
+                    <a href="#" class="w-16 h-16 rounded-full bg-[#00FF9D] text-black flex items-center justify-center text-2xl hover:scale-110 hover:shadow-[0_0_30px_#00FF9D] transition-all">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="#" class="w-16 h-16 rounded-full border border-white text-white flex items-center justify-center text-2xl hover:bg-white hover:text-black transition-all">
+                        <i class="fas fa-envelope"></i>
+                    </a>
+                </div>
+
+                <div class="flex flex-col md:flex-row justify-between items-center border-t border-gray-800 pt-8 text-xs text-gray-500 font-mono">
+                    <p>© 2026 ETHERNAÍ // INTELLIGENCE SYSTEM</p>
+                    <p>MONTERREY, MX [HQ]</p>
+                </div>
+            </div>
+        </footer>
+    </main>
 
     <script>
-        // --- 1. DATA (JSON) ---
-        const data = {
-            techStack: [
-                { name: "Google", icon: "fab fa-google" },
-                { name: "GA4", icon: "fas fa-chart-bar" },
-                { name: "Python", icon: "fab fa-python" },
-                { name: "Looker", icon: "fas fa-chart-pie" },
-                { name: "OpenAI", icon: "fas fa-brain" },
-                { name: "Meta", icon: "fab fa-meta" },
-                { name: "Jupyter", icon: "fas fa-laptop-code" },
-            ],
-            steps: [
-                { id: "01", title: "Diagnóstico", desc: "Auditoría profunda del ecosistema digital actual." },
-                { id: "02", title: "Captura", desc: "Implementación de sensores (Tags/Pixels) de alta precisión." },
-                { id: "03", title: "Análisis", desc: "Modelado estadístico para encontrar patrones de compra." },
-                { id: "04", title: "Evolución", desc: "Automatización con IA para escalar sin aumentar personal." }
-            ],
-            services: [
-                {
-                    title: "Infraestructura de Medición",
-                    details: "Configuramos GTM Server-side, GA4 avanzado y limpieza de datos para eliminar el tráfico bot de tus reportes."
-                },
-                {
-                    title: "Ciencia de Datos & ROI",
-                    details: "Dashboards predictivos en Looker Studio. Dejamos de ver 'qué pasó' para predecir 'qué pasará'."
-                },
-                {
-                    title: "Automatización e IA",
-                    details: "Chatbots entrenados con tu propia data. Integración CRM automática entre Marketing y Ventas."
-                },
-                {
-                    title: "Consultoría Global",
-                    details: "Soporte nativo en Español, Inglés y Portugués para equipos distribuidos."
-                }
-            ]
-        };
-
-        // --- 2. RENDERING FUNCTIONS ---
+        // --- 1. CONFIGURACIÓN DEL CURSOR ---
+        const cursorDot = document.querySelector('.cursor-dot');
+        const cursorCircle = document.querySelector('.cursor-circle');
         
-        // Render Tech Carousel (Duplicado para efecto infinito)
-        const track = document.getElementById('techTrack');
-        const itemsHTML = data.techStack.map(t => 
-            `<div class="tech-item"><i class="${t.icon}"></i> ${t.name}</div>`
-        ).join('');
-        // Inyectar 3 veces para asegurar loop fluido en pantallas grandes
-        track.innerHTML = itemsHTML + itemsHTML + itemsHTML + itemsHTML;
-
-        // Render Steps
-        const stepsContainer = document.getElementById('stepsGrid');
-        stepsContainer.innerHTML = data.steps.map(s => `
-            <div class="step-box">
-                <div class="step-num">${s.id}</div>
-                <h4>${s.title}</h4>
-                <p style="font-size: 0.9rem; color: #666;">${s.desc}</p>
-            </div>
-        `).join('');
-
-        // Render Services (Accordion)
-        const servicesContainer = document.getElementById('servicesContainer');
-        servicesContainer.innerHTML = data.services.map((s, index) => `
-            <div class="acc-item" onclick="toggleAcc(this)">
-                <div class="acc-header">
-                    <span class="acc-title">${s.title}</span>
-                    <div class="acc-icon"><i class="fas fa-plus"></i></div>
-                </div>
-                <div class="acc-body">
-                    <div class="acc-content">${s.details}</div>
-                </div>
-            </div>
-        `).join('');
-
-        // --- 3. INTERACTION LOGIC ---
-        function toggleAcc(el) {
-            const isActive = el.classList.contains('active');
+        document.addEventListener('mousemove', (e) => {
+            // Mover punto central instantáneamente
+            cursorDot.style.left = e.clientX + 'px';
+            cursorDot.style.top = e.clientY + 'px';
             
-            // Cerrar todos
-            document.querySelectorAll('.acc-item').forEach(item => {
-                item.classList.remove('active');
-                item.querySelector('.acc-body').style.maxHeight = null;
+            // Mover círculo con lag (retraso) para efecto fluido
+            cursorCircle.animate({
+                left: e.clientX + 'px',
+                top: e.clientY + 'px'
+            }, { duration: 500, fill: "forwards" });
+        });
+
+        // Efecto magnético en botones
+        document.querySelectorAll('a, button, .service-row').forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursorCircle.style.transform = 'translate(-50%, -50%) scale(2)';
+                cursorCircle.style.backgroundColor = 'rgba(0, 255, 157, 0.1)';
+                cursorDot.style.opacity = '0';
             });
-
-            // Abrir clickeado si no estaba activo
-            if (!isActive) {
-                el.classList.add('active');
-                el.querySelector('.acc-body').style.maxHeight = el.querySelector('.acc-content').scrollHeight + "px";
-            }
-        }
-
-        // --- 4. GSAP ANIMATIONS ---
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Hero Intro
-        gsap.to(".hero-card", {
-            opacity: 1,
-            y: 0,
-            duration: 1.5,
-            ease: "power3.out",
-            delay: 0.2
+            el.addEventListener('mouseleave', () => {
+                cursorCircle.style.transform = 'translate(-50%, -50%) scale(1)';
+                cursorCircle.style.backgroundColor = 'transparent';
+                cursorDot.style.opacity = '1';
+            });
         });
 
-        // Steps Stagger
-        gsap.from(".step-box", {
-            scrollTrigger: {
-                trigger: ".grid-steps",
-                start: "top 80%"
-            },
-            y: 50,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.2
+        // --- 2. THREE.JS BACKGROUND (PARTÍCULAS ORGÁNICAS) ---
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({
+            canvas: document.querySelector('#webgl-canvas'),
+            alpha: true,
+            antialias: true
         });
 
-        // --- 5. CANVAS BACKGROUND (ORGANIC NODES) ---
-        const canvas = document.getElementById('hero-canvas');
-        const ctx = canvas.getContext('2d');
-        let width, height;
-        let particles = [];
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
 
-        function resize() {
-            width = canvas.width = window.innerWidth;
-            height = canvas.height = window.innerHeight;
-        }
-        window.addEventListener('resize', resize);
-        resize();
-
-        class Particle {
-            constructor() {
-                this.x = Math.random() * width;
-                this.y = Math.random() * height;
-                this.vx = (Math.random() - 0.5) * 0.5;
-                this.vy = (Math.random() - 0.5) * 0.5;
-                this.size = Math.random() * 2;
-            }
-            update() {
-                this.x += this.vx;
-                this.y += this.vy;
-                if (this.x < 0 || this.x > width) this.vx *= -1;
-                if (this.y < 0 || this.y > height) this.vy *= -1;
-            }
-            draw() {
-                ctx.fillStyle = '#58A4B0'; // Green color
-                ctx.beginPath();
-                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
-                ctx.fill();
-            }
+        // Creación de Partículas
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 2000; // Cantidad de partículas
+        
+        const posArray = new Float32Array(particlesCount * 3);
+        
+        for(let i = 0; i < particlesCount * 3; i++) {
+            // Esparcir en un rango amplio
+            posArray[i] = (Math.random() - 0.5) * 15;
         }
 
-        for (let i = 0; i < 60; i++) particles.push(new Particle());
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        // Material estilo "Luciérnaga Tecnológica"
+        const material = new THREE.PointsMaterial({
+            size: 0.02,
+            color: 0x00FF9D,
+            transparent: true,
+            opacity: 0.8,
+            blending: THREE.AdditiveBlending
+        });
+
+        // Malla
+        const particlesMesh = new THREE.Points(particlesGeometry, material);
+        scene.add(particlesMesh);
+
+        camera.position.z = 3;
+
+        // Interacción con Mouse para 3D
+        let mouseX = 0;
+        let mouseY = 0;
+        let targetX = 0;
+        let targetY = 0;
+
+        const windowHalfX = window.innerWidth / 2;
+        const windowHalfY = window.innerHeight / 2;
+
+        document.addEventListener('mousemove', (event) => {
+            mouseX = (event.clientX - windowHalfX);
+            mouseY = (event.clientY - windowHalfY);
+        });
+
+        // Reloj para animaciones constantes
+        const clock = new THREE.Clock();
 
         function animate() {
-            ctx.clearRect(0, 0, width, height);
-            
-            // Draw connections
-            particles.forEach((p, index) => {
-                p.update();
-                p.draw();
-                
-                for (let j = index; j < particles.length; j++) {
-                    const dx = p.x - particles[j].x;
-                    const dy = p.y - particles[j].y;
-                    const dist = Math.sqrt(dx*dx + dy*dy);
-                    
-                    if (dist < 150) {
-                        ctx.strokeStyle = `rgba(88, 164, 176, ${0.1 - dist/1500})`;
-                        ctx.lineWidth = 1;
-                        ctx.beginPath();
-                        ctx.moveTo(p.x, p.y);
-                        ctx.lineTo(particles[j].x, particles[j].y);
-                        ctx.stroke();
-                    }
-                }
-            });
-            requestAnimationFrame(animate);
+            targetX = mouseX * 0.001;
+            targetY = mouseY * 0.001;
+
+            const elapsedTime = clock.getElapsedTime();
+
+            // Rotación suave base
+            particlesMesh.rotation.y += 0.001;
+            particlesMesh.rotation.x += 0.0005;
+
+            // Respuesta al mouse con inercia
+            particlesMesh.rotation.y += 0.05 * (targetX - particlesMesh.rotation.y);
+            particlesMesh.rotation.x += 0.05 * (targetY - particlesMesh.rotation.x);
+
+            // Efecto de "Respiración" (Onda sinusoidal)
+            particlesMesh.position.y = Math.sin(elapsedTime * 0.5) * 0.2;
+
+            renderer.render(scene, camera);
+            window.requestAnimationFrame(animate);
         }
+
         animate();
 
+        // Resize Handler
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- 3. ANIMACIONES GSAP (Scroll y Textos) ---
+        gsap.registerPlugin(ScrollTrigger);
+
+        // Intro Reveal
+        const tl = gsap.timeline();
+        
+        // Animación de texto estilo "Typewriter" o "Reveal"
+        const mySplitText = new SplitType('.hero-title', { types: 'words, chars' });
+        
+        tl.to('.hero-title', { opacity: 1, duration: 0.1 })
+          .from(mySplitText.chars, {
+              opacity: 0,
+              y: 20,
+              rotateX: -90,
+              stagger: 0.02,
+              duration: 1,
+              ease: "back.out(1.7)"
+          })
+          .to('.hero-subtitle', { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
+          .to('.hero-cta', { opacity: 1, duration: 0.8 }, "-=0.5");
+
+        // Animación del Marquee (Cinta Infinita)
+        gsap.to(".animate-marquee", {
+            xPercent: -50,
+            repeat: -1,
+            duration: 20,
+            ease: "linear"
+        });
+
+        // Parallax suave en elementos al hacer scroll
+        gsap.utils.toArray('.glass-panel').forEach((panel, i) => {
+            gsap.from(panel, {
+                scrollTrigger: {
+                    trigger: panel,
+                    start: "top 85%",
+                    toggleActions: "play none none reverse"
+                },
+                y: 100,
+                opacity: 0,
+                duration: 1,
+                delay: i * 0.1,
+                ease: "power4.out"
+            });
+        });
+
+        // Explosión de partículas al hacer scroll
+        ScrollTrigger.create({
+            trigger: "body",
+            start: "top top",
+            end: "bottom bottom",
+            onUpdate: (self) => {
+                // Aumentar velocidad de rotación al bajar
+                particlesMesh.rotation.z = self.progress * 2;
+                // Acercar cámara en secciones profundas
+                camera.position.z = 3 - (self.progress * 1.5);
+            }
+        });
+
     </script>
+    <style>
+        /* Animación personalizada para el marquee */
+        @keyframes marquee {
+            0% { transform: translateX(0%); }
+            100% { transform: translateX(-100%); }
+        }
+        .animate-marquee {
+            animation: marquee 30s linear infinite;
+        }
+    </style>
 </body>
 </html>
