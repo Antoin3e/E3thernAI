@@ -3,481 +3,473 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ethernaí | Ecosistema de Datos</title>
+    <title>Ethernaí | Ecosistema Digital</title>
     
-    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Syncopate:wght@700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&family=Cormorant+Garamond:ital,wght@1,500&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://unpkg.com/split-type"></script>
-    <script src="https://cdn.tailwindcss.com"></script>
 
     <style>
         :root {
-            --neon-green: #00FF9D;
-            --deep-forest: #021210;
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --bg-deep: #0f172a; /* Azul pizarra oscuro (base) */
+            --glass-white: rgba(255, 255, 255, 0.90); /* Blanco casi sólido */
+            --glass-frosted: rgba(255, 255, 255, 0.1); /* Cristal transparente */
+            --accent-mint: #2DD4BF; /* Menta tecnológico */
+            --text-dark: #1e293b;
+            --text-light: #f8fafc;
         }
 
         body {
-            background-color: var(--deep-forest);
-            color: #ffffff;
-            font-family: 'Space Grotesk', sans-serif;
             margin: 0;
+            background-color: var(--bg-deep);
+            color: var(--text-light);
+            font-family: 'Outfit', sans-serif;
             overflow-x: hidden;
-            cursor: none; /* Ocultamos cursor nativo */
         }
 
-        /* --- UI & TEXTURAS --- */
-        .scanline {
-            width: 100%;
-            height: 100px;
-            z-index: 9999;
-            background: linear-gradient(0deg, rgba(0,0,0,0) 0%, rgba(0, 255, 157, 0.04) 50%, rgba(0,0,0,0) 100%);
-            opacity: 0.1;
-            position: absolute;
-            bottom: 100%;
-            pointer-events: none;
-            animation: scanline 10s linear infinite;
-        }
-
-        @keyframes scanline {
-            0% { bottom: 100%; }
-            100% { bottom: -100%; }
-        }
-
-        .noise-overlay {
-            position: fixed;
-            top: 0; left: 0; width: 100vw; height: 100vh;
-            background: url('https://grainy-gradients.vercel.app/noise.svg');
-            opacity: 0.05;
-            z-index: 50;
-            pointer-events: none;
-        }
-
-        /* --- CURSOR PERSONALIZADO --- */
-        .cursor-dot, .cursor-circle {
-            position: fixed;
-            top: 0; left: 0;
-            transform: translate(-50%, -50%);
-            border-radius: 50%;
-            z-index: 9999;
-            pointer-events: none;
-        }
-        .cursor-dot {
-            width: 8px; height: 8px;
-            background: var(--neon-green);
-        }
-        .cursor-circle {
-            width: 40px; height: 40px;
-            border: 1px solid rgba(0, 255, 157, 0.5);
-            transition: width 0.3s, height 0.3s, background-color 0.3s;
-        }
-
-        /* --- TIPOGRAFÍA Y EFECTOS --- */
-        h1, h2, .tech-font {
-            font-family: 'Syncopate', sans-serif;
-            text-transform: uppercase;
-        }
-
-        .glass-panel {
-            background: rgba(2, 18, 16, 0.4);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
-        }
-
-        .text-glow {
-            text-shadow: 0 0 20px rgba(0, 255, 157, 0.5);
-        }
-
-        /* Glitch Effect simple */
-        .glitch-wrapper:hover {
-            animation: glitch-anim 0.3s infinite;
-        }
-        @keyframes glitch-anim {
-            0% { transform: translate(0) }
-            20% { transform: translate(-2px, 2px) }
-            40% { transform: translate(-2px, -2px) }
-            60% { transform: translate(2px, 2px) }
-            80% { transform: translate(2px, -2px) }
-            100% { transform: translate(0) }
-        }
-
-        /* --- CANVAS --- */
-        #webgl-canvas {
+        /* --- FONDO ANIMADO (CANVAS) --- */
+        #canvas-container {
             position: fixed;
             top: 0; left: 0;
             width: 100%; height: 100%;
             z-index: -1;
+            background: radial-gradient(circle at 50% 50%, #1e293b 0%, #020617 100%);
         }
 
-        /* --- Scrollbar --- */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #021210; }
-        ::-webkit-scrollbar-thumb { background: #00FF9D; border-radius: 3px; }
+        /* --- UTILIDADES --- */
+        h1, h2, h3 { font-weight: 700; letter-spacing: -0.02em; }
+        .serif { font-family: 'Cormorant Garamond', serif; font-style: italic; color: var(--accent-mint); }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 2rem;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* --- HERO SECTION --- */
+        .hero {
+            min-height: 90vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            flex-direction: column;
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
+            line-height: 1.1;
+            margin-bottom: 1.5rem;
+            text-shadow: 0 0 30px rgba(45, 212, 191, 0.3);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            border: 1px solid var(--accent-mint);
+            border-radius: 50px;
+            color: var(--accent-mint);
+            font-size: 0.9rem;
+            margin-bottom: 2rem;
+            backdrop-filter: blur(5px);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        /* --- SERVICIOS (TARJETAS BIOLÓGICAS) --- */
+        .services-section {
+            padding: 5rem 0 10rem 0;
+        }
+
+        .card-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 2rem;
+            margin-top: 4rem;
+        }
+
+        /* ESTILO DE TARJETA MEJORADO (MÁS BLANCO) */
+        .bio-card {
+            background: var(--glass-white); /* Fondo blanco */
+            color: var(--text-dark); /* Texto oscuro para contraste */
+            border-radius: 20px;
+            overflow: hidden;
+            position: relative;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+            cursor: pointer;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            border-left: 5px solid transparent;
+        }
+
+        .bio-card:hover {
+            transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 20px 40px rgba(45, 212, 191, 0.2);
+            border-left: 5px solid var(--accent-mint);
+        }
+
+        .card-header {
+            padding: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .card-title h3 {
+            font-size: 1.8rem;
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .card-subtitle {
+            color: #64748b;
+            margin-top: 0.5rem;
+            font-size: 1rem;
+        }
+
+        .toggle-icon {
+            width: 40px; height: 40px;
+            background: #f1f5f9;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.4s ease;
+            color: var(--text-dark);
+        }
+
+        /* CONTENIDO DESPLEGABLE */
+        .card-body {
+            height: 0;
+            opacity: 0;
+            overflow: hidden;
+            background: #f8fafc; /* Gris muy claro */
+            transition: all 0.5s ease;
+        }
+
+        .card-content-inner {
+            padding: 0 2.5rem 2.5rem 2.5rem;
+            display: grid;
+            grid-template-columns: 1fr 1fr; /* Dividir en 2 columnas: Proceso y Tech */
+            gap: 3rem;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 2rem;
+        }
+
+        .bio-card.active .card-body {
+            height: auto;
+            opacity: 1;
+        }
+
+        .bio-card.active .toggle-icon {
+            transform: rotate(45deg);
+            background: var(--accent-mint);
+            color: white;
+        }
+
+        /* Listas de detalles */
+        .detail-list {
+            list-style: none;
+            padding: 0;
+        }
+        .detail-list li {
+            margin-bottom: 1rem;
+            position: relative;
+            padding-left: 1.5rem;
+            color: #475569;
+        }
+        .detail-list li::before {
+            content: '→';
+            position: absolute;
+            left: 0;
+            color: var(--accent-mint);
+            font-weight: bold;
+        }
+
+        /* Tech Stack Tags */
+        .tech-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.8rem;
+            margin-top: 1rem;
+        }
+        .tech-tag {
+            background: white;
+            border: 1px solid #cbd5e1;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .tech-tag i { color: var(--accent-mint); font-size: 1.1rem; }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card-content-inner { grid-template-columns: 1fr; gap: 1.5rem; }
+            .hero h1 { font-size: 3rem; }
+        }
     </style>
 </head>
-<body class="antialiased selection:bg-teal-500 selection:text-black">
+<body>
 
-    <div class="noise-overlay"></div>
-    <div class="cursor-dot"></div>
-    <div class="cursor-circle"></div>
-    
-    <canvas id="webgl-canvas"></canvas>
+    <div id="canvas-container"></div>
 
-    <nav class="fixed top-0 w-full z-40 px-6 py-6 flex justify-between items-center mix-blend-difference text-white">
-        <div class="text-2xl font-bold tracking-tighter glitch-wrapper">ETHERNAÍ</div>
-        <div class="hidden md:flex gap-8 text-sm tracking-widest">
-            <a href="#proceso" class="hover:text-[#00FF9D] transition-colors">PROCESO</a>
-            <a href="#servicios" class="hover:text-[#00FF9D] transition-colors">CAPACIDADES</a>
-            <a href="#contacto" class="hover:text-[#00FF9D] transition-colors">NEXUS</a>
-        </div>
-        <div class="md:hidden text-2xl"><i class="fas fa-bars"></i></div>
-    </nav>
+    <div class="container">
+        <nav style="padding: 2rem 0; display: flex; justify-content: space-between; align-items: center;">
+            <div style="font-weight: 700; font-size: 1.5rem; letter-spacing: -1px;">ETHERNAÍ<span style="color:var(--accent-mint)">.</span></div>
+            <a href="#contacto" style="color: white; text-decoration: none; border-bottom: 1px solid var(--accent-mint);">Hablemos</a>
+        </nav>
 
-    <main>
-        <section class="h-screen w-full flex items-center justify-center relative overflow-hidden">
-            <div class="scanline"></div>
-            <div class="container mx-auto px-4 z-10 text-center relative">
-                <div class="inline-block mb-4 px-4 py-1 rounded-full border border-[#00FF9D]/30 bg-[#00FF9D]/10 text-[#00FF9D] text-xs tracking-[0.3em]">
-                    SISTEMA ACTIVO v2.6
+        <section class="hero">
+            <span class="badge">Nature-Tech Intelligence</span>
+            <h1>Evoluciona tu Negocio<br><span class="serif">de lo Invisible a lo Autónomo</span></h1>
+            <p style="max-width: 600px; color: #cbd5e1; font-size: 1.2rem; margin-bottom: 3rem;">
+                No solo hacemos páginas. Construimos organismos digitales que viven, aprenden y venden por ti.
+            </p>
+            <div style="font-size: 2rem; color: var(--accent-mint); animation: bounce 2s infinite;">↓</div>
+        </section>
+
+        <section class="services-section">
+            <h2 style="font-size: 2.5rem; margin-bottom: 1rem;">Nuestra Metodología</h2>
+            <p style="color: #94a3b8; max-width: 500px;">Selecciona una fase para revelar la ingeniería detrás del proceso.</p>
+
+            <div class="card-grid">
+
+                <div class="bio-card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h3><i class="fas fa-seedling" style="color: #10b981;"></i> Digitalización Base</h3>
+                            <div class="card-subtitle">Presencia, Identidad y Geolocalización.</div>
+                        </div>
+                        <div class="toggle-icon"><i class="fas fa-plus"></i></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-content-inner">
+                            <div>
+                                <h4 style="color: #0f172a; margin-bottom: 1rem;">¿Cómo lo hacemos?</h4>
+                                <ul class="detail-list">
+                                    <li>**Alta Oficial:** Verificación de propiedad en **Google Maps** para aparecer en búsquedas locales (SEO Local).</li>
+                                    <li>**Infraestructura Web:** Desarrollo de sitio web optimizado para velocidad y móviles.</li>
+                                    <li>**Identidad:** Configuración de correos corporativos y fichas de contacto profesionales.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: #0f172a; margin-bottom: 1rem;">Tecnologías (Stack)</h4>
+                                <div class="tech-tags">
+                                    <div class="tech-tag"><i class="fab fa-google"></i> Google Business Profile</div>
+                                    <div class="tech-tag"><i class="fab fa-react"></i> React / HTML5</div>
+                                    <div class="tech-tag"><i class="fas fa-map-marked-alt"></i> Maps API</div>
+                                    <div class="tech-tag"><i class="fas fa-server"></i> AWS / Hostinger</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <h1 class="hero-title text-5xl md:text-8xl font-bold leading-tight mb-6 mix-blend-overlay opacity-0 translate-y-10">
-                    Datos <br>
-                    <span class="text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-[#00FF9D] text-glow">Orgánicos</span>
-                </h1>
-                <p class="hero-subtitle text-gray-400 text-lg md:text-xl max-w-2xl mx-auto mb-10 opacity-0 font-light">
-                    Transformamos el caos digital en ecosistemas de crecimiento predecible. Ingeniería biológica aplicada a tus ventas.
-                </p>
-                <div class="hero-cta opacity-0">
-                    <button class="group relative px-8 py-4 bg-transparent overflow-hidden rounded-none border border-[#00FF9D] text-white hover:text-black transition-all duration-300">
-                        <div class="absolute inset-0 w-0 bg-[#00FF9D] transition-all duration-[250ms] ease-out group-hover:w-full"></div>
-                        <span class="relative uppercase tracking-widest text-sm font-bold flex items-center gap-2">
-                            Iniciar Diagnóstico <i class="fas fa-arrow-right text-xs"></i>
-                        </span>
-                    </button>
+
+                <div class="bio-card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h3><i class="fas fa-chart-network" style="color: #3b82f6;"></i> Rastreo & Publicidad</h3>
+                            <div class="card-subtitle">Seguimiento de usuarios y detección de oportunidades.</div>
+                        </div>
+                        <div class="toggle-icon"><i class="fas fa-plus"></i></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-content-inner">
+                            <div>
+                                <h4 style="color: #0f172a; margin-bottom: 1rem;">¿Cómo lo hacemos?</h4>
+                                <ul class="detail-list">
+                                    <li>**Etiquetado (Tagging):** Inserción de sensores en tu web para saber dónde hacen clic los usuarios.</li>
+                                    <li>**Analytics Avanzado:** Reportes visuales que te dicen exactamente qué producto visitan más y dónde pierdes ventas.</li>
+                                    <li>**Ads Dirigidos:** Campañas publicitarias basadas en datos reales, no en suposiciones.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: #0f172a; margin-bottom: 1rem;">Tecnologías (Stack)</h4>
+                                <div class="tech-tags">
+                                    <div class="tech-tag"><i class="fas fa-tag"></i> Google Tag Manager</div>
+                                    <div class="tech-tag"><i class="fas fa-chart-line"></i> GA4 (Analytics)</div>
+                                    <div class="tech-tag"><i class="fab fa-google"></i> Google Ads</div>
+                                    <div class="tech-tag"><i class="fas fa-search"></i> Looker Studio</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            
-            <div class="absolute bottom-10 left-10 font-mono text-xs text-[#00FF9D]/50 hidden md:block">
-                COORDS: 25.6866° N, 100.3161° W<br>
-                STATUS: OPTIMAL<br>
-                NODES: CONNECTED
+
+                <div class="bio-card" onclick="toggleCard(this)">
+                    <div class="card-header">
+                        <div class="card-title">
+                            <h3><i class="fas fa-brain" style="color: #8b5cf6;"></i> Automatización IA</h3>
+                            <div class="card-subtitle">Agentes autónomos que trabajan 24/7.</div>
+                        </div>
+                        <div class="toggle-icon"><i class="fas fa-plus"></i></div>
+                    </div>
+                    <div class="card-body">
+                        <div class="card-content-inner">
+                            <div>
+                                <h4 style="color: #0f172a; margin-bottom: 1rem;">¿Cómo lo hacemos?</h4>
+                                <ul class="detail-list">
+                                    <li>**Atención al Cliente:** Chatbots entrenados con IA que responden preguntas frecuentes al instante.</li>
+                                    <li>**Agendamiento:** Sistemas que conectan con tu calendario y cierran citas sin intervención humana.</li>
+                                    <li>**Gestión de Inventarios:** Algoritmos que predicen stock y alertan reposiciones automáticas.</li>
+                                </ul>
+                            </div>
+                            <div>
+                                <h4 style="color: #0f172a; margin-bottom: 1rem;">Tecnologías (Stack)</h4>
+                                <div class="tech-tags">
+                                    <div class="tech-tag"><i class="fas fa-robot"></i> OpenAI API (GPT-4)</div>
+                                    <div class="tech-tag"><i class="fab fa-python"></i> Python / LangChain</div>
+                                    <div class="tech-tag"><i class="fab fa-whatsapp"></i> WhatsApp Business API</div>
+                                    <div class="tech-tag"><i class="fas fa-database"></i> SQL / NoSQL</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </section>
 
-        <div class="w-full bg-[#00FF9D] text-black py-4 overflow-hidden transform -rotate-1 origin-left border-y-4 border-black z-20 relative">
-            <div class="flex whitespace-nowrap animate-marquee font-bold text-2xl font-mono">
-                <span class="mx-8">PYTHON /// AI MODELS</span>
-                <span class="mx-8">GOOGLE CLOUD /// BIG DATA</span>
-                <span class="mx-8">LOOKER /// PREDICTIVE</span>
-                <span class="mx-8">META API /// CONVERSIONS</span>
-                <span class="mx-8">OPENAI /// AUTOMATION</span>
-                <span class="mx-8">PYTHON /// AI MODELS</span>
-                <span class="mx-8">GOOGLE CLOUD /// BIG DATA</span>
-            </div>
-        </div>
-
-        <section id="proceso" class="py-32 relative">
-            <div class="container mx-auto px-6">
-                <div class="flex flex-col md:flex-row justify-between items-end mb-20 border-b border-gray-800 pb-10">
-                    <h2 class="text-4xl md:text-6xl text-white">El Algoritmo</h2>
-                    <p class="text-gray-400 max-w-md text-right mt-4 md:mt-0">Nuestro código fuente para escalar tu negocio.</p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                    <div class="glass-panel p-8 rounded-xl relative group hover:-translate-y-2 transition-transform duration-500">
-                        <div class="text-[#00FF9D] text-5xl font-mono mb-4 opacity-30 group-hover:opacity-100 transition-opacity">01</div>
-                        <h3 class="text-xl font-bold mb-3">Escaneo</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">Auditoría profunda del ecosistema. Encontramos las fugas de datos que te cuestan dinero.</p>
-                        <div class="absolute top-4 right-4 w-2 h-2 bg-red-500 rounded-full animate-pulse"></div>
-                    </div>
-
-                    <div class="glass-panel p-8 rounded-xl relative group hover:-translate-y-2 transition-transform duration-500 delay-100">
-                        <div class="text-[#00FF9D] text-5xl font-mono mb-4 opacity-30 group-hover:opacity-100 transition-opacity">02</div>
-                        <h3 class="text-xl font-bold mb-3">Inyección</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">Implementación de sensores (Server-side tracking) para capturar la realidad del usuario.</p>
-                    </div>
-
-                    <div class="glass-panel p-8 rounded-xl relative group hover:-translate-y-2 transition-transform duration-500 delay-200">
-                        <div class="text-[#00FF9D] text-5xl font-mono mb-4 opacity-30 group-hover:opacity-100 transition-opacity">03</div>
-                        <h3 class="text-xl font-bold mb-3">Síntesis</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">Dashboards que no solo reportan, sino que predicen. Convertimos datos en decisiones.</p>
-                    </div>
-
-                    <div class="glass-panel p-8 rounded-xl relative group hover:-translate-y-2 transition-transform duration-500 delay-300">
-                        <div class="text-[#00FF9D] text-5xl font-mono mb-4 opacity-30 group-hover:opacity-100 transition-opacity">04</div>
-                        <h3 class="text-xl font-bold mb-3">Evolución</h3>
-                        <p class="text-gray-400 text-sm leading-relaxed">Automatización con IA. Tu negocio aprende y se optimiza solo mientras duermes.</p>
-                        <div class="absolute top-4 right-4 w-2 h-2 bg-[#00FF9D] rounded-full animate-ping"></div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <section id="servicios" class="py-32 relative overflow-hidden">
-            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-gradient-to-r from-teal-900 to-black rounded-full blur-[120px] opacity-40 -z-10"></div>
-
-            <div class="container mx-auto px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
-                <div class="lg:col-span-5">
-                    <h2 class="text-5xl md:text-7xl mb-8 leading-none">Módulos <br><span class="text-stroke text-transparent" style="-webkit-text-stroke: 1px #fff;">Activos</span></h2>
-                    <p class="text-gray-400 mb-8 text-lg">
-                        Desplegamos infraestructura de nivel militar para marketing comercial. Sin cajas negras.
-                    </p>
-                    <a href="#" class="inline-flex items-center gap-3 text-[#00FF9D] hover:gap-6 transition-all duration-300 uppercase tracking-widest text-sm border-b border-[#00FF9D] pb-1">
-                        Ver especificaciones completas <i class="fas fa-chevron-right"></i>
-                    </a>
-                </div>
-                
-                <div class="lg:col-span-7 space-y-4">
-                    <div class="service-row group border-b border-gray-800 pb-6 hover:border-[#00FF9D] transition-colors cursor-pointer">
-                        <div class="flex justify-between items-center">
-                            <h4 class="text-2xl md:text-3xl group-hover:translate-x-4 transition-transform duration-300">Infraestructura GTM</h4>
-                            <i class="fas fa-microchip text-gray-600 group-hover:text-[#00FF9D] group-hover:rotate-90 transition-all"></i>
-                        </div>
-                        <div class="h-0 overflow-hidden group-hover:h-auto group-hover:mt-4 transition-all">
-                            <p class="text-gray-400">Limpieza de tráfico bot, configuración Server-side y API de conversiones.</p>
-                        </div>
-                    </div>
-
-                    <div class="service-row group border-b border-gray-800 pb-6 hover:border-[#00FF9D] transition-colors cursor-pointer">
-                        <div class="flex justify-between items-center">
-                            <h4 class="text-2xl md:text-3xl group-hover:translate-x-4 transition-transform duration-300">Inteligencia Artificial</h4>
-                            <i class="fas fa-brain text-gray-600 group-hover:text-[#00FF9D] group-hover:rotate-90 transition-all"></i>
-                        </div>
-                         <div class="h-0 overflow-hidden group-hover:h-auto group-hover:mt-4 transition-all">
-                            <p class="text-gray-400">Chatbots entrenados con tu data, automatización de CRM y análisis predictivo.</p>
-                        </div>
-                    </div>
-
-                    <div class="service-row group border-b border-gray-800 pb-6 hover:border-[#00FF9D] transition-colors cursor-pointer">
-                        <div class="flex justify-between items-center">
-                            <h4 class="text-2xl md:text-3xl group-hover:translate-x-4 transition-transform duration-300">Data Visualization</h4>
-                            <i class="fas fa-eye text-gray-600 group-hover:text-[#00FF9D] group-hover:rotate-90 transition-all"></i>
-                        </div>
-                         <div class="h-0 overflow-hidden group-hover:h-auto group-hover:mt-4 transition-all">
-                            <p class="text-gray-400">Dashboards interactivos en Looker Studio. Entiende tu ROI en tiempo real.</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <footer id="contacto" class="relative pt-32 pb-10 bg-black overflow-hidden">
-            <div class="absolute inset-0 z-0 opacity-20">
-                <img src="https://media.giphy.com/media/26tn33ai0AvD4fEnS/giphy.gif" class="w-full h-full object-cover grayscale" alt="data flow">
-            </div>
-            
-            <div class="container mx-auto px-6 relative z-10 text-center">
-                <h2 class="text-4xl md:text-8xl mb-12 mix-blend-difference">¿Listo para la<br>Singularidad?</h2>
-                
-                <div class="flex justify-center gap-6 mb-16">
-                    <a href="#" class="w-16 h-16 rounded-full bg-[#00FF9D] text-black flex items-center justify-center text-2xl hover:scale-110 hover:shadow-[0_0_30px_#00FF9D] transition-all">
-                        <i class="fab fa-whatsapp"></i>
-                    </a>
-                    <a href="#" class="w-16 h-16 rounded-full border border-white text-white flex items-center justify-center text-2xl hover:bg-white hover:text-black transition-all">
-                        <i class="fas fa-envelope"></i>
-                    </a>
-                </div>
-
-                <div class="flex flex-col md:flex-row justify-between items-center border-t border-gray-800 pt-8 text-xs text-gray-500 font-mono">
-                    <p>© 2026 ETHERNAÍ // INTELLIGENCE SYSTEM</p>
-                    <p>MONTERREY, MX [HQ]</p>
-                </div>
-            </div>
+        <footer style="padding: 4rem 0; border-top: 1px solid rgba(255,255,255,0.1); text-align: center; color: #64748b;">
+            <p>© 2026 Ethernaí. Tecnología con sensibilidad biológica.</p>
         </footer>
-    </main>
+    </div>
 
     <script>
-        // --- 1. CONFIGURACIÓN DEL CURSOR ---
-        const cursorDot = document.querySelector('.cursor-dot');
-        const cursorCircle = document.querySelector('.cursor-circle');
-        
-        document.addEventListener('mousemove', (e) => {
-            // Mover punto central instantáneamente
-            cursorDot.style.left = e.clientX + 'px';
-            cursorDot.style.top = e.clientY + 'px';
+        // --- 1. LÓGICA DE TARJETAS (ACORDEÓN) ---
+        function toggleCard(element) {
+            // Cerrar otras tarjetas si se quiere un comportamiento de acordeón estricto
+            // document.querySelectorAll('.bio-card').forEach(card => {
+            //     if (card !== element) card.classList.remove('active');
+            // });
+
+            element.classList.toggle('active');
             
-            // Mover círculo con lag (retraso) para efecto fluido
-            cursorCircle.animate({
-                left: e.clientX + 'px',
-                top: e.clientY + 'px'
-            }, { duration: 500, fill: "forwards" });
-        });
-
-        // Efecto magnético en botones
-        document.querySelectorAll('a, button, .service-row').forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                cursorCircle.style.transform = 'translate(-50%, -50%) scale(2)';
-                cursorCircle.style.backgroundColor = 'rgba(0, 255, 157, 0.1)';
-                cursorDot.style.opacity = '0';
-            });
-            el.addEventListener('mouseleave', () => {
-                cursorCircle.style.transform = 'translate(-50%, -50%) scale(1)';
-                cursorCircle.style.backgroundColor = 'transparent';
-                cursorDot.style.opacity = '1';
-            });
-        });
-
-        // --- 2. THREE.JS BACKGROUND (PARTÍCULAS ORGÁNICAS) ---
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-        const renderer = new THREE.WebGLRenderer({
-            canvas: document.querySelector('#webgl-canvas'),
-            alpha: true,
-            antialias: true
-        });
-
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-
-        // Creación de Partículas
-        const particlesGeometry = new THREE.BufferGeometry();
-        const particlesCount = 2000; // Cantidad de partículas
-        
-        const posArray = new Float32Array(particlesCount * 3);
-        
-        for(let i = 0; i < particlesCount * 3; i++) {
-            // Esparcir en un rango amplio
-            posArray[i] = (Math.random() - 0.5) * 15;
+            // Animación suave del contenido interno
+            const body = element.querySelector('.card-body');
+            if (element.classList.contains('active')) {
+                gsap.fromTo(body.querySelectorAll('li, .tech-tag'), 
+                    { y: 20, opacity: 0 },
+                    { y: 0, opacity: 1, duration: 0.4, stagger: 0.05, delay: 0.2 }
+                );
+            }
         }
 
-        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+        // --- 2. THREE.JS (FONDO DE NIEBLA LUMINOSA) ---
+        const scene = new THREE.Scene();
+        // Niebla para suavizar la profundidad (Color oscuro azulado)
+        scene.fog = new THREE.FogExp2(0x0f172a, 0.002);
 
-        // Material estilo "Luciérnaga Tecnológica"
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+        const renderer = new THREE.WebGLRenderer({ alpha: true, antialias: true });
+        
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        document.getElementById('canvas-container').appendChild(renderer.domElement);
+
+        // Creación de partículas "Esporas/Datos"
+        const geometry = new THREE.BufferGeometry();
+        const count = 3000;
+        const positions = new Float32Array(count * 3);
+        const sizes = new Float32Array(count);
+
+        for (let i = 0; i < count * 3; i++) {
+            positions[i] = (Math.random() - 0.5) * 20; // Esparcir en el espacio
+        }
+        for (let i = 0; i < count; i++) {
+            sizes[i] = Math.random();
+        }
+
+        geometry.setAttribute('position', new THREE.BufferAttribute(positions, 3));
+        geometry.setAttribute('size', new THREE.BufferAttribute(sizes, 1));
+
+        // Material de las partículas (Blanco brillante / Menta)
         const material = new THREE.PointsMaterial({
-            size: 0.02,
-            color: 0x00FF9D,
+            size: 0.03,
+            color: 0xffffff, // Blanco puro
             transparent: true,
-            opacity: 0.8,
-            blending: THREE.AdditiveBlending
+            opacity: 0.6,
+            sizeAttenuation: true
         });
 
-        // Malla
-        const particlesMesh = new THREE.Points(particlesGeometry, material);
-        scene.add(particlesMesh);
+        const particles = new THREE.Points(geometry, material);
+        scene.add(particles);
 
         camera.position.z = 3;
 
-        // Interacción con Mouse para 3D
+        // Animación
         let mouseX = 0;
         let mouseY = 0;
-        let targetX = 0;
-        let targetY = 0;
 
-        const windowHalfX = window.innerWidth / 2;
-        const windowHalfY = window.innerHeight / 2;
-
-        document.addEventListener('mousemove', (event) => {
-            mouseX = (event.clientX - windowHalfX);
-            mouseY = (event.clientY - windowHalfY);
+        document.addEventListener('mousemove', (e) => {
+            mouseX = e.clientX * 0.0001;
+            mouseY = e.clientY * 0.0001;
         });
 
-        // Reloj para animaciones constantes
         const clock = new THREE.Clock();
 
         function animate() {
-            targetX = mouseX * 0.001;
-            targetY = mouseY * 0.001;
-
             const elapsedTime = clock.getElapsedTime();
 
-            // Rotación suave base
-            particlesMesh.rotation.y += 0.001;
-            particlesMesh.rotation.x += 0.0005;
+            // Movimiento suave y orgánico de todo el sistema
+            particles.rotation.y = elapsedTime * 0.05;
+            particles.rotation.x = mouseY * 0.5;
+            particles.position.y = -mouseY * 0.2;
 
-            // Respuesta al mouse con inercia
-            particlesMesh.rotation.y += 0.05 * (targetX - particlesMesh.rotation.y);
-            particlesMesh.rotation.x += 0.05 * (targetY - particlesMesh.rotation.x);
-
-            // Efecto de "Respiración" (Onda sinusoidal)
-            particlesMesh.position.y = Math.sin(elapsedTime * 0.5) * 0.2;
+            // Ondulación
+            particles.position.x = Math.sin(elapsedTime * 0.2) * 0.2;
 
             renderer.render(scene, camera);
-            window.requestAnimationFrame(animate);
+            requestAnimationFrame(animate);
         }
 
         animate();
 
-        // Resize Handler
+        // Responsive
         window.addEventListener('resize', () => {
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // --- 3. ANIMACIONES GSAP (Scroll y Textos) ---
-        gsap.registerPlugin(ScrollTrigger);
-
-        // Intro Reveal
-        const tl = gsap.timeline();
+        // --- 3. ANIMACIONES DE ENTRADA (GSAP) ---
+        gsap.from(".hero h1", { duration: 1.5, y: 50, opacity: 0, ease: "power3.out" });
+        gsap.from(".badge", { duration: 1, scale: 0, ease: "elastic.out(1, 0.5)", delay: 0.5 });
         
-        // Animación de texto estilo "Typewriter" o "Reveal"
-        const mySplitText = new SplitType('.hero-title', { types: 'words, chars' });
-        
-        tl.to('.hero-title', { opacity: 1, duration: 0.1 })
-          .from(mySplitText.chars, {
-              opacity: 0,
-              y: 20,
-              rotateX: -90,
-              stagger: 0.02,
-              duration: 1,
-              ease: "back.out(1.7)"
-          })
-          .to('.hero-subtitle', { opacity: 1, y: 0, duration: 0.8 }, "-=0.5")
-          .to('.hero-cta', { opacity: 1, duration: 0.8 }, "-=0.5");
-
-        // Animación del Marquee (Cinta Infinita)
-        gsap.to(".animate-marquee", {
-            xPercent: -50,
-            repeat: -1,
-            duration: 20,
-            ease: "linear"
-        });
-
-        // Parallax suave en elementos al hacer scroll
-        gsap.utils.toArray('.glass-panel').forEach((panel, i) => {
-            gsap.from(panel, {
+        gsap.utils.toArray('.bio-card').forEach((card, i) => {
+            gsap.from(card, {
                 scrollTrigger: {
-                    trigger: panel,
-                    start: "top 85%",
-                    toggleActions: "play none none reverse"
+                    trigger: card,
+                    start: "top 90%",
                 },
-                y: 100,
+                y: 50,
                 opacity: 0,
-                duration: 1,
-                delay: i * 0.1,
-                ease: "power4.out"
+                duration: 0.8,
+                delay: i * 0.2
             });
         });
 
-        // Explosión de partículas al hacer scroll
-        ScrollTrigger.create({
-            trigger: "body",
-            start: "top top",
-            end: "bottom bottom",
-            onUpdate: (self) => {
-                // Aumentar velocidad de rotación al bajar
-                particlesMesh.rotation.z = self.progress * 2;
-                // Acercar cámara en secciones profundas
-                camera.position.z = 3 - (self.progress * 1.5);
+        // Keyframes para la flecha
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = `
+            @keyframes bounce {
+                0%, 20%, 50%, 80%, 100% {transform: translateY(0);}
+                40% {transform: translateY(-10px);}
+                60% {transform: translateY(-5px);}
             }
-        });
+        `;
+        document.head.appendChild(styleSheet);
 
     </script>
-    <style>
-        /* Animación personalizada para el marquee */
-        @keyframes marquee {
-            0% { transform: translateX(0%); }
-            100% { transform: translateX(-100%); }
-        }
-        .animate-marquee {
-            animation: marquee 30s linear infinite;
-        }
-    </style>
 </body>
 </html>
